@@ -1,13 +1,26 @@
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
+import 'package:bhaapp/otp/service/otpService.dart';
 import 'package:bhaapp/otp/view/widget/otp_text_field.dart';
 import 'package:bhaapp/otp/view/widget/otp_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class OtpScreen extends StatelessWidget {
-  const OtpScreen({Key? key}) : super(key: key);
+import '../../login/view/login_screen.dart';
+
+class OtpScreen extends StatefulWidget {
+  String verificationId;
+
+   OtpScreen({required this.verificationId});
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+class _OtpScreenState extends State<OtpScreen> {
+  String  enteredOtp='';
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +47,7 @@ class OtpScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,),
             SizedBox(height: screenHeight*0.02,),
-            Text("Sent to +62 875 875 098",
+            Text("Sent to ${LoginScreen.mobileNumber}",
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -44,6 +57,10 @@ class OtpScreen extends StatelessWidget {
             SizedBox(height: screenHeight*0.06,),
             otptextfield((value){
               print(value);
+              setState(() {
+                enteredOtp=value;
+                print(enteredOtp);
+              });
             },screenWidth),
             SizedBox(height: screenHeight*0.02,),
             OtpTimer(),
@@ -56,17 +73,31 @@ class OtpScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,),
             SizedBox(height: screenHeight*0.012,),
-            Text(
-              "Resend",
-              style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: splashBlue
+            InkWell(
+              onTap: (){
+                OtpService().resendPhoneAuth(LoginScreen.mobileNumber!, context);
+              },
+              child: Text(
+                "Resend",
+                style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: splashBlue
+                ),
               ),
             ),
             SizedBox(height: screenHeight*0.05,),
             blackButton('Login Now', (){
-              Navigator.pushNamed(context, '/shop_search');
+              if(enteredOtp.length>=6){
+                OtpService().signInWithPhoneNumber(
+                    widget.verificationId,
+                    enteredOtp,
+                    context
+                );
+              }else{
+                Fluttertoast.showToast(msg: 'Enter valid otp');
+              }
+
             }, screenWidth, screenHeight*0.05
             )
           ],

@@ -1,3 +1,4 @@
+import 'package:bhaapp/category/mainCategoryScreen.dart';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/home/widget/category_list.dart';
 import 'package:bhaapp/home/widget/home_appbar.dart';
@@ -6,6 +7,7 @@ import 'package:bhaapp/home/widget/main_banner.dart';
 import 'package:bhaapp/home/widget/product_tile.dart';
 import 'package:bhaapp/home/widget/search_field.dart';
 import 'package:bhaapp/home/widget/small_banner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  final Stream<QuerySnapshot> _categoryStream = FirebaseFirestore.instance.collection('categories').snapshots();
+
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -75,7 +80,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(height: screenHeight*0.02,),
-                      categoryList(screenHeight,(){Navigator.pushNamed(context, '/category_detail');}),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: _categoryStream,
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return SizedBox.shrink();
+                          }
+
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return SizedBox.shrink();
+                          }
+                          return Container(
+                            height: screenHeight*0.07,
+                            alignment: Alignment.centerLeft,
+                            child: ListView(
+                              padding: EdgeInsets.all(0),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                return categoryList((){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MainCategory(title:data['catName'] ,)));
+                                  },
+                                    data['catName']);
+                              }).toList(),
+                            ),
+                          );
+                        },
+                      ),
+
                       SizedBox(height: screenHeight*0.024,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(height: screenHeight*0.024,),
-                      SizedBox(
+                      /*SizedBox(
                         width: screenWidth,
                         child: Wrap(
                           alignment: WrapAlignment.spaceBetween,
@@ -103,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           children: List.generate(2, (index) => productTile(screenHeight,screenWidth,(){Navigator.pushNamed(context, '/product_detail');})),
                         ),
-                      ),
+                      ),*/
                       SizedBox(height: screenHeight*0.03,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(height: screenHeight*0.024,),
-                      SizedBox(
+                     /* SizedBox(
                         width: screenWidth,
                         child: Wrap(
                           alignment: WrapAlignment.spaceBetween,
@@ -131,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           children: List.generate(2, (index) => productTile(screenHeight,screenWidth,(){Navigator.pushNamed(context, '/product_detail');})),
                         ),
-                      )
+                      )*/
               ],
             ),
                 ))

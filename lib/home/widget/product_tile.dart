@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
-InkWell productTile(double height,double width,VoidCallback ontap){
+InkWell productTile(double height,double width,VoidCallback ontap,String image,
+    String prodName,String salePrize,String reguarPrize,String quantity){
   return InkWell(
     onTap:ontap ,
     child: Container(
@@ -24,21 +25,22 @@ InkWell productTile(double height,double width,VoidCallback ontap){
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        ((double.parse(reguarPrize)-double.parse(salePrize))/double.parse(reguarPrize))*100 > 0 ?
                         Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               color: splashBlue.withOpacity(0.1),
                               borderRadius: BorderRadius.all(Radius.circular(2))
                             ),
-                            child: Text('20% OFF',
+                            child: Text('${(((double.parse(reguarPrize)-double.parse(salePrize))/double.parse(reguarPrize))*100).toString().substring(0,4)}% OFF',
                             style: GoogleFonts.inter(
                               fontSize: 10,fontWeight: FontWeight.w700,color: splashBlue
-                            ),)),
+                            ),)):Container(),
                         Image.asset('assets/home/Vector-3.png',
                         height: 17.5,)
                       ],
                     ),
-                    Image.asset('assets/home/2985 1.png',
+                    Image.network(image,
                       height: height*0.12,),
                     SizedBox(height: height*0.065,),
                   ],
@@ -79,7 +81,7 @@ InkWell productTile(double height,double width,VoidCallback ontap){
                             child: Column(
                               children: [
                                 SizedBox(height: height*0.01,),
-                                Text('Tomato - Hybrid (Loose)',
+                                Text(prodName,
                                 style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 9,
@@ -87,7 +89,7 @@ InkWell productTile(double height,double width,VoidCallback ontap){
                                 ),
                                 textAlign: TextAlign.center,),
                                 SizedBox(height: height*0.0005,),
-                                Text('\$2.49/Kg',
+                                Text('\$${salePrize}/$quantity',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 11,

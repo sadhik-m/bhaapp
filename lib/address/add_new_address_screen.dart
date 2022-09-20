@@ -2,6 +2,7 @@ import 'package:bhaapp/address/widget/address_type_tile.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/register/view/widget/text_field.dart';
+import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
 
 import '../register/view/widget/country_picker.dart';
@@ -39,7 +40,11 @@ class _AddAddressState extends State<AddAddress> {
                 SizedBox(height: screenHeight*0.015,),
                 textField('Email Address (Optional)',TextInputType.emailAddress,(value){}),
                 SizedBox(height: screenHeight*0.015,),
-                countryPicker(),
+                countryPicker(
+                        (Country country) {
+                      print("${country.name}");
+                    }
+                ),
                 Padding(
                   padding:  EdgeInsets.only(top:2.0),
                   child: Container(

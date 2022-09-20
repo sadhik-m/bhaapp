@@ -1,8 +1,18 @@
 import 'dart:async';
 
 import 'package:bhaapp/common/constants/colors.dart';
+import 'package:bhaapp/dashboard/dash_board_screen.dart';
+import 'package:bhaapp/login/view/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -15,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    pushNotification();
     startTime();
   }
   @override
@@ -26,10 +37,10 @@ class _SplashScreenState extends State<SplashScreen> {
         height: screenHeight,
         width: screenWidth,
         decoration: const BoxDecoration(
-          color: splashBlue,
+          color: Colors.white,
           image: DecorationImage(
             image: AssetImage(
-              'assets/authentication/Splash_blue.png',
+              'assets/authentication/Splash_White.png',
             ),
             fit: BoxFit.fill
           )
@@ -38,13 +49,71 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
   startTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     var _duration = const Duration(seconds: 4);
-    return  Timer(_duration, () {
-      navigationPage('/login');
+    return Timer(_duration, () {
+      isLoggedIn ?
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+          (context)=>DashBoardScreen()), (route) => false) :
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+          (context)=>LoginScreen()), (route) => false);
+    });
+  }
+  pushNotification() async{
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then(( message) {
+      if (message != null) {
+        print("VVVVVVVVVV ${message.data.toString()}");
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        print('A new XXXXXXXX event was published!');
+        print(notification.title);
+        print(notification.body.toString());
+        print(notification.body.toString());
+        print(notification.body.toString());
+
+      }
+    });
+    FirebaseMessaging.instance.getToken().then((token) {
+      update(token!);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
     });
 
   }
-  void navigationPage(String destination) {
-    Navigator.of(context).pushReplacementNamed(destination);
+
+  void update(String token)async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print('TOKEN : $token');
+    String textValue = token;
+    prefs.setString('dev_id', token);
+    setState(() {});
   }
 }

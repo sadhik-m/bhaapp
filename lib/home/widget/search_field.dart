@@ -15,7 +15,7 @@ Container searchField(double height,double width){
     child: TextField(
       decoration: InputDecoration(
         border: InputBorder.none,
-        contentPadding: EdgeInsets.only(top:height*0.008),
+        contentPadding: EdgeInsets.only(top:height*0.015),
         prefixIcon: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

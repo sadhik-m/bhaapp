@@ -4,10 +4,14 @@ import 'package:bhaapp/login/view/widget/phone_textfield.dart';
 import 'package:bhaapp/login/view/widget/social_media_button.dart';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../service/loginService.dart';
 
 
 class LoginScreen extends StatelessWidget {
+  static String ? mobileNumber;
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -44,11 +48,15 @@ class LoginScreen extends StatelessWidget {
             Column(
               children: [
                 phoneTextfield((v){
-                  print(v);
+                  mobileNumber=v.completeNumber.toString();
                 }),
                 SizedBox(height: screenHeight*0.02,),
                 blackButton('Continue', (){
-                  Navigator.pushNamed(context, '/register');
+                  if(mobileNumber!=null && mobileNumber!.length>=13){
+                    LoginService().fireBasePhoneAuth(mobileNumber!, context);
+                  }else{
+                    Fluttertoast.showToast(msg: 'Enter valid mobile number');
+                  }
                 }, screenWidth, screenHeight*0.05
                 )
               ],
@@ -60,7 +68,9 @@ class LoginScreen extends StatelessWidget {
                     'assets/authentication/281764.png',
                     red,
                     screenHeight*0.05,
-                    screenWidth, (){}
+                    screenWidth, (){
+                  LoginService().signInWithGoogle(context: context);
+                }
                 ),
                 SizedBox(height: screenHeight*0.02,),
                 socialMediaButton(

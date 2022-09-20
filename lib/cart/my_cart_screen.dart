@@ -286,7 +286,47 @@ class _MyCartState extends State<MyCart> {
                                   ],
                                 ),
                               ),
-                            ))
+                            )),
+                        SizedBox(height: screenHeight*0.02,),
+                        Container(
+                            width: screenWidth,
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(4))
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.asset('assets/home/Group 78.png',
+                                          width: screenWidth*0.1,),
+                                        SizedBox(width: screenWidth*0.03,),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Store Pickup',style: GoogleFonts.inter(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black
+                                            ),),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Radio(value: 'store', groupValue: delivery,
+                                        onChanged: (value){
+                                          setState(() {
+                                            delivery=value.toString();
+                                          });
+                                        })
+                                  ],
+                                ),
+                              ),
+                            )),
                       ],
                     ):SizedBox.shrink(),
                     SizedBox(height: screenHeight*0.04,),

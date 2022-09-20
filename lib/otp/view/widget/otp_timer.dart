@@ -44,7 +44,14 @@ class _OtpTimerState extends State<OtpTimer> {
   }
 
   Widget build(BuildContext context) {
-    return  Text(
+    return _start == 0?
+    Text("Time Out, click resend",
+      style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: red
+      ),):
+    Text(
       '0:'+_start.toString().padLeft(2,'0')+' Sec',
       style: GoogleFonts.inter(
           fontSize: 14,

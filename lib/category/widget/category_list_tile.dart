@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-ListTile categoryListTile(VoidCallback ontap){
+ListTile categoryListTile(VoidCallback ontap,String name){
   return ListTile(
     onTap: ontap,
     contentPadding: EdgeInsets.all(0),
-    title: Text('Fruits & Vegetables',
+    title: Text(name,
     style: GoogleFonts.inter(
       fontWeight: FontWeight.w500,
       color: Colors.black,

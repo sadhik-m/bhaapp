@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "711167476501",
+    "project_id": "bha-app-e35ef",
+    "storage_bucket": "bha-app-e35ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711167476501:android:f1c1d0d25650c2f215df1c",
+        "android_client_info": {
+          "package_name": "com.bhaapp.bha_app_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711167476501-8nnqrm3uqimvauejhli72d9avft817t8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_customer",
+            "certificate_hash": "177ff4856bac22540d8dcb07a77e611e6bf14fb5"
+          }
+        },
+        {
+          "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKRGvNh1MbpNCc4eMgQ9sunroJ13Jo36o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711167476501:android:069d43160361d1c415df1c",
+        "android_client_info": {
+          "package_name": "com.bhaapp.bha_app_vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711167476501-4qb0g37teed65ge8big1bt90ka1p4ipf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_vendor",
+            "certificate_hash": "fab7fd09478d9989c7eb781b04e59576ad88e938"
+          }
+        },
+        {
+          "client_id": "711167476501-cpun2a4k9h777l7aufgggh4neecsic4t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_vendor",
+            "certificate_hash": "f9dc336bc5ced7958b6c2071ded697b6d1d26410"
+          }
+        },
+        {
+          "client_id": "711167476501-e0tbeattd9aavcfkg6melk3nuh8nedmg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_vendor",
+            "certificate_hash": "c0e0792af7d39ce9c7a3097acef6d40e4bfdd869"
+          }
+        },
+        {
+          "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKRGvNh1MbpNCc4eMgQ9sunroJ13Jo36o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

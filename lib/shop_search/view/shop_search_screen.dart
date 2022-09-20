@@ -6,6 +6,8 @@ import 'package:bhaapp/shop_search/view/widgets/shop_list_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../common/constants/colors.dart';
+
 class ShopSearchScreen extends StatefulWidget {
   const ShopSearchScreen({Key? key}) : super(key: key);
 
@@ -55,6 +57,44 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     color: Colors.grey,
                   ),
                 ),
+                SizedBox(height: screenHeight*0.03,),
+                Text("OR"),
+                SizedBox(height: screenHeight*0.03,),
+                Container(
+                  width: screenWidth,
+                  height: screenHeight*0.06,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      border: Border.all(color: border_grey.withOpacity(0.1)),
+                      color: fill_grey.withOpacity(0.1)
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(top:screenHeight*0.015),
+                      prefixIcon: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/home/search.png',
+                            height: screenHeight*0.03,
+                          ),
+                        ],
+                      ),
+                      hintText: 'Search by Vendor ID',
+                      hintStyle: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black.withOpacity(0.5)
+                      ),
+                    ),
+                    style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black
+                    ),
+                  ),
+                ),
+
               ],
             ),
             blackButton('View Shops', (){

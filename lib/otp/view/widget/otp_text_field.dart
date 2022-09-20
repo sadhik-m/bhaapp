@@ -4,23 +4,24 @@ import 'package:google_fonts/google_fonts.dart';
 
 SizedBox otptextfield(Function(String) onsubmit,double width){
   return SizedBox(
-    height:width*0.15 ,
+    height:width*0.12 ,
     child: OtpTextField(
-      numberOfFields: 4,
+      numberOfFields: 6,
       borderColor: Colors.black,
       disabledBorderColor: Colors.black.withOpacity(0.2),
       cursorColor: Colors.black,
       focusedBorderColor: Colors.black,
       borderWidth: 1,
-      fieldWidth: width*0.14,
+      fieldWidth: width*0.11,
       autoFocus: true,
       showFieldAsBox: true,
       onCodeChanged: (String code) {},
       onSubmit:onsubmit,
       textStyle: GoogleFonts.inter(
         color: Colors.black.withOpacity(0.8),
-        fontWeight: FontWeight.w400,
-        fontSize: 22
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        height: 0.9
       ),
 
     ),
