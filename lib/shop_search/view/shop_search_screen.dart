@@ -2,7 +2,11 @@ import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/register/view/widget/country_picker.dart';
 import 'package:bhaapp/register/view/widget/text_field.dart';
+import 'package:bhaapp/shop_search/model/vendorModel.dart';
+import 'package:bhaapp/shop_search/view/shopSerachVendorId.dart';
+import 'package:bhaapp/shop_search/view/shop_result_screen.dart';
 import 'package:bhaapp/shop_search/view/widgets/shop_list_dropdown.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,6 +20,18 @@ class ShopSearchScreen extends StatefulWidget {
 }
 
 class _ShopSearchScreenState extends State<ShopSearchScreen> {
+
+  List<VendorModel> vendorList=[];
+  List<String> categoryList=[];
+  bool loaded=false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadVendorList();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -23,7 +39,10 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar('Shop Search', [],true),
-      body: Container(
+      body: loaded==false?
+          Center(
+            child: Text("Loading..."),
+          ): Container(
         height: screenHeight,
         width: screenWidth,
         padding: EdgeInsets.symmetric(
@@ -46,9 +65,9 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                 shopDropDown(
                     (v){
                       setState(() {
-                        dropdownvalue=v;
+                        selectedCategory=v;
                       });
-                    }
+                    },categoryList
                 ),
                 Padding(
                   padding:  EdgeInsets.only(top:0.0),
@@ -69,6 +88,10 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                       color: fill_grey.withOpacity(0.1)
                   ),
                   child: TextField(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchVendorId(vendorList: vendorList,)));
+                    },
+                    readOnly: true,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(top:screenHeight*0.015),
@@ -98,12 +121,44 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
               ],
             ),
             blackButton('View Shops', (){
-              Navigator.pushNamed(context, '/shop_result');
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopResult(vendorList: vendorList)));
             }, screenWidth, screenHeight*0.05
             )
           ],
         ),
       ),
     );
+  }
+
+  loadVendorList()async{
+    await FirebaseFirestore.instance
+        .collection('vendors')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+          setState(() {
+            vendorList.add(
+                VendorModel(vendorId: doc['vendorId'], shopName: doc['shopName'],
+                    category: doc['loadProductType'],address: doc['address'])
+            );
+          });
+      });
+    });
+    await FirebaseFirestore.instance
+        .collection('subCategories')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          categoryList.add(
+              doc['subCatName']
+          );
+        });
+      });
+    });
+    setState(() {
+      selectedCategory=categoryList[0];
+      loaded=true;
+    });
   }
 }

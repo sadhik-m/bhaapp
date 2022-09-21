@@ -1,10 +1,14 @@
+import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/order/my_orders_screen.dart';
 import 'package:bhaapp/profile/widget/profile_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants/colors.dart';
 import '../common/widgets/appBar.dart';
+import '../dashboard/dash_board_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -95,10 +99,58 @@ class ProfileScreen extends StatelessWidget {
                         (){
                     }
                 ),
+                SizedBox(height: screenHeight*0.01,),
+                profileTile(
+                    'Logout',
+                        (){
+                          showLogoutDialog(context);
+                    }
+                ),
               ],
             ),
           ),
         )
     );
+  }
+  showLogoutDialog(BuildContext context) {
+
+    Widget cancelButton = TextButton(
+      child:const Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child:const Text("Continue"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+        _signOut(context);
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title:const Text("Are you sure you want to logout?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+  Future<void> _signOut(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await FirebaseAuth.instance.signOut();
+    preferences.remove('isLoggedIn');
+    preferences.remove('vendorId');
+    pageIndex = 0;
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+        (context)=>LoginScreen()), (route) => false);
   }
 }

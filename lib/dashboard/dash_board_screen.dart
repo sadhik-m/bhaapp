@@ -3,11 +3,14 @@ import 'package:bhaapp/dashboard/widget/bottombar_icon.dart';
 import 'package:bhaapp/home/home_screen.dart';
 import 'package:bhaapp/order/my_orders_screen.dart';
 import 'package:bhaapp/profile/profile_screen.dart';
+import 'package:bhaapp/shop_search/view/shop_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants/colors.dart';
 int pageIndex = 0;
+String ? vendorId;
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
 
@@ -23,7 +26,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     Container(),
     MyCart(show_back: false,),
   ];
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkVendorId();
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -98,5 +106,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         ),
       ),
     );
+  }
+  checkVendorId()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      vendorId = preferences.getString('vendorId')??'null';
+    });
+    if(vendorId=='null'){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+          (context)=>ShopSearchScreen()), (route) => false);
+    }
   }
 }

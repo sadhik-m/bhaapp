@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/login/view/login_screen.dart';
+import 'package:bhaapp/shop_search/view/shop_search_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -51,13 +52,22 @@ class _SplashScreenState extends State<SplashScreen> {
   startTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    vendorId = prefs.getString('vendorId')??'null';
+
     var _duration = const Duration(seconds: 4);
     return Timer(_duration, () {
-      isLoggedIn ?
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
-          (context)=>DashBoardScreen()), (route) => false) :
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
-          (context)=>LoginScreen()), (route) => false);
+      if(isLoggedIn){
+        if(vendorId=='null'){
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+              (context)=>ShopSearchScreen()), (route) => false);
+        }else{
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+              (context)=>DashBoardScreen()), (route) => false);
+        }
+      }else{
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+            (context)=>LoginScreen()), (route) => false);
+      }
     });
   }
   pushNotification() async{

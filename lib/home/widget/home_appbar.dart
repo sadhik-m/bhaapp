@@ -1,9 +1,12 @@
 import 'package:bhaapp/common/constants/colors.dart';
+import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/home/widget/locaton_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Container homeAppBar(Function(dynamic)? location_onchanged){
+import '../../shop_search/view/shop_search_screen.dart';
+
+Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context){
   return Container(
     child: Column(
       children: [
@@ -36,12 +39,18 @@ Container homeAppBar(Function(dynamic)? location_onchanged){
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Change Shop Type /Vendor',
-                            style:GoogleFonts.inter(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                                color: Colors.black
-                            ) ,),
+                          InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchScreen()));
+                            },
+                            child: Text(vendorId!,
+                              //'Change Shop Type /Vendor',
+                              style:GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: Colors.black
+                              ) ,),
+                          ),
                           SizedBox(width: 4,),
                           Padding(
                             padding: const EdgeInsets.only(right:2.0),

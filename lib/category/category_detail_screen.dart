@@ -1,5 +1,6 @@
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
+import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/home/widget/product_tile.dart';
 import 'package:bhaapp/product/product_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +13,7 @@ class CategoryDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('subCategory',isEqualTo: title.toString()).snapshots();
+    final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('subCategory',isEqualTo: title.toString()).where('seller.${'vid'}',isEqualTo: vendorId).snapshots();
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
     return Scaffold(

@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/register':(BuildContext context) => const RegisterScreen(),
         '/otp':(BuildContext context) =>  OtpScreen(verificationId: '',),
         '/shop_search':(BuildContext context) => const ShopSearchScreen(),
-        '/shop_result':(BuildContext context) => const ShopResult(),
+        '/shop_result':(BuildContext context) =>  ShopResult(vendorList: [],),
         '/dash':(BuildContext context) => const DashBoardScreen(),
         '/home':(BuildContext context) => const HomeScreen(),
         '/category_list':(BuildContext context) => const CategoryList(),
