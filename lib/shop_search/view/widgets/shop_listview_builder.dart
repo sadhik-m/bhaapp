@@ -21,7 +21,7 @@ ListView ShopListView(double width,double height,BuildContext context,List<Vendo
           width,
           height,
             (){
-              saveVendorId(data[index].vendorId,context);
+              saveVendorId(data[index].vendorId,context,data[index].vendorDocId);
             }
         ),
       );
@@ -29,9 +29,10 @@ ListView ShopListView(double width,double height,BuildContext context,List<Vendo
   );
 
 }
-saveVendorId(String vendorId,BuildContext context)async{
+saveVendorId(String vendorId,BuildContext context,String vendorDocId)async{
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString('vendorId', vendorId);
+  preferences.setString('vendorDocId', vendorDocId);
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
       (context)=>DashBoardScreen()), (route) => false);
 }

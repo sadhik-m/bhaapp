@@ -139,7 +139,8 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
           setState(() {
             vendorList.add(
                 VendorModel(vendorId: doc['vendorId'], shopName: doc['shopName'],
-                    category: doc['loadProductType'],address: doc['address'])
+                    category: doc['loadProductType'],address: doc['address'],
+                    vendorDocId:doc.id.toString())
             );
           });
       });

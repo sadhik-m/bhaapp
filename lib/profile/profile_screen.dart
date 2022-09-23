@@ -1,6 +1,8 @@
 import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/order/my_orders_screen.dart';
+import 'package:bhaapp/profile/model/profileModel.dart';
 import 'package:bhaapp/profile/widget/profile_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,9 +12,44 @@ import '../common/constants/colors.dart';
 import '../common/widgets/appBar.dart';
 import '../dashboard/dash_board_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  ProfileModel ? profileModel;
+  bool loaded=false;
+  getProfileDetails()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String ? uid= preferences.getString('uid');
+   await FirebaseFirestore.instance
+        .collection('customers')
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          profileModel = ProfileModel(address: documentSnapshot['address'],
+              country: documentSnapshot['country'], name: documentSnapshot['name'],
+              email: documentSnapshot['email'], phone: documentSnapshot['phone']);
+        });
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+   setState(() {
+     loaded=true;
+   });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getProfileDetails();
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -31,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                   ),),
               ),
             )],false),
-        body: Container(
+        body:loaded? Container(
           height: screenHeight,
           width: screenWidth,
           padding: EdgeInsets.symmetric(
@@ -53,14 +90,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: screenHeight*0.02,),
-                Text('Kaushik Chandraskhar',style:
+                Text(profileModel!.name,style:
                   GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                     color: Color(0xff030303)
                   ),),
                 SizedBox(height: screenHeight*0.01,),
-                Text('kaushik007@gmail.com',style:
+                Text(profileModel!.email,style:
                 GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -109,9 +146,11 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ):
+            Center(child: Text('Loading..'),)
     );
   }
+
   showLogoutDialog(BuildContext context) {
 
     Widget cancelButton = TextButton(
@@ -144,6 +183,7 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
+
   Future<void> _signOut(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await FirebaseAuth.instance.signOut();

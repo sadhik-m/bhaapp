@@ -1,6 +1,9 @@
+import 'package:bhaapp/address/model/addressModel.dart';
+import 'package:bhaapp/address/services/getAddressList.dart';
 import 'package:bhaapp/address/widget/address_tile.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChangeAddress extends StatefulWidget {
@@ -11,6 +14,7 @@ class ChangeAddress extends StatefulWidget {
 }
 
 class _ChangeAddressState extends State<ChangeAddress> {
+  final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('customers').snapshots();
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -25,16 +29,43 @@ class _ChangeAddressState extends State<ChangeAddress> {
         child: Column(
           children: [
             Expanded(child:
-            ListView.builder(
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return addressTile(screenWidth, screenHeight, (){
-                  setState(() {
-                    selectedAddressIndex=index;
-                  });
-                },index);
+            FutureBuilder<List<AddressModel>>(
+              future: GetAddress().getAddress(),
+              builder: (
+                  BuildContext context,
+                   snapshot,
+                  ) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  );
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return const Text('Error');
+                  } else if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return addressTile(screenWidth, screenHeight, (){
+                          setState(() {
+                            selectedAddressIndex=index;
+                          });
+                        },index);
+                      },
+                    );
+                  } else {
+                    return const Text('Empty data');
+                  }
+                } else {
+                  return Text('State: ${snapshot.connectionState}');
+                }
               },
-            )),
+            ),
+            ),
             blackButton('Add New Address', (){
               Navigator.pushNamed(context, '/Add_address');
             }, screenWidth, screenHeight*0.05)

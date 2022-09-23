@@ -1,5 +1,6 @@
 import 'package:bhaapp/category/mainCategoryScreen.dart';
 import 'package:bhaapp/common/constants/colors.dart';
+import 'package:bhaapp/home/productSearchScreen.dart';
 import 'package:bhaapp/home/widget/category_list.dart';
 import 'package:bhaapp/home/widget/home_appbar.dart';
 import 'package:bhaapp/home/widget/locaton_dropdown.dart';
@@ -7,10 +8,14 @@ import 'package:bhaapp/home/widget/main_banner.dart';
 import 'package:bhaapp/home/widget/product_tile.dart';
 import 'package:bhaapp/home/widget/search_field.dart';
 import 'package:bhaapp/home/widget/small_banner.dart';
+import 'package:bhaapp/product/product_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../dashboard/dash_board_screen.dart';
+import 'newProductsViewAll.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   final Stream<QuerySnapshot> _categoryStream = FirebaseFirestore.instance.collection('categories').snapshots();
+  final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).limit(2).snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     location_dropdownvalue=value;
                   });
-                },context
+                },context,
+                (){
+                }
             ),
             Expanded(
                 child: SingleChildScrollView(
@@ -53,7 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: screenHeight*0.02,),
                       mainBanner(),
                       SizedBox(height: screenHeight*0.02,),
-                      searchField(screenHeight, screenWidth),
+                      searchField(screenHeight, screenWidth,(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen()));
+                      }),
                       SizedBox(height: screenHeight*0.024,),
                       smallBanner(),
                       SizedBox(height: screenHeight*0.02,),
@@ -113,46 +123,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Weekly Sale',
-                            style: GoogleFonts.inter(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.black
-                            ),),
-                          Text('View All',
-                            style: GoogleFonts.inter(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 10,
-                                color: splashBlue
-                            ),)
-                        ],
-                      ),
-                      SizedBox(height: screenHeight*0.024,),
-                      /*SizedBox(
-                        width: screenWidth,
-                        child: Wrap(
-                          alignment: WrapAlignment.spaceBetween,
-                          runAlignment: WrapAlignment.spaceBetween,
-
-                          children: List.generate(2, (index) => productTile(screenHeight,screenWidth,(){Navigator.pushNamed(context, '/product_detail');})),
-                        ),
-                      ),*/
-                      SizedBox(height: screenHeight*0.03,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
                           Text('New Products',
                             style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                                 color: Colors.black
                             ),),
-                          Text('View All',
-                            style: GoogleFonts.inter(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 10,
-                                color: splashBlue
-                            ),)
+                          InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts()));
+                            },
+                            child: Text('View All',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 10,
+                                  color: splashBlue
+                              ),),
+                          )
                         ],
                       ),
                       SizedBox(height: screenHeight*0.024,),
@@ -165,6 +152,55 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: List.generate(2, (index) => productTile(screenHeight,screenWidth,(){Navigator.pushNamed(context, '/product_detail');})),
                         ),
                       )*/
+                  StreamBuilder<QuerySnapshot>(
+                    stream: _productStream,
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return SizedBox.shrink();
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Padding(
+                          padding:  EdgeInsets.only(top: screenHeight*0.35),
+                          child: Text("Loading...."),
+                        );
+                      }
+                      if (snapshot.data!.docs.isEmpty) {
+                        return Padding(
+                          padding:  EdgeInsets.only(top: screenHeight*0.35),
+                          child: Text('Nothing Found!'),
+                        );
+                      }
+                      return SizedBox(
+
+                        width: screenWidth,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          runAlignment: WrapAlignment.spaceBetween,
+                          runSpacing: 20,
+                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            return
+                              productTile(screenHeight,screenWidth,
+                                    (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())));
+                                },
+                                data['productImageUrl'],
+                                data['productName'],
+                                data['salesPrice'].toString(),
+                                data['regularPrice'].toString(),
+                                data['priceUnit'],
+
+
+                              );
+                          }).toList(),
+
+                        ),
+                      );
+
+
+                    },
+                  ),
               ],
             ),
                 ))

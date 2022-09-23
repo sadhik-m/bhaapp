@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Container searchField(double height,double width){
+Container searchField(double height,double width,VoidCallback ontap){
   return Container(
     width: width,
     height: height*0.06,
@@ -13,6 +13,8 @@ Container searchField(double height,double width){
       color: fill_grey.withOpacity(0.1)
     ),
     child: TextField(
+      onTap: ontap,
+      readOnly: true,
       decoration: InputDecoration(
         border: InputBorder.none,
         contentPadding: EdgeInsets.only(top:height*0.015),

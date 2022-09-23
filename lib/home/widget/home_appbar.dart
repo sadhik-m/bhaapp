@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../shop_search/view/shop_search_screen.dart';
 
-Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context){
+Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context,VoidCallback ontap){
   return Container(
     child: Column(
       children: [
@@ -63,15 +63,18 @@ Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context)
                 ),
               ],
             ),
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black,
-              ),
-              child: Center(
-                child: Icon(Icons.person,color: Colors.white,),
+            InkWell(
+              onTap:ontap,
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black,
+                ),
+                child: Center(
+                  child: Icon(Icons.person,color: Colors.white,),
+                ),
               ),
             ),
           ],
