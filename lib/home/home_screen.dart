@@ -190,8 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 data['salesPrice'].toString(),
                                 data['regularPrice'].toString(),
                                 data['priceUnit'],
-
-
+                                  document.id.toString(),
+                                  favouriteList!.contains(document.id.toString())
                               );
                           }).toList(),
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/constants/colors.dart';
+import '../../dashboard/dash_board_screen.dart';
 
 InkWell productTile(double height,double width,VoidCallback ontap,String image,
-    String prodName,String salePrize,String reguarPrize,String quantity){
+    String prodName,String salePrize,String reguarPrize,String quantity,String prodId,bool fav){
   return InkWell(
     onTap:ontap ,
     child: Container(
@@ -36,8 +38,22 @@ InkWell productTile(double height,double width,VoidCallback ontap,String image,
                             style: GoogleFonts.inter(
                               fontSize: 10,fontWeight: FontWeight.w700,color: splashBlue
                             ),)):Container(),
-                        Image.asset('assets/home/Vector-3.png',
-                        height: 17.5,)
+                        fav?
+                        InkWell(
+                          onTap: (){
+                            toggleFavourites(prodId);
+                          },
+                          child: Icon(Icons.favorite,
+                            size: 20.5,color: red,
+                          ),
+                        ):
+                        InkWell(
+                          onTap: (){
+                            toggleFavourites(prodId);
+                          },
+                          child: Image.asset('assets/home/Vector-3.png',
+                          height: 17.5,),
+                        )
                       ],
                     ),
                     Image.network(image,
@@ -134,3 +150,20 @@ InkWell productTile(double height,double width,VoidCallback ontap,String image,
     ),
   );
 }
+
+toggleFavourites(String productID)async{
+  print("JKLOP");
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  List<String> favList=preferences.getStringList('favList')??[];
+
+    if(favList.contains(productID)){
+      favouriteList!.remove(productID);
+      preferences.setStringList('favList',favouriteList! );
+    }else{
+      favouriteList!.add(productID);
+      preferences.setStringList('favList',favouriteList! );
+    }
+
+
+}
+

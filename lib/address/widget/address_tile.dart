@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
-Column addressTile(double width,double height,VoidCallback ontap,int index){
+Column addressTile(double width,double height,VoidCallback ontap,int index,
+    String name,String address,String country,String phone){
   return Column(
     children: [
       Row(
@@ -31,7 +32,7 @@ Column addressTile(double width,double height,VoidCallback ontap,int index){
                   SizedBox(height: height*0.02,),
                 ],
               ):SizedBox.shrink(),
-              Text('John Thomas',style: GoogleFonts.inter(
+              Text(name,style: GoogleFonts.inter(
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
                   color: Colors.black
@@ -39,7 +40,7 @@ Column addressTile(double width,double height,VoidCallback ontap,int index){
               SizedBox(height: height*0.005,),
               Container(
                 width: width*0.45,
-                child: Text('Jalan Haji Juanda No 1Paledang, Kecamatan Bogor Tengah, Kota Bogor,',style: GoogleFonts.inter(
+                child: Text('$address,$country\nph : $phone',style: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                     color: Colors.black.withOpacity(0.6)

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/constants/colors.dart';
 int pageIndex = 0;
 String ? vendorId;
+List<String> ? favouriteList;
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
 
@@ -111,6 +112,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       vendorId = preferences.getString('vendorId')??'null';
+      favouriteList=preferences.getStringList('favList')??[];
     });
     if(vendorId=='null'){
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:

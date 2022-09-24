@@ -5,6 +5,7 @@ class AddressModel {
   String country;
   String address;
   String type;
+  String id;
 
 
   AddressModel({
@@ -14,6 +15,7 @@ class AddressModel {
     required this.country,
     required this.address,
     required this.type,
+    required this.id,
 
   });
 
@@ -24,6 +26,7 @@ class AddressModel {
     'country': country,
     'address': address,
     'type': type,
+    'id': id,
 
   };
 
@@ -35,6 +38,7 @@ class AddressModel {
       country: json['country'],
       address: json['address'],
       type: json['type'],
+      id: json['id'],
 
     );
   }

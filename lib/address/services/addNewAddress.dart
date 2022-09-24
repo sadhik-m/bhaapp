@@ -4,6 +4,7 @@ import 'package:bhaapp/address/model/addressModel.dart';
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddNewAddress{
@@ -18,7 +19,9 @@ class AddNewAddress{
            addressModel.toJson(),
         );
 
+
     Navigator.of(context).pop();
+    Fluttertoast.showToast(msg: 'address added successfully');
     return 'success';
   }
 }

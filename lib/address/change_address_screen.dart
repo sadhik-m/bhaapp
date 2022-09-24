@@ -5,6 +5,7 @@ import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangeAddress extends StatefulWidget {
   const ChangeAddress({Key? key}) : super(key: key);
@@ -52,9 +53,15 @@ class _ChangeAddressState extends State<ChangeAddress> {
                       itemBuilder: (context, index) {
                         return addressTile(screenWidth, screenHeight, (){
                           setState(() {
+                            makeDefualt(snapshot.data![index].id);
                             selectedAddressIndex=index;
                           });
-                        },index);
+                        },index,
+                        snapshot.data![index].name,
+                        snapshot.data![index].address,
+                        snapshot.data![index].country,
+                        snapshot.data![index].mobile
+                        );
                       },
                     );
                   } else {
@@ -67,11 +74,25 @@ class _ChangeAddressState extends State<ChangeAddress> {
             ),
             ),
             blackButton('Add New Address', (){
-              Navigator.pushNamed(context, '/Add_address');
+              Navigator.pushNamed(context, '/Add_address').then((value) {
+                setState(() {
+
+                });
+              });
             }, screenWidth, screenHeight*0.05)
           ],
         ),
       ),
+    );
+  }
+  makeDefualt(String addressId)async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String uid=preferences.getString('uid')??'';
+    await FirebaseFirestore.instance.collection('customers').doc(uid)
+        .set({
+      'defualtAddressId': addressId
+    },
+      SetOptions(merge: true),
     );
   }
 }

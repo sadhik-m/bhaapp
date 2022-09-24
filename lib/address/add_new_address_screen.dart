@@ -5,6 +5,7 @@ import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/register/view/widget/text_field.dart';
 import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../register/view/widget/country_picker.dart';
@@ -95,7 +96,7 @@ class _AddAddressState extends State<AddAddress> {
                   ),
                 ),
                 SizedBox(height: screenHeight*0.015,),
-                textField('Address (Optional)',TextInputType.streetAddress,(value){
+                textField('Address',TextInputType.streetAddress,(value){
                   setState(() {
                     address=value;
                   });
@@ -104,10 +105,20 @@ class _AddAddressState extends State<AddAddress> {
               ],
             ),
             blackButton('Save Address', (){
-              setState(() {
-                addressList.add(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home'));
-              });
-              AddNewAddress().addAddress(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home'), context);
+             if(name.isEmpty){
+               Fluttertoast.showToast(msg: 'Enter name');
+             }else if(mobile.isEmpty){
+               Fluttertoast.showToast(msg: 'Enter mobile');
+             }else if(address.isEmpty){
+               Fluttertoast.showToast(msg: 'Enter address');
+             }else{
+               setState(() {
+                 addressList.add(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home',id: ''));
+               });
+               AddNewAddress().addAddress(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home',id: ''), context).then((value) {
+                 Navigator.of(context).pop();
+               });
+             }
             }, screenWidth, screenHeight*0.05
             )
           ],

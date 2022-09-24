@@ -2,6 +2,7 @@ import 'package:bhaapp/home/widget/product_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../dashboard/dash_board_screen.dart';
 import '../../product/product_detail_screen.dart';
 import '../model/productModel.dart';
 
@@ -24,6 +25,8 @@ SingleChildScrollView prodList(double screenWidth,double screenHeight, List<Prod
               data.salePrice.toString(),
               data.regularPrice.toString(),
               data.priceUnit,
+              data.prodDocId.toString(),
+                favouriteList!.contains(data.prodDocId.toString())
 
 
             );

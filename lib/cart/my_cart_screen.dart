@@ -5,6 +5,9 @@ import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/product/widget/benefit_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../product/model/cartModel.dart';
 
 class MyCart extends StatefulWidget {
   bool? show_back;
@@ -18,6 +21,34 @@ class _MyCartState extends State<MyCart> {
    bool isGst=false;
    bool showOption=true;
    String? delivery;
+   bool loaded=false;
+
+
+   List<CartModel> cartList=[];
+
+   @override
+   void initState() {
+     // TODO: implement initState
+     super.initState();
+     getCartList();
+   }
+   getCartList()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     final String cartString = await prefs.getString('cartList')??'null';
+     setState(() {
+       if(cartString != 'null'){
+         cartList=CartModel.decode(cartString);
+         loaded=true;
+       }
+     });
+   }
+   clearCart()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     setState(() {
+       cartList.clear();
+     });
+     prefs.setString('cartList',CartModel.encode(cartList));
+   }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -25,22 +56,28 @@ class _MyCartState extends State<MyCart> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar("My Cart",
-          [Padding(
-            padding: const EdgeInsets.only(right:18.0),
-            child: Center(
-              child: Text('Clear Cart',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w500,
-                color: splashBlue,
-                fontSize: 12
-              ),),
+          [InkWell(
+            onTap: (){
+              clearCart();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right:18.0),
+              child: Center(
+                child: Text('Clear Cart',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w500,
+                  color: splashBlue,
+                  fontSize: 12
+                ),),
+              ),
             ),
           )],widget.show_back!),
-      body: Container(
+      body:loaded? Container(
         height: screenHeight,
         width: screenWidth,
 
-        child: SingleChildScrollView(
+        child: cartList.isNotEmpty?
+        SingleChildScrollView(
           child: Column(
             children: [
 
@@ -50,11 +87,11 @@ class _MyCartState extends State<MyCart> {
                   horizontal: screenWidth*0.06,
                 ),
                 child: ListView.builder(
-                  itemCount: 2,
+                  itemCount: cartList.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return cartListTile(screenWidth, screenHeight);
+                    return cartListTile(screenWidth, screenHeight,cartList[index].productId,cartList[index].productQuantity,index+1);
                   },
                 ),
               ),
@@ -470,8 +507,10 @@ class _MyCartState extends State<MyCart> {
               )
             ],
           ),
-        ),
-      ),
+        ):
+        Center(child: Text("No Items!"),),
+      ):
+      Center(child: Text("Loading..."),),
     );
   }
 }

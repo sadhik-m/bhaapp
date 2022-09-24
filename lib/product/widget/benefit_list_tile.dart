@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
-Padding benefitListTile(){
+Padding benefitListTile(int index){
   return Padding(
     padding: const EdgeInsets.only(bottom: 8.0),
     child: Row(
@@ -17,7 +17,7 @@ Padding benefitListTile(){
               shape: BoxShape.circle
           ),),
         SizedBox(width: 8,),
-        Expanded(child: Text('Kills 99%# of infection causing\nbacteria',
+        Expanded(child: Text('Benefit Demo $index',
           style: GoogleFonts.inter(
               fontWeight: FontWeight.w400,
               fontSize: 14,

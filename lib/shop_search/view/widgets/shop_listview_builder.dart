@@ -29,9 +29,10 @@ ListView ShopListView(double width,double height,BuildContext context,List<Vendo
   );
 
 }
-saveVendorId(String vendorId,BuildContext context,String vendorDocId)async{
+saveVendorId(String vendorIds,BuildContext context,String vendorDocId)async{
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setString('vendorId', vendorId);
+  vendorId=vendorIds;
+  preferences.setString('vendorId', vendorIds);
   preferences.setString('vendorDocId', vendorDocId);
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
       (context)=>DashBoardScreen()), (route) => false);

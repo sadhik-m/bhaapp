@@ -1,10 +1,15 @@
 import 'package:bhaapp/cart/my_cart_screen.dart';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
+import 'package:bhaapp/common/widgets/loading_indicator.dart';
 import 'package:bhaapp/product/widget/benefit_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'model/cartModel.dart';
 
 class ProductDetail extends StatefulWidget {
   String docId;
@@ -16,7 +21,14 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   int quantity=1;
+   List<CartModel> cartList=[];
   CollectionReference prodDetail = FirebaseFirestore.instance.collection('products');
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCartList();
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -24,10 +36,16 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar("Product Details",
-          [Padding(
-            padding: const EdgeInsets.only(right:18.0),
-            child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
-              height: 24,width: 24,),
+          [InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder:
+                                  (context)=>MyCart(show_back: true,)));
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right:18.0),
+              child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
+                height: 24,width: 24,),
+            ),
           )],true),
       body: Container(
         height: screenHeight,
@@ -48,7 +66,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 return Text("Document does not exist");
               }
 
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
                 Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                 return SingleChildScrollView(
                   child: Column(
@@ -110,7 +128,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                return  benefitListTile();
+                                return  benefitListTile(index+1);
                               },
                             ),
                           )
@@ -259,8 +277,9 @@ class _ProductDetailState extends State<ProductDetail> {
                           SizedBox(width: screenWidth*0.03,),
                           InkWell(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder:
-                                  (context)=>MyCart(show_back: true,)));
+                              addToCart(snapshot.data!.id.toString(),quantity);
+                              /*Navigator.push(context, MaterialPageRoute(builder:
+                                  (context)=>MyCart(show_back: true,)));*/
                             },
                             child: Container(
                               height: screenWidth*0.11,
@@ -300,5 +319,36 @@ class _ProductDetailState extends State<ProductDetail> {
           )
       ),
     );
+  }
+
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        cartList=CartModel.decode(cartString);
+      }
+    });
+  }
+  addToCart(String prodId,int prodQuantity)async{
+    showLoadingIndicator(context);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String encodedData=CartModel.encode(cartList);
+    if(encodedData.contains(prodId)){
+      int index = cartList.indexWhere((element) => element.productId == prodId);
+      if (index != -1) {
+       setState(() {
+         cartList[index].productQuantity=cartList[index].productQuantity+prodQuantity;
+       });
+      }
+    }else{
+      setState(() {
+        cartList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
+      });
+    }
+    prefs.setString('cartList',CartModel.encode(cartList) ).then((value){
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: 'item added to cart');
+    });
   }
 }
