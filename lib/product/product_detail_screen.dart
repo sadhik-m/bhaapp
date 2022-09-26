@@ -39,7 +39,11 @@ class _ProductDetailState extends State<ProductDetail> {
           [InkWell(
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder:
-                                  (context)=>MyCart(show_back: true,)));
+                                  (context)=>MyCart(show_back: true,))).then((value) {
+                                    setState(() {
+                                      getCartList();
+                                    });
+              });
             },
             child: Padding(
               padding: const EdgeInsets.only(right:18.0),

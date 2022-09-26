@@ -1,12 +1,15 @@
+import 'package:bhaapp/cart/service/paymentService.dart';
 import 'package:bhaapp/cart/widget/cart_list_tile.dart';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/product/widget/benefit_list_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../address/model/addressModel.dart';
 import '../product/model/cartModel.dart';
 
 class MyCart extends StatefulWidget {
@@ -20,17 +23,21 @@ class MyCart extends StatefulWidget {
 class _MyCartState extends State<MyCart> {
    bool isGst=false;
    bool showOption=true;
-   String? delivery;
+   String delivery='now';
    bool loaded=false;
-
+   int totalItems=0;
+   double totalPrice=0;
+   AddressModel ? addressModel;
 
    List<CartModel> cartList=[];
+    Map<String, int> items={};
 
    @override
    void initState() {
      // TODO: implement initState
      super.initState();
      getCartList();
+     getDeliveryAddress();
    }
    getCartList()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,8 +45,22 @@ class _MyCartState extends State<MyCart> {
      setState(() {
        if(cartString != 'null'){
          cartList=CartModel.decode(cartString);
-         loaded=true;
+         totalItems=cartList.length;
        }
+     });
+     cartList.forEach((element) { 
+       setState(() {
+         FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
+           setState(() {
+             totalPrice += (double.parse(value['salesPrice'].toString())*element.productQuantity);
+             items.addAll({'${value['sku']}':element.productQuantity});
+           });
+         });
+       });
+     });
+     setState(() {
+       print("IIIITTTTT $items");
+       loaded=true;
      });
    }
    clearCart()async{
@@ -48,6 +69,24 @@ class _MyCartState extends State<MyCart> {
        cartList.clear();
      });
      prefs.setString('cartList',CartModel.encode(cartList));
+   }
+   getDeliveryAddress()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     String ? uid=prefs.getString('uid');
+     String ? addressId;
+     await FirebaseFirestore.instance.collection('customers').doc(uid).get().then((value) {
+       setState(() {
+         addressId=value['defualtAddressId'].toString();
+       });
+     });
+     await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').doc(addressId).get()
+         .then((DocumentSnapshot doc) {
+
+         setState(() {
+           addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString());
+         });
+
+     });
    }
   @override
   Widget build(BuildContext context) {
@@ -113,7 +152,7 @@ class _MyCartState extends State<MyCart> {
                             fontWeight: FontWeight.w400,
                             color: Colors.black.withOpacity(0.8)
                         ),),
-                        Text('2 Items',style: GoogleFonts.inter(
+                        Text('$totalItems Items',style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: splashBlue
@@ -121,7 +160,7 @@ class _MyCartState extends State<MyCart> {
                       ],
                     ),
                     SizedBox(width: screenWidth*0.15,),
-                    Text('\$ 1.100.000',style: GoogleFonts.inter(
+                    Text('\$ $totalPrice',style: GoogleFonts.inter(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                         color: Colors.black
@@ -366,82 +405,93 @@ class _MyCartState extends State<MyCart> {
                             )),
                       ],
                     ):SizedBox.shrink(),
-                    SizedBox(height: screenHeight*0.04,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    addressModel==null?
+                    SizedBox.shrink():
+                    Column(
                       children: [
-                        Text('Delivery Address',
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.black.withOpacity(0.8)
-                          ),),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight*0.03,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(height: screenHeight*0.04,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              color: splashBlue.withOpacity(0.2),
-                              child: Padding(
-                                padding:  EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                child: Text('Default',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 9,
-                                  color: splashBlue
-                                ),),
-                              ),
-                            ),
-                            SizedBox(height: screenHeight*0.02,),
-                            Text('John Thomas',style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: Colors.black
-                            ),),
-                            SizedBox(height: screenHeight*0.005,),
-                            Container(
-                              width: screenWidth*0.45,
-                              child: Text('Jalan Haji Juanda No 1Paledang, Kecamatan Bogor Tengah, Kota Bogor,',style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: Colors.black.withOpacity(0.6)
+                            Text('Delivery Address',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.black.withOpacity(0.8)
                               ),),
-                            ),
                           ],
                         ),
-                        InkWell(
-                          onTap: (){
-                            Navigator.pushNamed(context, '/change_address');
-                          },
-                          child: Container(
-                            height: screenHeight*0.055,
-                            width: screenWidth*0.25,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black)
-                            ),
-                            child: Center(
-                              child: Text('Change',
-                                style: GoogleFonts.inter(
+                        SizedBox(height: screenHeight*0.03,),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  color: splashBlue.withOpacity(0.2),
+                                  child: Padding(
+                                    padding:  EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                    child: Text('Default',
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 9,
+                                          color: splashBlue
+                                      ),),
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight*0.02,),
+                                Text(addressModel!.name,style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
+                                SizedBox(height: screenHeight*0.005,),
+                                Container(
+                                  width: screenWidth*0.45,
+                                  child: Text('${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.black.withOpacity(0.6)
+                                  ),),
+                                ),
+                              ],
                             ),
-                          ),
+                            InkWell(
+                              onTap: (){
+                                Navigator.pushNamed(context, '/change_address').then((value) {
+                                  setState(() {
+                                    getDeliveryAddress();
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: screenHeight*0.055,
+                                width: screenWidth*0.25,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black)
+                                ),
+                                child: Center(
+                                  child: Text('Change',
+                                    style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: Colors.black
+                                    ),),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding:  EdgeInsets.symmetric(vertical: screenHeight*0.02),
+                          child: Divider(color: Colors.black.withOpacity(0.3),),
                         ),
                       ],
                     ),
-                    Padding(
-                      padding:  EdgeInsets.symmetric(vertical: screenHeight*0.02),
-                      child: Divider(color: Colors.black.withOpacity(0.3),),
-                    ),
-                    SizedBox(height: screenHeight*0.01,),
+                  /*  SizedBox(height: screenHeight*0.01,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -495,11 +545,13 @@ class _MyCartState extends State<MyCart> {
                           ),
                         ),
                       ],
-                    ),
+                    ),*/
                     SizedBox(height: screenHeight*0.08,),
                     blackButton('Checkout',
                         (){
-                      Navigator.pushNamed(context, '/payment_success');
+                          PaymentService().checkOut(context,
+                              '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                          delivery,totalPrice.toString(),items);
                         }, screenWidth, screenHeight*0.05),
                     SizedBox(height: screenHeight*0.04,),
                   ],

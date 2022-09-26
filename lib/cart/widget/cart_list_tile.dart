@@ -16,11 +16,8 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
         return Text("Something went wrong");
       }
 
-      if (snapshot.hasData && !snapshot.data!.exists) {
-        return Text("Document does not exist");
-      }
 
-      if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.hasData) {
         Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
         return Column(
           children: [

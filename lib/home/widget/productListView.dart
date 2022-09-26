@@ -15,21 +15,18 @@ SingleChildScrollView prodList(double screenWidth,double screenHeight, List<Prod
         runAlignment: WrapAlignment.spaceBetween,
         runSpacing: 20,
         children: searchList.map((data) {
-          return
-            productTile(screenHeight,screenWidth,
-                  (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: data.prodDocId.toString())));
+          return ProductTile(height: screenHeight,
+              width: screenWidth,
+              ontap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId:data.prodDocId.toString())));
               },
-              data.image,
-              data.name,
-              data.salePrice.toString(),
-              data.regularPrice.toString(),
-              data.priceUnit,
-              data.prodDocId.toString(),
-                favouriteList!.contains(data.prodDocId.toString())
-
-
-            );
+              image: data.image,
+              prodName: data.name,
+              salePrize: data.salePrice.toString(),
+              reguarPrize: data.regularPrice.toString(),
+              quantity: data.priceUnit,
+              prodId: data.prodDocId.toString(),
+              fav: favouriteList!.contains(data.prodDocId.toString()));
         }).toList(),
 
       ),

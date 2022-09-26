@@ -49,6 +49,8 @@ dependencies:
   google_sign_in: ^5.4.1
   flutter_spinkit: ^5.1.0
   cloud_firestore: ^3.4.8
+  cashfree_pg: ^2.0.12+32
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

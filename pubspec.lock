@@ -22,6 +22,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.1"
+  cashfree_pg:
+    dependency: "direct main"
+    description:
+      name: cashfree_pg
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.12+32"
   characters:
     dependency: transitive
     description:
@@ -262,7 +269,7 @@ packages:
     source: hosted
     version: "0.10.2"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"

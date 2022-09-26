@@ -6,7 +6,7 @@ import '../../common/constants/colors.dart';
 import '../../dashboard/dash_board_screen.dart';
 
 
-class ProductTile extends StatefulWidget {
+class WishProductTile extends StatefulWidget {
   double height;
   double width;
   VoidCallback ontap;
@@ -17,7 +17,8 @@ class ProductTile extends StatefulWidget {
   String quantity;
   String prodId;
   bool fav;
-  ProductTile({
+  VoidCallback onFavTap;
+  WishProductTile({
     Key? key,
     required this.height,
     required this.width,
@@ -28,14 +29,15 @@ class ProductTile extends StatefulWidget {
     required this.reguarPrize,
     required this.quantity,
     required this.prodId,
-    required this.fav
+    required this.fav,
+    required this.onFavTap
   }) : super(key: key);
 
   @override
-  _ProductTileState createState() => _ProductTileState();
+  _WishProductTileState createState() => _WishProductTileState();
 }
 
-class _ProductTileState extends State<ProductTile> {
+class _WishProductTileState extends State<WishProductTile> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -71,17 +73,13 @@ class _ProductTileState extends State<ProductTile> {
                                 ),)):Container(),
                           widget.fav?
                           InkWell(
-                            onTap: (){
-                              toggleFavourites(widget.prodId);
-                            },
+                            onTap: widget.onFavTap,
                             child: Icon(Icons.favorite,
                               size: 20.5,color: red,
                             ),
                           ):
                           InkWell(
-                            onTap: (){
-                              toggleFavourites(widget.prodId);
-                            },
+                            onTap:widget.onFavTap ,
                             child: Icon(Icons.favorite_outline_outlined,
                               size: 20.5,color: Colors.grey,
                             ),
@@ -182,23 +180,7 @@ class _ProductTileState extends State<ProductTile> {
       ),
     );
   }
-  toggleFavourites(String productID)async{
-    print("JKLOP");
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String> favList=preferences.getStringList('favList')??[];
-setState(() {
-  widget.fav=!widget.fav;
-});
-    if(favList.contains(productID)){
-        favouriteList!.remove(productID);
-        preferences.setStringList('favList',favouriteList! );
-    }else{
-        favouriteList!.add(productID);
-        preferences.setStringList('favList',favouriteList! );
-    }
 
-
-  }
 }
 
 

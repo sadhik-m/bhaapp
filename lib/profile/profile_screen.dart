@@ -2,6 +2,7 @@ import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/order/my_orders_screen.dart';
 import 'package:bhaapp/profile/model/profileModel.dart';
 import 'package:bhaapp/profile/widget/profile_tile.dart';
+import 'package:bhaapp/profile/wishlist_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -114,6 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 profileTile(
                     'My Wishlists',
                         (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>WishListScreen()));
                     }
                 ),
                 SizedBox(height: screenHeight*0.01,),

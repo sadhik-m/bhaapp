@@ -96,21 +96,18 @@ class CategoryDetail extends StatelessWidget {
                       runSpacing: 20,
                       children: snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                        return
-                        productTile(screenHeight,screenWidth,
-                              (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())));
-                          },
-                          data['productImageUrl'],
-                          data['productName'],
-                          data['salesPrice'].toString(),
-                          data['regularPrice'].toString(),
-                          data['priceUnit'],
-                          document.id.toString(),
-                            favouriteList!.contains(document.id.toString())
-
-
-                        );
+                        return ProductTile(height: screenHeight,
+                            width: screenWidth,
+                            ontap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())));
+                            },
+                            image: data['productImageUrl'],
+                            prodName: data['productName'],
+                            salePrize: data['salesPrice'].toString(),
+                            reguarPrize: data['regularPrice'].toString(),
+                            quantity: data['priceUnit'],
+                            prodId: document.id.toString(),
+                            fav: favouriteList!.contains(document.id.toString()));
                       }).toList(),
 
                     ),
