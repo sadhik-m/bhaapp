@@ -23,7 +23,7 @@ class MyCart extends StatefulWidget {
 class _MyCartState extends State<MyCart> {
    bool isGst=false;
    bool showOption=true;
-   String delivery='now';
+   String delivery='deliver now';
    bool loaded=false;
    int totalItems=0;
    double totalPrice=0;
@@ -265,7 +265,7 @@ class _MyCartState extends State<MyCart> {
                                         ),
                                       ],
                                     ),
-                                    Radio(value: 'now', groupValue: delivery,
+                                    Radio(value: 'deliver now', groupValue: delivery,
                                         onChanged: (value){
                                       setState(() {
                                         delivery=value.toString();
@@ -314,7 +314,7 @@ class _MyCartState extends State<MyCart> {
                                             ),
                                           ],
                                         ),
-                                        Radio(value: 'later', groupValue: delivery,
+                                        Radio(value: 'deliver later', groupValue: delivery,
                                             onChanged: (value){
                                               setState(() {
                                                 delivery=value.toString();
@@ -393,7 +393,7 @@ class _MyCartState extends State<MyCart> {
                                         ),
                                       ],
                                     ),
-                                    Radio(value: 'store', groupValue: delivery,
+                                    Radio(value: 'store pickup', groupValue: delivery,
                                         onChanged: (value){
                                           setState(() {
                                             delivery=value.toString();

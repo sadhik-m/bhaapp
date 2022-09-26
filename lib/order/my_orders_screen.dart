@@ -1,13 +1,16 @@
 import 'package:bhaapp/common/constants/colors.dart';
+import 'package:bhaapp/order/service/getOrder.dart';
 import 'package:bhaapp/order/widget/order_history_tile.dart';
 import 'package:bhaapp/order/widget/order_tile.dart';
 import 'package:bhaapp/order/widget/product_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../cart/widget/cart_list_tile.dart';
 import '../common/widgets/appBar.dart';
+import '../dashboard/dash_board_screen.dart';
 
 class OrderScreen extends StatefulWidget {
   bool? show_back;
@@ -27,7 +30,7 @@ class _OrderScreenState extends State<OrderScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar("My Orders",
-          [Padding(
+          [/*Padding(
             padding: const EdgeInsets.only(right:18.0),
             child: Row(
              children: [
@@ -38,7 +41,7 @@ class _OrderScreenState extends State<OrderScreen> {
                height: 24,color: Colors.black,),
              ],
             ),
-          )],widget.show_back!),
+          )*/],widget.show_back!),
       body: Container(
         height: screenHeight,
           width: screenWidth,
@@ -104,14 +107,36 @@ class _OrderScreenState extends State<OrderScreen> {
             SizedBox(height: screenHeight*0.03,),
             Expanded(child:
             orderType=='my_orders'?
-            ListView.builder(
-              itemCount: 5,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom:14.0),
-                  child: orderTile(screenWidth, screenHeight,
-                          (){Navigator.pushNamed(context, '/order_detail');}),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return SizedBox.shrink();
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Padding(
+                    padding:  EdgeInsets.only(top: screenHeight*0.35),
+                    child: Center(child: Text('Loading...')),
+                  );
+                }
+                if (snapshot.data!.docs.isEmpty) {
+                  return Padding(
+                    padding:  EdgeInsets.only(top: screenHeight*0.35),
+                    child: Center(child: Text('Nothing Found!')),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom:14.0),
+                      child: orderTile(screenWidth, screenHeight,
+                              (){Navigator.pushNamed(context, '/order_detail');},
+                          snapshot.data!.docs[index]),
+                    );
+                  },
                 );
               },
             ):
@@ -132,4 +157,5 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
+
 }

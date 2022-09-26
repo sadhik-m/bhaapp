@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../product/model/cartModel.dart';
 import '../../profile/model/profileModel.dart';
 class PaymentService{
   // WEB Intent
@@ -17,6 +18,7 @@ class PaymentService{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String ? uid= preferences.getString('uid');
+    String ? vendorId = preferences.getString('vendorId');
     await FirebaseFirestore.instance
         .collection('customers')
         .doc(uid)
@@ -24,7 +26,7 @@ class PaymentService{
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
        getTolken(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'], '$uid${DateTime.now().toString().replaceAll(RegExp('[^A-Za-z0-9]'), '').replaceAll(' ', '')}',
-       deliveryAddress,deliveryOption,orderAmount,items);
+       deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!);
       } else {
         print('Document does not exist on the database');
         Navigator.of(context).pop();
@@ -32,7 +34,7 @@ class PaymentService{
       }
     });
   }
-  getTolken(BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items)async{
+  getTolken(BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid)async{
 
   var url='https://test.cashfree.com/api/v2/cftoken/order';
   var body=json.encode({
@@ -52,7 +54,7 @@ class PaymentService{
       Navigator.of(context).pop();
       var data=json.decode(value.body.toString());
       print(data['cftoken']);
-      makePayment(data['cftoken'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,orderAmount,items);
+      makePayment(data['cftoken'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,orderAmount,items,uid,vid);
     }else{
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'payment failed');
@@ -62,7 +64,7 @@ class PaymentService{
   }
 
 
-  makePayment(String tolken,BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items) {
+  makePayment(String tolken,BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid) {
     Map<String, dynamic> inputParams = {
       "orderId": orderid,
       "orderAmount": double.parse(orderAmount),
@@ -84,7 +86,7 @@ print(values);
         if(key=='txStatus'){
           if(values['txStatus'] =='SUCCESS'){
 
-            saveOrderInfo(context, orderid, deliveryAddress, deliveryOption, orderAmount, values['paymentMode'], values['referenceId'], values['txTime'],items);
+            saveOrderInfo(context, orderid, deliveryAddress, deliveryOption, orderAmount, values['paymentMode'], values['referenceId'], values['txTime'],items,uid,vid);
 
           }else if(values['txStatus'] =='FAILED'){
             Fluttertoast.showToast(msg: 'Payment Failed');
@@ -98,8 +100,11 @@ print(values);
     }
   }
   saveOrderInfo(BuildContext context,String orderId,String deliveryAddress,String deliveryOption,String orderAmount,
-      String paymentMode,String txnId,String txTime,Map<String, int> items)async{
+      String paymentMode,String txnId,String txTime,Map<String, int> items,String uid,String vid)async{
+
     showLoadingIndicator(context);
+    SharedPreferences preferences =await SharedPreferences.getInstance();
+    preferences.setString('cartList',CartModel.encode([]));
     await FirebaseFirestore.instance.collection('orders').doc(orderId)  .set({
       'orderId': orderId,
       'deliveryAddress': deliveryAddress,
@@ -108,12 +113,15 @@ print(values);
       'paymentMode': paymentMode,
       'txnId': txnId,
       'txTime': txTime,
-      'items':items
+      'items':items,
+      'userId':uid,
+      'vendorId':vid,
+      'status':'order placed'
     },
       SetOptions(merge: true),
     ).then((value) {
       Navigator.of(context).pop();
-      Fluttertoast.showToast(msg: 'Payment Success !!!');
+      Fluttertoast.showToast(msg: 'Order placed successfully');
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()));
     });
 
