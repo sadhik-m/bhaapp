@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Container orderSummaryTile(double width,double height,VoidCallback ontap){
+Container orderSummaryTile(double width,double height,List<String>sku,List<String>quqntity,String shopname,String shopaddress,String total){
   return Container(
     decoration:BoxDecoration(
         border: Border.all(
@@ -17,14 +17,14 @@ Container orderSummaryTile(double width,double height,VoidCallback ontap){
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Premier Supermarket',
+            Text(shopname,
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
                   color: Color(0xff030303)
               ),),
             SizedBox(height: 8,),
-            Text('Zakaria Bazar Junction, opposite Akshaya Centre, Alappuzha, Kerala 688012',
+            Text(shopaddress,
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
@@ -38,11 +38,11 @@ Container orderSummaryTile(double width,double height,VoidCallback ontap){
         children: [
           SizedBox(height: height*0.01,),
           ListView.builder(
-            itemCount: 2,
+            itemCount: sku.length,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return productListTile(width,height);
+              return productListTile(width,height,sku[index],quqntity[index]);
             },
           ),
           Padding(
@@ -59,7 +59,7 @@ Container orderSummaryTile(double width,double height,VoidCallback ontap){
                           fontSize: 12,
                           color: Color(0xff030303)
                       ),),
-                    Text('\$110',
+                    Text('\$$total',
                       style: GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -68,7 +68,7 @@ Container orderSummaryTile(double width,double height,VoidCallback ontap){
                   ],
                 ),
                 InkWell(
-                  onTap: ontap,
+                  onTap: (){},
                   child: Container(
                     height: 24,width: 122,
                     color: Color(0xff005DFF),

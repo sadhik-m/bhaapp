@@ -19,13 +19,21 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   String ? name;
-  String  email='';
+  String ? email;
   String  country= 'India';
-  String  address='';
+  String ? address;
+  var mobController=TextEditingController();
+  var emailController=TextEditingController();
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
+    if(LoginScreen.isPhone!){
+      mobController.text=LoginScreen.mobileNumber.toString();
+    }else{
+      emailController.text=LoginScreen.emailId.toString();
+    }
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -52,8 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.number,
                   onChanged:(value){} ,
                   controller:
-                  TextEditingController(text: LoginScreen.mobileNumber.toString(),),
-                  readOnly: true,
+                  mobController,
+                  readOnly: LoginScreen.isPhone!?true:false,
                   enabled: true,
                   decoration: InputDecoration(
                       label:Text('Mobile Number') ,
@@ -72,11 +80,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 SizedBox(height: screenHeight*0.015,),
-                textField('Email Address (Optional)',TextInputType.emailAddress,(value){
-                  setState(() {
-                    email=value;
-                  });
-                }),
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged:(value){} ,
+                  controller:
+                  emailController,
+                  readOnly: LoginScreen.isPhone!?false:true,
+                  enabled: true,
+                  decoration: InputDecoration(
+                      label:Text('Email Address') ,
+                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                      labelStyle: GoogleFonts.inter(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        //color: label_blue
+                      )
+                  ),
+                  style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black
+                  ),
+                ),
                 SizedBox(height: screenHeight*0.015,),
                 countryPicker(
                         (Country selectedcountry) {
@@ -93,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 SizedBox(height: screenHeight*0.015,),
-                textField('Address (Optional)',TextInputType.streetAddress,(value){
+                textField('Address',TextInputType.streetAddress,(value){
                   setState(() {
                     address=value;
                   });
@@ -104,8 +129,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             blackButton('Register', (){
               if(name==null) {
                 Fluttertoast.showToast(msg: 'Enter valid name');
+              }else if(mobController.text.toString().isEmpty ) {
+                Fluttertoast.showToast(msg: 'Enter valid mobile');
+              }else if(emailController.text.isEmpty) {
+                Fluttertoast.showToast(msg: 'Enter valid email');
+              }else if(address==null) {
+                Fluttertoast.showToast(msg: 'Enter valid name');
               }else{
-                RegisterService().addUser(name!, email, LoginScreen.mobileNumber!, country, address,context);
+                RegisterService().addUser(name!, emailController.text, mobController.text, country, address!,context);
               }
             }, screenWidth, screenHeight*0.05
             )

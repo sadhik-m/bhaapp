@@ -8,12 +8,14 @@ import 'package:bhaapp/shop_search/view/shop_result_screen.dart';
 import 'package:bhaapp/shop_search/view/widgets/shop_list_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
 class ShopSearchScreen extends StatefulWidget {
-  const ShopSearchScreen({Key? key}) : super(key: key);
+  bool willPop;
+   ShopSearchScreen({Key? key,required this.willPop}) : super(key: key);
 
   @override
   State<ShopSearchScreen> createState() => _ShopSearchScreenState();
@@ -31,7 +33,19 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     loadVendorList();
   }
 
-
+  DateTime ? currentBackPressTime;
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if(widget.willPop){
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+        currentBackPressTime = now;
+        Fluttertoast.showToast(msg: 'Press back again to exit');
+        return Future.value(false);
+      }
+    }
+    return Future.value(true);
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -39,94 +53,97 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar('Shop Search', [],true),
-      body: loaded==false?
-          Center(
-            child: Text("Loading..."),
-          ): Container(
-        height: screenHeight,
-        width: screenWidth,
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth*0.1,
-            vertical: screenHeight*0.04
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Text('Facility to open a specific shop by\ngiving “Vendor ID or Category”',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.8)
-                ),
-                textAlign: TextAlign.center,),
-                SizedBox(height: screenHeight*0.06,),
-                shopDropDown(
-                    (v){
-                      setState(() {
-                        selectedCategory=v;
-                      });
-                    },categoryList
-                ),
-                Padding(
-                  padding:  EdgeInsets.only(top:0.0),
-                  child: Container(
-                    height: 1,
-                    color: Colors.grey,
+      body:WillPopScope(
+        onWillPop: onWillPop,
+        child:  loaded==false?
+        Center(
+          child: Text("Loading..."),
+        ): Container(
+          height: screenHeight,
+          width: screenWidth,
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth*0.1,
+              vertical: screenHeight*0.04
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text('Facility to open a specific shop by\ngiving “Vendor ID or Category”',
+                    style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black.withOpacity(0.8)
+                    ),
+                    textAlign: TextAlign.center,),
+                  SizedBox(height: screenHeight*0.06,),
+                  shopDropDown(
+                          (v){
+                        setState(() {
+                          selectedCategory=v;
+                        });
+                      },categoryList
                   ),
-                ),
-                SizedBox(height: screenHeight*0.03,),
-                Text("OR"),
-                SizedBox(height: screenHeight*0.03,),
-                Container(
-                  width: screenWidth,
-                  height: screenHeight*0.06,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      border: Border.all(color: border_grey.withOpacity(0.1)),
-                      color: fill_grey.withOpacity(0.1)
+                  Padding(
+                    padding:  EdgeInsets.only(top:0.0),
+                    child: Container(
+                      height: 1,
+                      color: Colors.grey,
+                    ),
                   ),
-                  child: TextField(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchVendorId(vendorList: vendorList,)));
-                    },
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(top:screenHeight*0.015),
-                      prefixIcon: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset('assets/home/search.png',
-                            height: screenHeight*0.03,
-                          ),
-                        ],
+                  SizedBox(height: screenHeight*0.03,),
+                  Text("OR"),
+                  SizedBox(height: screenHeight*0.03,),
+                  Container(
+                    width: screenWidth,
+                    height: screenHeight*0.06,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        border: Border.all(color: border_grey.withOpacity(0.1)),
+                        color: fill_grey.withOpacity(0.1)
+                    ),
+                    child: TextField(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchVendorId(vendorList: vendorList,)));
+                      },
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(top:screenHeight*0.015),
+                        prefixIcon: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/home/search.png',
+                              height: screenHeight*0.03,
+                            ),
+                          ],
+                        ),
+                        hintText: 'Search by Vendor ID',
+                        hintStyle: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black.withOpacity(0.5)
+                        ),
                       ),
-                      hintText: 'Search by Vendor ID',
-                      hintStyle: GoogleFonts.inter(
+                      style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.black.withOpacity(0.5)
+                          color: Colors.black
                       ),
                     ),
-                    style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black
-                    ),
                   ),
-                ),
 
-              ],
-            ),
-            blackButton('View Shops', (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopResult(vendorList: vendorList)));
-            }, screenWidth, screenHeight*0.05
-            )
-          ],
+                ],
+              ),
+              blackButton('View Shops', (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopResult(vendorList: vendorList)));
+              }, screenWidth, screenHeight*0.05
+              )
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 

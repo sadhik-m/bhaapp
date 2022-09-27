@@ -1,15 +1,16 @@
+import 'package:bhaapp/order/order_detail_screen.dart';
 import 'package:bhaapp/order/widget/product_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:intl/intl.dart';
 import 'orderProductTile.dart';
 
-Container orderTile(double width,double height,VoidCallback ontap,DocumentSnapshot snapshot){
+Container orderTile(double width,double height,DocumentSnapshot snapshot,BuildContext context){
 
-  print("HHHHHHHHHHHHH   ${snapshot['items']as Map<String, dynamic>}");
+
   Map<String, dynamic> items=snapshot['items']as Map<String, dynamic>;
   List<String> skuList=[];
   List<String> quantityList=[];
@@ -18,8 +19,6 @@ Container orderTile(double width,double height,VoidCallback ontap,DocumentSnapsh
     quantityList.add(value.toString());
   });
   DateTime date= DateTime.parse(snapshot['txTime'].toString());
-  String convertedDateTime = "${date.year.toString()}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')} ${date.hour.toString().padLeft(2,'0')}-${date.minute.toString().padLeft(2,'0')}";
-  print("HHHHHHHHHHHHH   ${skuList[0]},,,${quantityList[0]}");
 
   return Container(
     decoration:BoxDecoration(
@@ -88,7 +87,7 @@ Container orderTile(double width,double height,VoidCallback ontap,DocumentSnapsh
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(convertedDateTime,
+                        Text(DateFormat('d MMM y, hh:mm a').format(date),
                           style: GoogleFonts.inter(
                               fontWeight: FontWeight.w400,
                               fontSize: 12,
@@ -103,7 +102,9 @@ Container orderTile(double width,double height,VoidCallback ontap,DocumentSnapsh
                       ],
                     ),
                     InkWell(
-                      onTap: ontap,
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot['orderId'], sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot['status'],orderStatusDate: snapshot['txTime'],)));
+                      },
                       child: Container(
                         height: 24,width: 85,
                         color: Color(0xff005DFF),

@@ -4,11 +4,18 @@ import 'package:bhaapp/order/widget/order_detail_product_tile.dart';
 import 'package:bhaapp/order/widget/order_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets/appBar.dart';
 
 class OrderDetail extends StatelessWidget {
-  const OrderDetail({Key? key}) : super(key: key);
+  String orderid;
+  List<String>sku=[];
+  List<String>quqntity=[];
+  String shopContact;
+  String orderStatus;
+  String orderStatusDate;
+   OrderDetail({Key? key,required this.orderid,required this.sku,required this.quqntity,required this.shopContact,required this.orderStatus,required this.orderStatusDate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class OrderDetail extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar("Order Details",
-          [Padding(
+          [/*Padding(
             padding: const EdgeInsets.only(right:18.0),
             child: Row(
               children: [
@@ -26,7 +33,7 @@ class OrderDetail extends StatelessWidget {
                   height: 24,color: Colors.black,),
               ],
             ),
-          )],true),
+          )*/],true),
       body: Container(
         height: screenHeight,
         width: screenWidth,
@@ -41,8 +48,10 @@ class OrderDetail extends StatelessWidget {
                       width: screenWidth,
                       height: screenHeight*0.065,
                       color: splashBlue.withOpacity(0.1),
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('Order ID:',
                           style: GoogleFonts.inter(
@@ -50,12 +59,14 @@ class OrderDetail extends StatelessWidget {
                             fontSize: 14,
                             color: Colors.black
                           ),) ,
-                          Text(' 45678KHYTHRHJ',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: splashBlue
-                          ),)
+                          Expanded(
+                            child: Text(orderid,
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: splashBlue
+                            ),),
+                          )
                         ],
                       ),
                     ),
@@ -68,11 +79,11 @@ class OrderDetail extends StatelessWidget {
                       child: Column(
                         children: [
                           ListView.builder(
-                            itemCount: 1,
+                            itemCount: sku.length,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return orderDetailProductListTile(screenWidth, screenHeight);
+                              return orderDetailProductListTile(screenWidth, screenHeight,sku[index],quqntity[index]);
                             },
                           ),
                           Row(
@@ -96,7 +107,7 @@ class OrderDetail extends StatelessWidget {
                                      fontWeight: FontWeight.w400,
                                      color: Colors.black.withOpacity(0.6)
                                  ),),
-                                 Text('22Aug 2022',style: GoogleFonts.inter(
+                                 Text('30 Sept 2022',style: GoogleFonts.inter(
                                      fontSize: 12,
                                      fontWeight: FontWeight.w600,
                                      color: Colors.black.withOpacity(0.8)
@@ -110,23 +121,31 @@ class OrderDetail extends StatelessWidget {
                           SizedBox(height: 10,),
                           Row(
                             children: [
-                              Container(
-                                width: 56,
-                                  height: 19.6,
-                                color: Color(0xff28B446).withOpacity(0.2),
-                                child: Center(
-                                  child: Text('Call',
-                                  style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 10,
-                                    color: Color(0xff28B446)
-                                  ),),
+                              InkWell(
+                                onTap: (){
+                                  launchUrl(Uri(
+                                    scheme: 'tel',
+                                    path: shopContact,
+                                  ));
+                                },
+                                child: Container(
+                                  width: 56,
+                                    height: 19.6,
+                                  color: Color(0xff28B446).withOpacity(0.2),
+                                  child: Center(
+                                    child: Text('Call',
+                                    style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10,
+                                      color: Color(0xff28B446)
+                                    ),),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(height: 20,),
-                          OrderTracker()
+                          OrderTracker(orderStatus: orderStatus,orderStatusDate: orderStatusDate,)
                         ],
                       ),
                     ),

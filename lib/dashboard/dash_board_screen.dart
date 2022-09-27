@@ -6,6 +6,7 @@ import 'package:bhaapp/profile/profile_screen.dart';
 import 'package:bhaapp/shop_search/view/shop_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants/colors.dart';
@@ -28,6 +29,18 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     Container(),
     MyCart(show_back: false,),
   ];
+  DateTime ? currentBackPressTime;
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(msg: 'Press back again to exit');
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -48,7 +61,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
        ),
      ),
       backgroundColor: Colors.white,
-      body: pages[pageIndex],
+      body: WillPopScope(
+          onWillPop: onWillPop,
+          child: pages[pageIndex]),
       bottomNavigationBar: buildMyNavBar(context,screenHeight,screenWidth),
     );
   }
@@ -118,7 +133,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     });
     if(vendorId=='null'){
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
-          (context)=>ShopSearchScreen()), (route) => false);
+          (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
     }
   }
 }

@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/login':(BuildContext context) => const LoginScreen(),
         '/register':(BuildContext context) => const RegisterScreen(),
         '/otp':(BuildContext context) =>  OtpScreen(verificationId: '',),
-        '/shop_search':(BuildContext context) => const ShopSearchScreen(),
+        //'/shop_search':(BuildContext context) => const ShopSearchScreen(),
         '/shop_result':(BuildContext context) =>  ShopResult(vendorList: [],),
         '/dash':(BuildContext context) => const DashBoardScreen(),
         '/home':(BuildContext context) => const HomeScreen(),
@@ -53,8 +53,8 @@ class MyApp extends StatelessWidget {
         '/change_payment':(BuildContext context) => const ChangePayment(),
         '/profile':(BuildContext context) => const ProfileScreen(),
         '/order':(BuildContext context) =>  OrderScreen(),
-        '/order_detail':(BuildContext context) => const OrderDetail(),
-        '/order_summary':(BuildContext context) => const OrderSummary(),
+        //'/order_detail':(BuildContext context) => const OrderDetail(),
+        //'/order_summary':(BuildContext context) => const OrderSummary(),
       },
     );
   }

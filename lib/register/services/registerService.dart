@@ -1,3 +1,4 @@
+import 'package:bhaapp/address/model/addressModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,21 @@ class RegisterService{
       'email': email,
       'phone': phone,
       'country': country,
-      'address': address
     },
       SetOptions(merge: true),
     )
         .then(
             (value){
               print("data merged with existing data!");
+               FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses')
+                  .add(
+                AddressModel(name: name, mobile: phone, email: email, country: country, address: address, type: '', id: '').toJson(),
+              ).then((value) {
+                 FirebaseFirestore.instance.collection('customers').doc(uid).set({
+                   'defualtAddressId':value.id.toString()
+                 },SetOptions(merge: true),);
+               });
+
               Navigator.of(context).pop();
               setAsLoggedIn(true);
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);

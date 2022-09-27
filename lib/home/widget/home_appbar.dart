@@ -41,7 +41,7 @@ Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context,
                         children: [
                           InkWell(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchScreen()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchScreen(willPop: false,)));
                             },
                             child: Text(vendorId!,
                               //'Change Shop Type /Vendor',

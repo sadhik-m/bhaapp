@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 class mainBanner extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -118,29 +119,47 @@ getVendorShopData()async{
                                 ),
                                 Row(
                                   children: [
-                                    Container(
-                                      height: 24,
-                                      width: 24,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.1),
-                                      ),
-                                      child: Center(
-                                        child: Image.asset('assets/home/Vector.png',
-                                          width: 13.4,height: 13.4,),
+                                    InkWell(
+                                      onTap: (){
+                                        launchUrl(Uri(
+                                          scheme: 'tel',
+                                          path: shopData[0].phone,
+                                        ));
+                                      },
+                                      child: Container(
+                                        height: 24,
+                                        width: 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white.withOpacity(0.1),
+                                        ),
+                                        child: Center(
+                                          child: Image.asset('assets/home/Vector.png',
+                                            width: 13.4,height: 13.4,),
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: screenWidth*0.015,),
-                                    Container(
-                                      height: 24,
-                                      width: 24,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.1),
-                                      ),
-                                      child: Center(
-                                        child: Image.asset('assets/home/Group 44.png',
-                                          width: 14,height: 10.2,),
+                                    InkWell(
+                                      onTap: (){
+                                        launchUrl(Uri(
+                                            scheme: 'mailto',
+                                            path: shopData[0].email,
+                                            query: 'Hello',
+                                            ),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: 24,
+                                        width: 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white.withOpacity(0.1),
+                                        ),
+                                        child: Center(
+                                          child: Image.asset('assets/home/Group 44.png',
+                                            width: 14,height: 10.2,),
+                                        ),
                                       ),
                                     )
                                   ],

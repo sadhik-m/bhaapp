@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(isLoggedIn){
         if(vendorId=='null'){
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
-              (context)=>ShopSearchScreen()), (route) => false);
+              (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
         }else{
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
               (context)=>DashBoardScreen()), (route) => false);

@@ -6,12 +6,15 @@ import 'package:bhaapp/login/view/widget/social_media_button.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../service/loginService.dart';
 
 
 class LoginScreen extends StatelessWidget {
   static String ? mobileNumber;
+  static String ? emailId;
+  static bool ? isPhone;
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -51,8 +54,11 @@ class LoginScreen extends StatelessWidget {
                   mobileNumber=v.completeNumber.toString();
                 }),
                 SizedBox(height: screenHeight*0.02,),
-                blackButton('Continue', (){
+                blackButton('Continue', ()async{
+                  SharedPreferences prefs=await SharedPreferences.getInstance();
+                  prefs.setBool('isPhone',true);
                   if(mobileNumber!=null && mobileNumber!.length>=13){
+                    isPhone=true;
                     LoginService().fireBasePhoneAuth(mobileNumber!, context);
                   }else{
                     Fluttertoast.showToast(msg: 'Enter valid mobile number');
@@ -68,7 +74,10 @@ class LoginScreen extends StatelessWidget {
                     'assets/authentication/281764.png',
                     red,
                     screenHeight*0.05,
-                    screenWidth, (){
+                    screenWidth, ()async{
+                  SharedPreferences prefs=await SharedPreferences.getInstance();
+                  prefs.setBool('isPhone',false);
+                  isPhone=false;
                   LoginService().signInWithGoogle(context: context);
                 }
                 ),

@@ -108,7 +108,7 @@ class _OrderScreenState extends State<OrderScreen> {
             Expanded(child:
             orderType=='my_orders'?
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).snapshots(),
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isEqualTo: 'order placed').snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return SizedBox.shrink();
@@ -116,13 +116,13 @@ class _OrderScreenState extends State<OrderScreen> {
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Padding(
-                    padding:  EdgeInsets.only(top: screenHeight*0.35),
+                    padding:  EdgeInsets.only(top: 0),
                     child: Center(child: Text('Loading...')),
                   );
                 }
                 if (snapshot.data!.docs.isEmpty) {
                   return Padding(
-                    padding:  EdgeInsets.only(top: screenHeight*0.35),
+                    padding:  EdgeInsets.only(top: 0),
                     child: Center(child: Text('Nothing Found!')),
                   );
                 }
@@ -133,25 +133,46 @@ class _OrderScreenState extends State<OrderScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom:14.0),
                       child: orderTile(screenWidth, screenHeight,
-                              (){Navigator.pushNamed(context, '/order_detail');},
-                          snapshot.data!.docs[index]),
+                          snapshot.data!.docs[index],context),
                     );
                   },
                 );
               },
             ):
-            ListView.builder(
-              itemCount: 5,
-              shrinkWrap: true,
-              physics: AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom:14.0),
-                  child: orderHistoryTile(screenWidth, screenHeight,
-                          (){Navigator.pushNamed(context, '/order_summary');}),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isEqualTo: 'order delivered').snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return SizedBox.shrink();
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Padding(
+                    padding:  EdgeInsets.only(top: 0),
+                    child: Center(child: Text('Loading...')),
+                  );
+                }
+                if (snapshot.data!.docs.isEmpty) {
+                  return Padding(
+                    padding:  EdgeInsets.only(top: 0),
+                    child: Center(child: Text('Nothing Found!')),
+                  );
+                }
+                return  ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  shrinkWrap: true,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom:14.0),
+                      child: orderHistoryTile(screenWidth, screenHeight,
+                          snapshot.data!.docs[index],context),
+                    );
+                  },
                 );
               },
-            ))
+            )
+           )
           ],
         ),
       ),

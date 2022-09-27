@@ -51,6 +51,8 @@ dependencies:
   cloud_firestore: ^3.4.8
   cashfree_pg: ^2.0.12+32
   http: ^0.13.5
+  intl: ^0.17.0
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:

@@ -7,12 +7,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants/colors.dart';
 import '../common/widgets/appBar.dart';
 import '../dashboard/dash_board_screen.dart';
-
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -33,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         setState(() {
-          profileModel = ProfileModel(address: documentSnapshot['address'],
+          profileModel = ProfileModel(
               country: documentSnapshot['country'], name: documentSnapshot['name'],
               email: documentSnapshot['email'], phone: documentSnapshot['phone']);
         });
@@ -188,7 +189,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _signOut(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await FirebaseAuth.instance.signOut();
+    bool isphone=preferences.getBool('isPhone')??false;
+    if(isphone){
+      await FirebaseAuth.instance.signOut();
+    }else{
+      await _googleSignIn.signOut();
+    }
     preferences.remove('isLoggedIn');
     preferences.remove('vendorId');
     pageIndex = 0;
