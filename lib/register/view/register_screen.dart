@@ -48,83 +48,87 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              children: [
-                textField('Full Name',TextInputType.name,(value){
-                 setState(() {
-                   name=value;
-                 });
-                }),
-                SizedBox(height: screenHeight*0.015,),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  onChanged:(value){} ,
-                  controller:
-                  mobController,
-                  readOnly: LoginScreen.isPhone!?true:false,
-                  enabled: true,
-                  decoration: InputDecoration(
-                      label:Text('Mobile Number') ,
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      labelStyle: GoogleFonts.inter(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        //color: label_blue
-                      )
-                  ),
-                  style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black
-                  ),
-                ),
-
-                SizedBox(height: screenHeight*0.015,),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged:(value){} ,
-                  controller:
-                  emailController,
-                  readOnly: LoginScreen.isPhone!?false:true,
-                  enabled: true,
-                  decoration: InputDecoration(
-                      label:Text('Email Address') ,
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      labelStyle: GoogleFonts.inter(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        //color: label_blue
-                      )
-                  ),
-                  style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black
-                  ),
-                ),
-                SizedBox(height: screenHeight*0.015,),
-                countryPicker(
-                        (Country selectedcountry) {
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    textField('Full Name',TextInputType.name,(value){
                      setState(() {
-                       country=selectedcountry.name;
+                       name=value;
                      });
-                    }
-                ),
-                Padding(
-                  padding:  EdgeInsets.only(top:2.0),
-                  child: Container(
-                    height: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: screenHeight*0.015,),
-                textField('Address',TextInputType.streetAddress,(value){
-                  setState(() {
-                    address=value;
-                  });
-                }),
+                    }),
+                    SizedBox(height: screenHeight*0.015,),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      onChanged:(value){} ,
+                      controller:
+                      mobController,
+                      readOnly: LoginScreen.isPhone!?true:false,
+                      enabled: true,
+                      decoration: InputDecoration(
+                          label:Text('Mobile Number') ,
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                          labelStyle: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            //color: label_blue
+                          )
+                      ),
+                      style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black
+                      ),
+                    ),
 
-              ],
+                    SizedBox(height: screenHeight*0.015,),
+                    TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged:(value){} ,
+                      controller:
+                      emailController,
+                      readOnly: LoginScreen.isPhone!?false:true,
+                      enabled: true,
+                      decoration: InputDecoration(
+                          label:Text('Email Address') ,
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                          labelStyle: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            //color: label_blue
+                          )
+                      ),
+                      style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black
+                      ),
+                    ),
+                    SizedBox(height: screenHeight*0.015,),
+                    countryPicker(
+                            (Country selectedcountry) {
+                         setState(() {
+                           country=selectedcountry.name;
+                         });
+                        }
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(top:2.0),
+                      child: Container(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: screenHeight*0.015,),
+                    textField('Address',TextInputType.streetAddress,(value){
+                      setState(() {
+                        address=value;
+                      });
+                    }),
+
+                  ],
+                ),
+              ),
             ),
             blackButton('Register', (){
               if(name==null) {
@@ -140,6 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
             }, screenWidth, screenHeight*0.05
             )
+
           ],
         ),
       ),

@@ -26,7 +26,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
    const HomeScreen(),
     OrderScreen(show_back: false,),
     ProfileScreen(),
-    Container(),
     MyCart(show_back: false,),
   ];
   DateTime ? currentBackPressTime;
@@ -110,14 +109,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     pageIndex = 3;
                   });
                 }
-                ,3, 'settings-2'),
-            BottomIcon(
-                    (){
-                  setState(() {
-                    pageIndex = 4;
-                  });
-                }
-                ,4, 'shopping-bag'),
+                ,3, 'shopping-bag'),
 
           ],
         ),

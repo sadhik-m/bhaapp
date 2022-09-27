@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/constants/colors.dart';
 import '../common/widgets/appBar.dart';
 import '../dashboard/dash_board_screen.dart';
+import 'editProfile.dart';
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -59,15 +60,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: appBar("My Profile",
-            [Padding(
-              padding: const EdgeInsets.only(right:18.0),
-              child: Center(
-                child: Text('Edit Profile',
-                  style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w500,
-                      color: splashBlue,
-                      fontSize: 12
-                  ),),
+            [InkWell(
+              onTap: (){
+                if(loaded && profileModel != null){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen(
+                    name: profileModel!.name,
+                    email: profileModel!.email,
+                    phone: profileModel!.phone,
+                  ))).then((value) {
+                    setState(() {
+                      getProfileDetails();
+                    });
+                  });
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right:18.0),
+                child: Center(
+                  child: Text('Edit Profile',
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w500,
+                        color: splashBlue,
+                        fontSize: 12
+                    ),),
+                ),
               ),
             )],false),
         body:loaded? Container(
@@ -126,13 +142,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/change_address');
                     }
                 ),
-                SizedBox(height: screenHeight*0.01,),
+               /* SizedBox(height: screenHeight*0.01,),
                 profileTile(
                     'Payment Methods',
                         (){
                           Navigator.pushNamed(context, '/change_payment');
                     }
-                ),
+                ),*/
                 SizedBox(height: screenHeight*0.01,),
                 profileTile(
                     'Notifications',
