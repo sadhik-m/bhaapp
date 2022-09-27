@@ -24,4 +24,14 @@ class AddNewAddress{
     Fluttertoast.showToast(msg: 'address added successfully');
     return 'success';
   }
+  makeDefualt(String addressId)async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String uid=preferences.getString('uid')??'';
+    await FirebaseFirestore.instance.collection('customers').doc(uid)
+        .set({
+      'defualtAddressId': addressId
+    },
+      SetOptions(merge: true),
+    );
+  }
 }

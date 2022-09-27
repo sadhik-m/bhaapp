@@ -1,4 +1,6 @@
+import 'package:bhaapp/address/add_new_address_screen.dart';
 import 'package:bhaapp/address/model/addressModel.dart';
+import 'package:bhaapp/address/services/addNewAddress.dart';
 import 'package:bhaapp/address/services/getAddressList.dart';
 import 'package:bhaapp/address/widget/address_tile.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
@@ -53,7 +55,7 @@ class _ChangeAddressState extends State<ChangeAddress> {
                       itemBuilder: (context, index) {
                         return addressTile(screenWidth, screenHeight, (){
                           setState(() {
-                            makeDefualt(snapshot.data![index].id);
+                            AddNewAddress().makeDefualt(snapshot.data![index].id);
                             selectedAddressIndex=index;
                           });
                         },index,
@@ -85,14 +87,5 @@ class _ChangeAddressState extends State<ChangeAddress> {
       ),
     );
   }
-  makeDefualt(String addressId)async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String uid=preferences.getString('uid')??'';
-    await FirebaseFirestore.instance.collection('customers').doc(uid)
-        .set({
-      'defualtAddressId': addressId
-    },
-      SetOptions(merge: true),
-    );
-  }
+
 }

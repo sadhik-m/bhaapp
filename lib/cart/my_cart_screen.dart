@@ -39,55 +39,7 @@ class _MyCartState extends State<MyCart> {
      getCartList();
      getDeliveryAddress();
    }
-   getCartList()async{
-     final SharedPreferences prefs = await SharedPreferences.getInstance();
-     final String cartString = await prefs.getString('cartList')??'null';
-     setState(() {
-       if(cartString != 'null'){
-         cartList=CartModel.decode(cartString);
-         totalItems=cartList.length;
-       }
-     });
-     cartList.forEach((element) { 
-       setState(() {
-         FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
-           setState(() {
-             totalPrice += (double.parse(value['salesPrice'].toString())*element.productQuantity);
-             items.addAll({'${value['sku']}':element.productQuantity});
-           });
-         });
-       });
-     });
-     setState(() {
-       print("IIIITTTTT $items");
-       loaded=true;
-     });
-   }
-   clearCart()async{
-     final SharedPreferences prefs = await SharedPreferences.getInstance();
-     setState(() {
-       cartList.clear();
-     });
-     prefs.setString('cartList',CartModel.encode(cartList));
-   }
-   getDeliveryAddress()async{
-     final SharedPreferences prefs = await SharedPreferences.getInstance();
-     String ? uid=prefs.getString('uid');
-     String ? addressId;
-     await FirebaseFirestore.instance.collection('customers').doc(uid).get().then((value) {
-       setState(() {
-         addressId=value['defualtAddressId'].toString();
-       });
-     });
-     await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').doc(addressId).get()
-         .then((DocumentSnapshot doc) {
 
-         setState(() {
-           addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString());
-         });
-
-     });
-   }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -565,4 +517,53 @@ class _MyCartState extends State<MyCart> {
       Center(child: Text("Loading..."),),
     );
   }
+   getCartList()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     final String cartString = await prefs.getString('cartList')??'null';
+     setState(() {
+       if(cartString != 'null'){
+         cartList=CartModel.decode(cartString);
+         totalItems=cartList.length;
+       }
+     });
+     cartList.forEach((element) {
+       setState(() {
+         FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
+           setState(() {
+             totalPrice += (double.parse(value['salesPrice'].toString())*element.productQuantity);
+             items.addAll({'${value['sku']}':element.productQuantity});
+           });
+         });
+       });
+     });
+     setState(() {
+       print("IIIITTTTT $items");
+       loaded=true;
+     });
+   }
+   clearCart()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     setState(() {
+       cartList.clear();
+     });
+     prefs.setString('cartList',CartModel.encode(cartList));
+   }
+   getDeliveryAddress()async{
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     String ? uid=prefs.getString('uid');
+     String ? addressId;
+     await FirebaseFirestore.instance.collection('customers').doc(uid).get().then((value) {
+       setState(() {
+         addressId=value['defualtAddressId'].toString();
+       });
+     });
+     await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').doc(addressId).get()
+         .then((DocumentSnapshot doc) {
+
+       setState(() {
+         addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString());
+       });
+
+     });
+   }
 }
