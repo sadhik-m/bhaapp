@@ -138,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }else if(emailController.text.isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid email');
               }else if(address==null) {
-                Fluttertoast.showToast(msg: 'Enter valid name');
+                Fluttertoast.showToast(msg: 'Enter valid address');
               }else{
                 RegisterService().addUser(name!, emailController.text, mobController.text, country, address!,context);
               }

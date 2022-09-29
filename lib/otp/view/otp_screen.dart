@@ -34,73 +34,75 @@ class _OtpScreenState extends State<OtpScreen> {
         width: screenWidth,
         padding: EdgeInsets.symmetric(
             horizontal: screenWidth*0.1,
-            vertical: screenHeight*0.04
         ),
-        child: Column(
-         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("We sent you a code to verify your\nphone number",
-            style: GoogleFonts.inter(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Colors.black.withOpacity(0.8)
-            ),
-            textAlign: TextAlign.center,),
-            SizedBox(height: screenHeight*0.02,),
-            Text("Sent to ${LoginScreen.mobileNumber}",
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Colors.black.withOpacity(0.3)
-            ),
-            textAlign: TextAlign.center,),
-            SizedBox(height: screenHeight*0.06,),
-            otptextfield((value){
-              print(value);
-              setState(() {
-                enteredOtp=value;
-                print(enteredOtp);
-              });
-            },screenWidth),
-            SizedBox(height: screenHeight*0.02,),
-            OtpTimer(),
-            SizedBox(height: screenHeight*0.08,),
-            Text("I didn’t receive a code",
+        child: SingleChildScrollView(
+          child: Column(
+           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(height: screenHeight*0.04,),
+              Text("We sent you a code to verify your\nphone number",
               style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.3)
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.black.withOpacity(0.8)
               ),
               textAlign: TextAlign.center,),
-            SizedBox(height: screenHeight*0.012,),
-            InkWell(
-              onTap: (){
-                OtpService().resendPhoneAuth(LoginScreen.mobileNumber!, context);
-              },
-              child: Text(
-                "Resend",
+              SizedBox(height: screenHeight*0.02,),
+              Text("Sent to ${LoginScreen.mobileNumber}",
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: Colors.black.withOpacity(0.3)
+              ),
+              textAlign: TextAlign.center,),
+              SizedBox(height: screenHeight*0.06,),
+              otptextfield((value){
+                print(value);
+                setState(() {
+                  enteredOtp=value;
+                  print(enteredOtp);
+                });
+              },screenWidth),
+              SizedBox(height: screenHeight*0.02,),
+              OtpTimer(),
+              SizedBox(height: screenHeight*0.08,),
+              Text("I didn’t receive a code",
                 style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: splashBlue
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black.withOpacity(0.3)
+                ),
+                textAlign: TextAlign.center,),
+              SizedBox(height: screenHeight*0.012,),
+              InkWell(
+                onTap: (){
+                  OtpService().resendPhoneAuth(LoginScreen.mobileNumber!, context);
+                },
+                child: Text(
+                  "Resend",
+                  style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: splashBlue
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: screenHeight*0.05,),
-            blackButton('Login Now', (){
-              if(enteredOtp.length>=6){
-                OtpService().signInWithPhoneNumber(
-                    widget.verificationId,
-                    enteredOtp,
-                    context
-                );
-              }else{
-                Fluttertoast.showToast(msg: 'Enter valid otp');
-              }
+              SizedBox(height: screenHeight*0.05,),
+              blackButton('Login Now', (){
+                if(enteredOtp.length>=6){
+                  OtpService().signInWithPhoneNumber(
+                      widget.verificationId,
+                      enteredOtp,
+                      context
+                  );
+                }else{
+                  Fluttertoast.showToast(msg: 'Enter valid otp');
+                }
 
-            }, screenWidth, screenHeight*0.05
-            )
-          ],
+              }, screenWidth, screenHeight*0.05
+              )
+            ],
+          ),
         ),
       ),
     );
