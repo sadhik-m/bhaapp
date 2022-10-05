@@ -119,9 +119,9 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                             ),
                           ],
                         ),
-                        hintText: 'Search by Vendor ID',
+                        hintText: 'Search by ID,Name Or Category',
                         hintStyle: GoogleFonts.inter(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                             color: Colors.black.withOpacity(0.5)
                         ),

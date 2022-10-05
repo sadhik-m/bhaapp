@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:bhaapp/cart/service/cartLengthService.dart';
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
+import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/payment/payment_success_screen.dart';
 import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../product/model/cartModel.dart';
 import '../../profile/model/profileModel.dart';
+
 class PaymentService{
   // WEB Intent
   checkOut(BuildContext context,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items)async{
@@ -105,6 +108,7 @@ print(values);
     showLoadingIndicator(context);
     SharedPreferences preferences =await SharedPreferences.getInstance();
     preferences.setString('cartList',CartModel.encode([]));
+    DashBoardScreen.cartValueNotifier.updateNotifier(0);
     await FirebaseFirestore.instance.collection('orders').doc(orderId)  .set({
       'orderId': orderId,
       'deliveryAddress': deliveryAddress,

@@ -2,6 +2,7 @@ import 'package:bhaapp/cart/my_cart_screen.dart';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
+import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/product/widget/benefit_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cart/service/cartLengthService.dart';
 import 'model/cartModel.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -36,20 +38,52 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar("Product Details",
-          [InkWell(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder:
-                                  (context)=>MyCart(show_back: true,))).then((value) {
-                                    setState(() {
-                                      getCartList();
-                                    });
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right:18.0),
-              child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
-                height: 24,width: 24,),
-            ),
+          [Stack(
+            alignment: Alignment.center,
+            children: [
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder:
+                                      (context)=>MyCart(show_back: true,))).then((value) {
+                                        setState(() {
+                                          getCartList();
+                                        });
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:18.0),
+                  child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
+                    height: 24,width: 24,),
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: DashBoardScreen.cartValueNotifier.cartValueNotifier,
+                builder: (context, value, child) {
+                  return Positioned(
+                    top: 8,
+                    //bottom: 0,
+                    right: 8,
+                    child:value.toString()!='0'?
+                    Container(
+                      height: 14,width: 14,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: splashBlue
+                      ),
+                      child: Center(
+                        child: Text(
+                          value.toString(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8
+                          ),
+                        ),
+                      ),
+                    ):Container(),
+                  );
+                },
+              )
+            ],
           )],true),
       body: Container(
         height: screenHeight,
@@ -350,6 +384,9 @@ class _ProductDetailState extends State<ProductDetail> {
         cartList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
       });
     }
+    setState(() {
+      DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+    });
     prefs.setString('cartList',CartModel.encode(cartList) ).then((value){
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'item added to cart');

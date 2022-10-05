@@ -13,8 +13,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cart/service/cartLengthService.dart';
 import '../dashboard/dash_board_screen.dart';
+import '../product/model/cartModel.dart';
 import 'newProductsViewAll.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -62,7 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainBanner(),
                       SizedBox(height: screenHeight*0.02,),
                       searchField(screenHeight, screenWidth,(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen())).then((value) {
+                            getCartList();
+                          });
                       }),
                       SizedBox(height: screenHeight*0.024,),
                       smallBanner(),
@@ -78,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),),
                           InkWell(
                             onTap: (){
-                              Navigator.pushNamed(context, '/category_list');
+                              Navigator.pushNamed(context, '/category_list').then((value) {
+                                getCartList();
+                              });
                             },
                             child: Text('View All',
                               style: GoogleFonts.inter(
@@ -110,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: snapshot.data!.docs.map((DocumentSnapshot document) {
                                 Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                                 return categoryList((){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MainCategory(title:data['catName'] ,)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MainCategory(title:data['catName'] ,))).then((value) {
+                                    getCartList();
+                                  });
                                   },
                                     data['catName']);
                               }).toList(),
@@ -131,7 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),),
                           InkWell(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts())).then((value) {
+                                getCartList();
+                              });
                             },
                             child: Text('View All',
                               style: GoogleFonts.inter(
@@ -183,7 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             return
                               ProductTile(height:screenHeight,width:screenWidth,
                                    ontap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())))..then((value) {
+                                    getCartList();
+                                  });
                                 },
                                 image:data['productImageUrl'],
                                 prodName:data['productName'],
@@ -208,5 +221,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        List<CartModel> cartList=CartModel.decode(cartString);
+        DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+
+      }
+    });
   }
 }

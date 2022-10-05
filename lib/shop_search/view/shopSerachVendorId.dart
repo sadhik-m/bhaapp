@@ -34,11 +34,16 @@ class _ShopSearchVendorIdState extends State<ShopSearchVendorId> {
     setState(() {
       searchList.clear();
 
-      for (int i = 0; i < widget.vendorList.length; i++) {
-        if (widget.vendorList[i].vendorId.toLowerCase().contains(searchText.toLowerCase())) {
-          searchList.add(widget.vendorList[i]);
-        }
-      }
+     if(searchText.isNotEmpty){
+       for (int i = 0; i < widget.vendorList.length; i++) {
+         if (widget.vendorList[i].vendorId.toLowerCase().contains(searchText.toLowerCase()) ||
+             widget.vendorList[i].shopName.toLowerCase().contains(searchText.toLowerCase()) ||
+             widget.vendorList[i].category.toLowerCase().contains(searchText.toLowerCase())) {
+           searchList.add(widget.vendorList[i]);
+         }
+       }
+     }
+      print("SEARCH   ${searchList.length}");
     });
 
   }
@@ -87,9 +92,9 @@ class _ShopSearchVendorIdState extends State<ShopSearchVendorId> {
                         ),
                       ],
                     ),
-                    hintText: 'Search by Vendor ID',
+                    hintText: 'Search by ID,Name Or Category',
                     hintStyle: GoogleFonts.inter(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: Colors.black.withOpacity(0.5)
                     ),

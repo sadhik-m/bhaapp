@@ -9,13 +9,18 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cart/service/cartLengthService.dart';
 import '../common/constants/colors.dart';
+import '../product/model/cartModel.dart';
 int pageIndex = 0;
 String ? vendorId;
 String ? userId;
 List<String> ? favouriteList;
+
 class DashBoardScreen extends StatefulWidget {
-  const DashBoardScreen({Key? key}) : super(key: key);
+static CartValueNotifier cartValueNotifier = CartValueNotifier();
+
+const DashBoardScreen({Key? key}) : super(key: key);
 
   @override
   _DashBoardScreenState createState() => _DashBoardScreenState();
@@ -39,12 +44,22 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     }
     return Future.value(true);
   }
-
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        List<CartModel> cartList=CartModel.decode(cartString);
+        DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+      }
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     checkVendorId();
+    getCartList();
   }
   @override
   Widget build(BuildContext context) {

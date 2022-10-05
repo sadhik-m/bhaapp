@@ -1,3 +1,4 @@
+import 'package:bhaapp/cart/service/cartLengthService.dart';
 import 'package:bhaapp/cart/service/paymentService.dart';
 import 'package:bhaapp/cart/widget/cart_list_tile.dart';
 import 'package:bhaapp/common/constants/colors.dart';
@@ -10,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../address/model/addressModel.dart';
+import '../dashboard/dash_board_screen.dart';
 import '../product/model/cartModel.dart';
 
 class MyCart extends StatefulWidget {
@@ -39,7 +41,6 @@ class _MyCartState extends State<MyCart> {
      getCartList();
      getDeliveryAddress();
    }
-
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -524,6 +525,7 @@ class _MyCartState extends State<MyCart> {
        if(cartString != 'null'){
          cartList=CartModel.decode(cartString);
          totalItems=cartList.length;
+         DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
        }
      });
      cartList.forEach((element) {
@@ -545,6 +547,7 @@ class _MyCartState extends State<MyCart> {
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      setState(() {
        cartList.clear();
+       DashBoardScreen.cartValueNotifier.updateNotifier(0);
      });
      prefs.setString('cartList',CartModel.encode(cartList));
    }
