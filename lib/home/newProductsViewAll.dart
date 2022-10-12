@@ -18,7 +18,7 @@ class NewProducts extends StatelessWidget {
     var screenWidth=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBar('New Products',
+      appBar: appBar('Products',
           [],true),
       body: Container(
         height: screenHeight,
@@ -68,7 +68,8 @@ class NewProducts extends StatelessWidget {
                             reguarPrize: data['regularPrice'].toString(),
                             quantity: data['priceUnit'],
                             prodId: document.id.toString(),
-                            fav: favouriteList!.contains(document.id.toString()));
+                            fav: favouriteList!.contains(document.id.toString()),
+                          cartHomeList: [],);
                       }).toList(),
 
                     ),

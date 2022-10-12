@@ -53,6 +53,11 @@ dependencies:
   http: ^0.13.5
   intl: ^0.17.0
   url_launcher: ^6.1.5
+  geolocator: ^9.0.2
+  image_picker: ^0.8.6
+  path_provider: ^2.0.11
+  firebase_storage: ^10.3.11
+  easy_mask: ^2.0.1
 
 dev_dependencies:
   flutter_test:

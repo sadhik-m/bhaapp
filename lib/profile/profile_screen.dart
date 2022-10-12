@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import '../common/constants/colors.dart';
 import '../common/widgets/appBar.dart';
 import '../dashboard/dash_board_screen.dart';
@@ -37,7 +37,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           profileModel = ProfileModel(
               country: documentSnapshot['country'], name: documentSnapshot['name'],
-              email: documentSnapshot['email'], phone: documentSnapshot['phone']);
+              email: documentSnapshot['email'], phone: documentSnapshot['phone'],
+          image: documentSnapshot['image']);
         });
       } else {
         print('Document does not exist on the database');
@@ -67,6 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     name: profileModel!.name,
                     email: profileModel!.email,
                     phone: profileModel!.phone,
+                    image: profileModel!.image,
                   ))).then((value) {
                     setState(() {
                       getProfileDetails();
@@ -96,6 +98,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               children: [
                 SizedBox(height: screenHeight*0.02,),
+                profileModel!.image!=''?
+                Container(
+                  height: 88,
+                  width: 88,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black,
+                    image: DecorationImage(
+                      image: NetworkImage(profileModel!.image),fit: BoxFit.fill)
+                  ),
+                ):
                 Container(
                   height: 88,
                     width: 88,

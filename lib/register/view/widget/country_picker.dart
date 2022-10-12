@@ -3,15 +3,18 @@ import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-CountryPickerDropdown countryPicker(void Function(Country) onchange){
-  return CountryPickerDropdown(
-        initialValue: 'in',
-        itemBuilder: _buildDropdownItem,
-        onValuePicked: onchange,
-        isExpanded: true,
-        icon: Icon(Icons.keyboard_arrow_down_rounded,color: Colors.black,),
+IgnorePointer countryPicker(void Function(Country) onchange,String country,bool isIgnore){
+  return IgnorePointer(
+    ignoring: isIgnore,
+    child: CountryPickerDropdown(
+          initialValue: country,
+          itemBuilder: _buildDropdownItem,
+          onValuePicked: onchange,
+          isExpanded: true,
+          icon: Icon(Icons.keyboard_arrow_down_rounded,color: Colors.black,),
 
-      );
+        ),
+  );
 
 
 }

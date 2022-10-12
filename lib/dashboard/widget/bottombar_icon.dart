@@ -11,10 +11,11 @@ Column BottomIcon(VoidCallback onTap,int index,String image){
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      pageIndex == index ?
-          BottomDotBlue():BottomDotTransparent(),
+     /* pageIndex == index ?
+      BottomDotBlue():BottomDotTransparent(),*/
       Stack(
         children: [
+
           IconButton(
               enableFeedback: false,
               onPressed:onTap,

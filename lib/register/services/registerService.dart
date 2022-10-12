@@ -11,10 +11,11 @@ import '../../dashboard/dash_board_screen.dart';
 class RegisterService{
   CollectionReference users = FirebaseFirestore.instance.collection('customers');
 
-  Future<void> addUser(String name,String email,String phone,String country,String address,BuildContext context) async{
+  Future<void> addUser(String name,String email,String phone,String country,String address,BuildContext context,String lattitude,String longitude) async{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String uid=preferences.getString('uid')??'';
+    String img=preferences.getString('img')??'';
     return users
     // existing document in 'users' collection: "ABC123"
         .doc(uid)
@@ -23,6 +24,9 @@ class RegisterService{
       'email': email,
       'phone': phone,
       'country': country,
+      'latitude': lattitude,
+      'longitude': longitude,
+      'image': img,
     },
       SetOptions(merge: true),
     )

@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../product/model/cartModel.dart';
+
 class WishListScreen extends StatefulWidget {
 
   const WishListScreen({Key? key}) : super(key: key);
@@ -28,11 +30,24 @@ class _WishListScreenState extends State<WishListScreen> {
       loaded=true;
     });
   }
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        List<CartModel> cartList=CartModel.decode(cartString);
+        DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+        cartHomeList=CartModel.decode(cartString);
+      }
+    });
+  }
+  List<CartModel> cartHomeList=[];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     gatWishList();
+    getCartList();
   }
 
   @override
@@ -70,7 +85,7 @@ class _WishListScreenState extends State<WishListScreen> {
                             favList.remove(data);
                             preferences.setStringList('favList',favList );
                           });
-                        });
+                        },cartHomeList);
 
                   }).toList(),
 

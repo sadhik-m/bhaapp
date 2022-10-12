@@ -12,10 +12,12 @@ import 'package:bhaapp/product/product_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cart/service/cartLengthService.dart';
+import '../common/widgets/loading_indicator.dart';
 import '../dashboard/dash_board_screen.dart';
 import '../product/model/cartModel.dart';
 import 'newProductsViewAll.dart';
@@ -31,11 +33,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final Stream<QuerySnapshot> _categoryStream = FirebaseFirestore.instance.collection('categories').snapshots();
   final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).limit(2).snapshots();
-
+  List<CartModel> cartHomeList=[];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    gatWishList();
+    getCartList();
+  }
+  gatWishList()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      favouriteList=preferences.getStringList('favList')??[];
+    });
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
+    getCartList();
     return Scaffold(
 
       backgroundColor: Colors.white,
@@ -49,12 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: screenHeight*0.02,),
             homeAppBar(
-                    (value){
-                  setState(() {
-                    location_dropdownvalue=value;
-                  });
-                },context,
+                context,
+              screenHeight,
                 (){
+                  setState(() {
+                    pageIndex=2;
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+                        (context)=>DashBoardScreen()), (route) => false);
+                  });
                 }
             ),
             Expanded(
@@ -71,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }),
                       SizedBox(height: screenHeight*0.024,),
                       smallBanner(),
-                      SizedBox(height: screenHeight*0.02,),
+                     /* SizedBox(height: screenHeight*0.02,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -126,13 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                      ),
+                      ),*/
 
                       SizedBox(height: screenHeight*0.024,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('New Products',
+                          Text('Products',
                             style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
@@ -204,7 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 reguarPrize:data['regularPrice'].toString(),
                                 quantity:data['priceUnit'],
                                   prodId:document.id.toString(),
-                                  fav:favouriteList!.contains(document.id.toString())
+                                  fav:favouriteList!.contains(document.id.toString()),
+                                  cartHomeList:cartHomeList
                               );
                           }).toList(),
 
@@ -229,8 +248,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if(cartString != 'null'){
         List<CartModel> cartList=CartModel.decode(cartString);
         DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
-
+        cartHomeList=CartModel.decode(cartString);
       }
     });
   }
+
 }

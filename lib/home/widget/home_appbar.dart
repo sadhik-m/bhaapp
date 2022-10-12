@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../shop_search/view/shop_search_screen.dart';
+import '../service/profilePicService.dart';
 
-Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context,VoidCallback ontap){
+Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap){
   return Container(
     child: Column(
       children: [
@@ -14,69 +15,59 @@ Container homeAppBar(Function(dynamic)? location_onchanged,BuildContext context,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top:8.0),
-                  child: Image.asset('assets/home/map-pin.png',
-                    height: 18.3,
-                    width: 15,),
-                ),
-                SizedBox(width: 7,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    locationDropDown(
-                      location_onchanged,
-                    ),
+            Image.asset('assets/authentication/app_logo_old(1) 1-2.png',
+              height: screenHeight*0.025,),
+            FutureBuilder<String>(
+              future: ProfPic().getProfPic(),
+              builder:
+                  (BuildContext context, AsyncSnapshot snapshot) {
+
+
+                if (snapshot.hasData) {
+                  return InkWell(
+                    onTap:ontap,
+                    child: snapshot.data.toString()!=''?
                     Container(
-                      padding: EdgeInsets.only(top: 4, bottom: 4, left: 5),
+                      height: 40,
+                      width: 40,
                       decoration: BoxDecoration(
-                          color: splashBlue.withOpacity(0.1)
+                          shape: BoxShape.circle,
+                          color: Colors.black,
+                          image: DecorationImage(
+                              image: NetworkImage(snapshot.data.toString()),fit: BoxFit.fill)
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopSearchScreen(willPop: false,)));
-                            },
-                            child: Text(vendorId!,
-                              //'Change Shop Type /Vendor',
-                              style:GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 10,
-                                  color: Colors.black
-                              ) ,),
-                          ),
-                          SizedBox(width: 4,),
-                          Padding(
-                            padding: const EdgeInsets.only(right:2.0),
-                            child: Image.asset('assets/home/arrow-up-right-2.png',height: 16,width: 16,),
-                          )
-                        ],
+                    ):
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black,
                       ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-            InkWell(
-              onTap:ontap,
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black,
-                ),
-                child: Center(
-                  child: Icon(Icons.person,color: Colors.white,),
-                ),
-              ),
-            ),
+                      child: Center(
+                        child: Icon(Icons.person,color: Colors.white,),
+                      ),
+                    ),
+                  );
+                }
+
+                return Center(child:InkWell(
+                  onTap:ontap,
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black,
+                    ),
+                    child: Center(
+                      child: Icon(Icons.person,color: Colors.white,),
+                    ),
+                  ),
+                ));
+              },
+            )
+
           ],
         ),
         SizedBox(height: 14,),

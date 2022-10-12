@@ -7,9 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../common/constants/colors.dart';
 import '../../dashboard/dash_board_screen.dart';
 import '../../home/widget/product_tile.dart';
+import '../../product/model/cartModel.dart';
 import '../../product/product_detail_screen.dart';
 
-FutureBuilder wishListTile(double screenWidth,double screenHeight,String prodId,VoidCallback onFavTap){
+FutureBuilder wishListTile(double screenWidth,double screenHeight,String prodId,VoidCallback onFavTap,List<CartModel> cartlist){
   CollectionReference prodDetail = FirebaseFirestore.instance.collection('products');
   return FutureBuilder<DocumentSnapshot>(
     future: prodDetail.doc(prodId).get(),
@@ -35,7 +36,7 @@ FutureBuilder wishListTile(double screenWidth,double screenHeight,String prodId,
             quantity: data['priceUnit'],
             prodId: snapshot.data!.id.toString(),
             fav: favouriteList!.contains(snapshot.data!.id.toString()),
-        onFavTap: onFavTap,);
+        onFavTap: onFavTap,cartHomeList: cartlist,);
       }
 
       return Center(child: Text(""));

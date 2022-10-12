@@ -51,7 +51,7 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                           fontWeight: FontWeight.w500,
                           color: Colors.black
                       ),),
-                      SizedBox(height: height*0.004,),
+                   /*   SizedBox(height: height*0.004,),
                       Row(
                         children: [
                           Text('Product Code: ',style: GoogleFonts.inter(
@@ -65,7 +65,7 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                               color: Colors.black.withOpacity(0.8)
                           ),),
                         ],
-                      ),
+                      ),*/
                       SizedBox(height: height*0.004,),
                       Row(
                         children: [

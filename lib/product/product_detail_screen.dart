@@ -29,6 +29,7 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    gatWishList();
     getCartList();
   }
   @override
@@ -278,36 +279,57 @@ class _ProductDetailState extends State<ProductDetail> {
                       SizedBox(height: screenWidth*0.08,),
                       Row(
                         children: [
-                          Container(
-                            height: screenWidth*0.11,
-                            width: screenWidth*0.09,
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.1),
-                                borderRadius: BorderRadius.all(Radius.circular(4))
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.favorite_border,
-                                color: Colors.black,
-                                size: screenWidth*0.055,
+                          InkWell(
+                            onTap: (){
+                              toggleFavourites(widget.docId);
+                            },
+                            child: Container(
+                              height: screenWidth*0.11,
+                              width: screenWidth*0.09,
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.1),
+                                  borderRadius: BorderRadius.all(Radius.circular(4))
+                              ),
+                              child: Center(
+                                child:favouriteList!.contains(widget.docId)?
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: screenWidth*0.055,
+                                ):
+                                Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.black,
+                                  size: screenWidth*0.055,
+                                ),
                               ),
                             ),
                           ),
                           SizedBox(width: screenWidth*0.03,),
-                          Container(
-                            height: screenWidth*0.11,
-                            width: screenWidth*0.18,
-                            decoration: BoxDecoration(
-                                color: splashBlue.withOpacity(0.2),
-                                borderRadius: BorderRadius.all(Radius.circular(4))
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Buy',
-                                style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: splashBlue
+                          InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder:
+                                  (context)=>MyCart(show_back: true,))).then((value) {
+                                setState(() {
+                                  getCartList();
+                                });
+                              });
+                            },
+                            child: Container(
+                              height: screenWidth*0.11,
+                              width: screenWidth*0.18,
+                              decoration: BoxDecoration(
+                                  color: splashBlue.withOpacity(0.2),
+                                  borderRadius: BorderRadius.all(Radius.circular(4))
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Buy',
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: splashBlue
+                                  ),
                                 ),
                               ),
                             ),
@@ -368,6 +390,12 @@ class _ProductDetailState extends State<ProductDetail> {
       }
     });
   }
+  gatWishList()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      favouriteList=preferences.getStringList('favList')??[];
+    });
+  }
   addToCart(String prodId,int prodQuantity)async{
     showLoadingIndicator(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -391,5 +419,21 @@ class _ProductDetailState extends State<ProductDetail> {
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'item added to cart');
     });
+  }
+  toggleFavourites(String productID)async{
+    print("JKLOP");
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> favList=preferences.getStringList('favList')??[];
+ setState(() {
+   if(favList.contains(productID)){
+     favouriteList!.remove(productID);
+     preferences.setStringList('favList',favouriteList! );
+   }else{
+     favouriteList!.add(productID);
+     preferences.setStringList('favList',favouriteList! );
+   }
+ });
+
+
   }
 }

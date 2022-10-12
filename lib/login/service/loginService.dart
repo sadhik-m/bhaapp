@@ -78,6 +78,7 @@ class LoginService{
         user = userCredential.user;
         print('Authentication successful${user!.uid}');
         prefs.setString("uid", user.uid);
+        prefs.setString('img',user.photoURL!);
         LoginScreen.emailId=user.email.toString();
 
         RegisterService().checkIfUserExists(user.uid).then((value) {

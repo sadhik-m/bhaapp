@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/constants/colors.dart';
+import '../../common/widgets/loading_indicator.dart';
 import '../../dashboard/dash_board_screen.dart';
+import '../../product/model/cartModel.dart';
 
 
 class ProductTile extends StatefulWidget {
@@ -17,6 +20,7 @@ class ProductTile extends StatefulWidget {
   String quantity;
   String prodId;
   bool fav;
+  List<CartModel>cartHomeList;
   ProductTile({
     Key? key,
     required this.height,
@@ -28,7 +32,7 @@ class ProductTile extends StatefulWidget {
     required this.reguarPrize,
     required this.quantity,
     required this.prodId,
-    required this.fav
+    required this.fav,required this.cartHomeList
   }) : super(key: key);
 
   @override
@@ -156,16 +160,21 @@ class _ProductTileState extends State<ProductTile> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  height: widget.width*0.065,
-                                  width: widget.width*0.065,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: splashBlue
-                                  ),
-                                  child: Center(
-                                    child: Icon(Icons.add,
-                                      color: Colors.white,size: 14,),
+                                InkWell(
+                                  onTap: (){
+                                    addToCart(widget.prodId,1,widget.cartHomeList);
+                                  },
+                                  child: Container(
+                                    height: widget.width*0.065,
+                                    width: widget.width*0.065,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: splashBlue
+                                    ),
+                                    child: Center(
+                                      child: Icon(Icons.add,
+                                        color: Colors.white,size: 14,),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -181,6 +190,30 @@ class _ProductTileState extends State<ProductTile> {
         ),
       ),
     );
+  }
+  addToCart(String prodId,int prodQuantity,List<CartModel>cartHomeList)async{
+    showLoadingIndicator(context);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String encodedData=CartModel.encode(cartHomeList);
+    if(encodedData.contains(prodId)){
+      int index = cartHomeList.indexWhere((element) => element.productId == prodId);
+      if (index != -1) {
+        setState(() {
+          cartHomeList[index].productQuantity=cartHomeList[index].productQuantity+prodQuantity;
+        });
+      }
+    }else{
+      setState(() {
+        cartHomeList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
+      });
+    }
+    setState(() {
+      DashBoardScreen.cartValueNotifier.updateNotifier(cartHomeList.length);
+    });
+    prefs.setString('cartList',CartModel.encode(cartHomeList) ).then((value){
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: 'item added to cart');
+    });
   }
   toggleFavourites(String productID)async{
     print("JKLOP");

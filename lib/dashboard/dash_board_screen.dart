@@ -12,14 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../cart/service/cartLengthService.dart';
 import '../common/constants/colors.dart';
 import '../product/model/cartModel.dart';
-int pageIndex = 0;
+
 String ? vendorId;
 String ? userId;
 List<String> ? favouriteList;
-
+int pageIndex = 0;
 class DashBoardScreen extends StatefulWidget {
 static CartValueNotifier cartValueNotifier = CartValueNotifier();
-
 const DashBoardScreen({Key? key}) : super(key: key);
 
   @override
@@ -35,13 +34,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
   DateTime ? currentBackPressTime;
   Future<bool> onWillPop() {
-    DateTime now = DateTime.now();
+    /*DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: 'Press back again to exit');
       return Future.value(false);
     }
+    return Future.value(true);*/
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+        (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
     return Future.value(true);
   }
   getCartList()async{
@@ -83,7 +85,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   }
   Container buildMyNavBar(BuildContext context,double height,double width) {
     return Container(
-      height: height*0.12,
+      height: height*0.065,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: const BorderRadius.only(

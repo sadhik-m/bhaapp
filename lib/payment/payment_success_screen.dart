@@ -35,14 +35,7 @@ class PaymentSuccess extends StatelessWidget {
                     fontSize: 26,
                     color: Colors.black
                   ),),
-                  SizedBox(height: 8,),
-                  Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra sollicitudin nibh vel vestibulum. Aenean magna purus, dignissim consectetur ullamcorper nec, consectetur scelerisque eros.",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: Colors.black.withOpacity(0.3)
-                    ),)
+
                 ],
               ),
               Container(),

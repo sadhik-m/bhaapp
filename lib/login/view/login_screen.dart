@@ -2,7 +2,7 @@ import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/login/view/widget/phone_textfield.dart';
 import 'package:bhaapp/login/view/widget/social_media_button.dart';
-
+import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,9 +13,11 @@ import '../service/loginService.dart';
 
 class LoginScreen extends StatelessWidget {
   static String ? mobileNumber;
+  static String ? countrycode;
   static String ? emailId;
   static bool ? isPhone;
-  const LoginScreen({Key? key}) : super(key: key);
+   LoginScreen({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +54,24 @@ class LoginScreen extends StatelessWidget {
               children: [
                 phoneTextfield((v){
                   mobileNumber=v.completeNumber.toString();
+                  countrycode=v.countryISOCode.toString();
+                  print(mobileNumber);
                 }),
                 SizedBox(height: screenHeight*0.02,),
                 blackButton('Continue', ()async{
                   SharedPreferences prefs=await SharedPreferences.getInstance();
                   prefs.setBool('isPhone',true);
-                  if(mobileNumber!=null && mobileNumber!.length>=13){
+                  if(mobileNumber!=null && mobileNumber!.length>=10){
                     isPhone=true;
-                    LoginService().fireBasePhoneAuth(mobileNumber!, context);
+                    if(countrycode=='US'){
+                      MagicMask mask = MagicMask.buildMask('\\+9 (999) 999-9999');
+                      mobileNumber = mask.getMaskedString(mobileNumber!);
+                      print(mobileNumber);
+                      LoginService().fireBasePhoneAuth(mobileNumber!, context);
+                    }else{
+                      LoginService().fireBasePhoneAuth(mobileNumber!, context);
+                    }
+
                   }else{
                     Fluttertoast.showToast(msg: 'Enter valid mobile number');
                   }

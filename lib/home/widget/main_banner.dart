@@ -54,7 +54,7 @@ getVendorShopData()async{
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
     return Container(
-      height: screenHeight*0.24,
+      height: screenHeight*0.18,
         width: screenWidth,
         child: shopData.isEmpty?
         Center(child: CircularProgressIndicator(),):
@@ -80,8 +80,22 @@ getVendorShopData()async{
 
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(shopData[0].vendorId,
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  fontSize: 12
+                              ),),
+                          ],
+                        ),
+                      ),
                       Padding(
                         padding:  EdgeInsets.symmetric(horizontal: screenWidth*0.04),
                         child: Column(

@@ -52,7 +52,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     var screenWidth=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBar('Shop Search', [],true),
+      appBar: appBar('', [],true),
       body:WillPopScope(
         onWillPop: onWillPop,
         child:  loaded==false?
@@ -63,14 +63,32 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
           width: screenWidth,
           padding: EdgeInsets.symmetric(
               horizontal: screenWidth*0.1,
-              vertical: screenHeight*0.04
+              vertical: screenHeight*0.01
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
             children: [
               Column(
                 children: [
-                  Text('Facility to open a specific shop by\ngiving “Vendor ID or Category”',
+                  Row(
+                    children: [
+                      Image.asset('assets/authentication/app_logo_old(1) 1-2.png',
+                        height: screenHeight*0.035,),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text('Shop Search',
+                        style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 20
+                        ),),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight*0.06,),
+                  Text('Facility to open a specific shop by\ngiving “ID,Name Or Category”',
                     style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,

@@ -22,7 +22,7 @@ class OtpService{
       firebaseAuth.signInWithCredential(credential).then((value) {
         print('Authentication successful${value.user!.uid}');
         prefs.setString("uid", value.user!.uid);
-
+        prefs.setString('img','');
         RegisterService().checkIfUserExists(value.user!.uid).then((value) {
           Navigator.of(context).pop();
           if(value==true){

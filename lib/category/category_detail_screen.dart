@@ -107,7 +107,7 @@ class CategoryDetail extends StatelessWidget {
                             reguarPrize: data['regularPrice'].toString(),
                             quantity: data['priceUnit'],
                             prodId: document.id.toString(),
-                            fav: favouriteList!.contains(document.id.toString()));
+                            fav: favouriteList!.contains(document.id.toString()),cartHomeList: [],);
                       }).toList(),
 
                     ),
