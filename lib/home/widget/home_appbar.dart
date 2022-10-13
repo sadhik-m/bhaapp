@@ -15,8 +15,33 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
           children: [
-            Image.asset('assets/authentication/app_logo_old(1) 1-2.png',
-              height: screenHeight*0.025,),
+            Container(
+              height: 35,
+              width: 35,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black,
+              ),
+              child: Center(
+                child: Icon(Icons.shop,color: Colors.white,),
+              ),
+            ),
+            Container(
+                height: 20,
+                width: 60,
+              decoration: BoxDecoration(
+                //color: const Color(0xff7c94b6),
+                image: new DecorationImage(
+                  fit: BoxFit.fill,
+                  colorFilter:
+                  ColorFilter.mode(Colors.black.withOpacity(0.2),
+                      BlendMode.dstATop),
+                  image: new AssetImage(
+                    'assets/authentication/app_logo_old(1) 1-2.png',
+                  ),
+                ),
+              ),
+            ),
             FutureBuilder<String>(
               future: ProfPic().getProfPic(),
               builder:

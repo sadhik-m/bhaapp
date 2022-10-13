@@ -2,7 +2,9 @@ import 'package:bhaapp/address/services/addNewAddress.dart';
 import 'package:bhaapp/address/widget/address_type_tile.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
+import 'package:bhaapp/profile/model/profileModel.dart';
 import 'package:bhaapp/register/view/widget/text_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,21 +22,49 @@ class AddAddress extends StatefulWidget {
 }
 
 class _AddAddressState extends State<AddAddress> {
-  String  name='';
-  String  email='';
-  String  mobile='';
-  String  country= 'India';
   String  address='';
+  String  country='';
   List<AddressModel> addressList=[];
 bool isphone=true;
 bool loaded=false;
+  ProfileModel ? profileModel;
   getLoginMethod()async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       isphone = preferences.getBool('isPhone')??false;
-      loaded = true;
+    });
+    getProfileDetails();
+  }
+  getProfileDetails()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String ? uid= preferences.getString('uid');
+    await FirebaseFirestore.instance
+        .collection('customers')
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          profileModel = ProfileModel(
+              country: documentSnapshot['country'], name: documentSnapshot['name'],
+              email: documentSnapshot['email'], phone: documentSnapshot['phone'],
+              image: documentSnapshot['image']);
+          nameController.text=profileModel!.name;
+          emailController.text=profileModel!.email;
+          mobController.text=profileModel!.phone;
+        });
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+    setState(() {
+      loaded=true;
     });
   }
+
+  var mobController=TextEditingController();
+  var emailController=TextEditingController();
+  var nameController=TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -60,22 +90,61 @@ bool loaded=false;
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              textField('Full Name',TextInputType.name,(value){
-                setState(() {
-                  name=value;
-                });
-              }),
+              TextField(
+                keyboardType: TextInputType.name,
+                onChanged:(value){} ,
+                controller:
+                nameController,
+                readOnly:false,
+                enabled: true,
+                decoration: InputDecoration(
+                    label:Text('Full Name*') ,
+                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    labelStyle: GoogleFonts.inter(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      //color: label_blue
+                    )
+                ),
+                style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black
+                ),
+              ),
               SizedBox(height: screenHeight*0.015,),
               TextField(
                 keyboardType: TextInputType.number,
-                onChanged:(value){
-                  setState(() {
-                    mobile=value;
-                  });
-                } ,
+                onChanged:(value){} ,
+                controller:
+                mobController,
+                readOnly:false,
                 enabled: true,
                 decoration: InputDecoration(
-                    label:Text('Mobile Number') ,
+                    label:Text('Mobile Number*') ,
+                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    labelStyle: GoogleFonts.inter(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      //color: label_blue
+                    )
+                ),
+                style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black
+                ),
+              ),
+              SizedBox(height: screenHeight*0.015,),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                onChanged:(value){} ,
+                controller:
+                emailController,
+                readOnly:false,
+                enabled: true,
+                decoration: InputDecoration(
+                    label:Text('Email Address*') ,
                     focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                     labelStyle: GoogleFonts.inter(
                       fontWeight: FontWeight.w400,
@@ -91,18 +160,12 @@ bool loaded=false;
               ),
 
               SizedBox(height: screenHeight*0.015,),
-              textField('Email Address (Optional)',TextInputType.emailAddress,(value){
-                setState(() {
-                  email=value;
-                });
-              }),
-              SizedBox(height: screenHeight*0.015,),
               countryPicker(
                       (Country selectedcountry) {
                     setState(() {
                       country=selectedcountry.name;
                     });
-                  },'in',isphone
+                  },profileModel!.country,false
               ),
               Padding(
                 padding:  EdgeInsets.only(top:2.0),
@@ -119,27 +182,30 @@ bool loaded=false;
               }),
               SizedBox(height: screenHeight*0.1,),
               blackButton('Save Address', (){
-               if(name.isEmpty){
+               if(nameController.text.isEmpty){
                  Fluttertoast.showToast(msg: 'Enter name');
-               }else if(mobile.isEmpty){
+               }else if(mobController.text.isEmpty){
                  Fluttertoast.showToast(msg: 'Enter mobile');
+               }else if(emailController.text.isEmpty){
+                 Fluttertoast.showToast(msg: 'Enter Email');
                }else if(address.isEmpty){
                  Fluttertoast.showToast(msg: 'Enter address');
                }else{
                  setState(() {
-                   addressList.add(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home',id: ''));
+                   addressList.add(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: ''));
                  });
-                 AddNewAddress().addAddress(AddressModel(name: name, mobile: mobile, email: email, country: country, address: address, type: 'home',id: ''), context).then((value) {
+                 AddNewAddress().addAddress(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: ''), context).then((value) {
                    Navigator.of(context).pop();
                  });
                }
               }, screenWidth, screenHeight*0.05
               ),
+
             ],
           ),
         ),
       ):
-      CircularProgressIndicator(),
+      Center(child: CircularProgressIndicator()),
     );
   }
 }

@@ -117,9 +117,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
-                            fontSize: 26
+                            fontSize: 21
                         ),textAlign: TextAlign.center,),
-                      SizedBox(height: screenHeight*0.03),
+                      SizedBox(height: screenHeight*0.01),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -137,14 +137,14 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),textAlign: TextAlign.center,),
                         ],
                       ),
-                      SizedBox(height: screenHeight*0.03),
+                      SizedBox(height: screenHeight*0.01),
                       Text(data['productDescription'],
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w400,
                             color: Colors.black.withOpacity(0.3),
                             fontSize: 12
-                        ),textAlign: TextAlign.left,),
-                      SizedBox(height: screenHeight*0.04),
+                        ),textAlign: TextAlign.center,),
+                    /*  SizedBox(height: screenHeight*0.04),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,13 +172,13 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           )
                         ],
-                      ),
-                      SizedBox(height: screenHeight*0.04),
+                      ),*/
+                      SizedBox(height: screenHeight*0.09),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RotatedBox(
+                         /* RotatedBox(
                             quarterTurns: 5,
                             child: Container(
                               child: Text('Quantity',style: GoogleFonts.inter(
@@ -188,43 +188,20 @@ class _ProductDetailState extends State<ProductDetail> {
                               ),),
                             ),
                           ),
-                          SizedBox(width: screenWidth*0.05,),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: (){
-                                    if(quantity!=1){
-                                      setState(() {
-                                        quantity-=1;
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    height: screenWidth*0.11,
-                                    width: screenWidth*0.11,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.black
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(4))
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '-',
-                                        style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                            color: Colors.black
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: screenWidth*0.03,),
-                                Container(
+                          SizedBox(width: screenWidth*0.05,),*/
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: (){
+                                  if(quantity!=1){
+                                    setState(() {
+                                      quantity-=1;
+                                    });
+                                  }
+                                },
+                                child: Container(
                                   height: screenWidth*0.11,
-                                  width: screenWidth*0.21,
+                                  width: screenWidth*0.11,
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: Colors.black
@@ -233,7 +210,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      '${quantity.toString().padLeft(2,'0')}',
+                                      '-',
                                       style: GoogleFonts.inter(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16,
@@ -242,42 +219,64 @@ class _ProductDetailState extends State<ProductDetail> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: screenWidth*0.03,),
-                                InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      quantity+=1;
-                                    });
-                                  },
-                                  child: Container(
-                                    height: screenWidth*0.11,
-                                    width: screenWidth*0.11,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.black
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(4))
+                              ),
+                              SizedBox(width: screenWidth*0.03,),
+                              Container(
+                                height: screenWidth*0.11,
+                                width: screenWidth*0.21,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.black
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        '+',
-                                        style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                            color: Colors.black
-                                        ),
+                                    borderRadius: BorderRadius.all(Radius.circular(4))
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${quantity.toString().padLeft(2,'0')}',
+                                    style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: Colors.black
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth*0.03,),
+                              InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    quantity+=1;
+                                  });
+                                },
+                                child: Container(
+                                  height: screenWidth*0.11,
+                                  width: screenWidth*0.11,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.black
+                                      ),
+                                      borderRadius: BorderRadius.all(Radius.circular(4))
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '+',
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          color: Colors.black
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
 
                         ],
                       ),
                       SizedBox(height: screenWidth*0.08,),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           InkWell(
                             onTap: (){
@@ -306,35 +305,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           SizedBox(width: screenWidth*0.03,),
-                          InkWell(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder:
-                                  (context)=>MyCart(show_back: true,))).then((value) {
-                                setState(() {
-                                  getCartList();
-                                });
-                              });
-                            },
-                            child: Container(
-                              height: screenWidth*0.11,
-                              width: screenWidth*0.18,
-                              decoration: BoxDecoration(
-                                  color: splashBlue.withOpacity(0.2),
-                                  borderRadius: BorderRadius.all(Radius.circular(4))
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Buy',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: splashBlue
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: screenWidth*0.03,),
+
                           InkWell(
                             onTap: (){
                               addToCart(snapshot.data!.id.toString(),quantity);

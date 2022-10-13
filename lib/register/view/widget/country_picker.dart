@@ -25,7 +25,7 @@ Widget _buildDropdownItem(Country country) => Container(
       SizedBox(
         width: 8.0,
       ),
-      Text("${country.name}",
+      Text("${country.isoCode}",
       style: GoogleFonts.inter(
         color: Colors.black
       ),),

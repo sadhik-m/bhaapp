@@ -12,6 +12,7 @@ Container orderSummaryTile(double width,double height,List<String>sku,List<Strin
         )
     ),
     child: ExpandablePanel(
+
       header: Padding(
         padding: EdgeInsets.only(top: 21,left: 14,right: 10,bottom: 11),
         child: Column(

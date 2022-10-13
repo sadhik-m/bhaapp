@@ -8,6 +8,7 @@ import 'package:bhaapp/product/widget/benefit_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../address/model/addressModel.dart';
@@ -24,7 +25,7 @@ class MyCart extends StatefulWidget {
 
 class _MyCartState extends State<MyCart> {
    bool isGst=false;
-   bool showOption=true;
+   bool showOption=false;
    String delivery='deliver now';
    bool loaded=false;
    int totalItems=0;
@@ -194,67 +195,147 @@ class _MyCartState extends State<MyCart> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Image.asset('assets/home/Group 78.png',
-                                        width: screenWidth*0.1,),
-                                        SizedBox(width: screenWidth*0.03,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Deliver Now | \$6',style: GoogleFonts.inter(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black
-                                            ),),
-                                            Text('Get in next 30-35 mins',style: GoogleFonts.inter(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400,
-                                                color: splashBlue
-                                            ),),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Radio(value: 'deliver now', groupValue: delivery,
-                                        onChanged: (value){
-                                      setState(() {
-                                        delivery=value.toString();
-                                        deliveryCharge=6;
-                                      });
-                                        })
-                                  ],
-                                ),
-                              ),
-                            )),
-                        SizedBox(height: screenHeight*0.02,),
-                        Container(
-                            width: screenWidth,
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(4))
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      //crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
                                             Image.asset('assets/home/Group 78.png',
-                                              width: screenWidth*0.1,),
+                                            width: screenWidth*0.1,),
                                             SizedBox(width: screenWidth*0.03,),
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Deliver Later | \$25',style: GoogleFonts.inter(
+                                                Text('Deliver Now | \$6',style: GoogleFonts.inter(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black
+                                                ),),
+                                                Text('Get in next 30-35 mins',style: GoogleFonts.inter(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: splashBlue
+                                                ),),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        Radio(value: 'deliver now', groupValue: delivery,
+                                            onChanged: (value){
+                                          setState(() {
+                                            delivery=value.toString();
+                                            deliveryCharge=6;
+                                          });
+                                            })
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight*0.02,),
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          //crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Image.asset('assets/home/Group 78.png',
+                                                  width: screenWidth*0.1,),
+                                                SizedBox(width: screenWidth*0.03,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Deliver Later | \$25',style: GoogleFonts.inter(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Colors.black
+                                                    ),),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Radio(value: 'deliver later', groupValue: delivery,
+                                                onChanged: (value){
+                                                  setState(() {
+                                                    delivery=value.toString();
+                                                    deliveryCharge=25;
+                                                  });
+                                                })
+                                          ],
+                                        ),
+                                        SizedBox(height: screenHeight*0.01,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  height: screenHeight*0.035,
+                                                  width: screenWidth*0.25,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(color: Colors.black)
+                                                  ),
+                                                  child: Center(
+                                                    child: Text("${DateFormat('d MMM y').format(selectedDate)}",
+                                                      style: GoogleFonts.inter(
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 11,
+                                                          color: Colors.black
+                                                      ),),
+                                                  ),
+                                                ),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                InkWell(
+                                                    onTap: (){
+                                                      _selectDate(context);
+                                                    },
+                                                    child: Icon(Icons.date_range,color: Colors.blue,)),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  height: screenHeight*0.035,
+                                                  width: screenWidth*0.25,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(color: Colors.black)
+                                                  ),
+                                                  child: Center(
+                                                    child: Text("${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                                      style: GoogleFonts.inter(
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 11,
+                                                          color: Colors.black
+                                                      ),),
+                                                  ),
+                                                ),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                InkWell(
+                                                    onTap: (){
+                                                      _selectTime(context);
+                                                    },
+                                                    child: Icon(Icons.access_time,color: Colors.blue,)),
+                                              ],
+                                            )
+
+                                          ],
+                                        )
+
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight*0.02,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.local_grocery_store_outlined,size: screenWidth*0.08,),
+                                            SizedBox(width: screenWidth*0.03,),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Store Pickup',style: GoogleFonts.inter(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
@@ -263,81 +344,15 @@ class _MyCartState extends State<MyCart> {
                                             ),
                                           ],
                                         ),
-                                        Radio(value: 'deliver later', groupValue: delivery,
+                                        Radio(value: 'store pickup', groupValue: delivery,
                                             onChanged: (value){
                                               setState(() {
                                                 delivery=value.toString();
-                                                deliveryCharge=25;
+                                                deliveryCharge=0;
                                               });
                                             })
                                       ],
                                     ),
-                                    SizedBox(height: screenHeight*0.01,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          height: screenHeight*0.055,
-                                          width: screenWidth*0.35,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.black)
-                                          ),
-                                          child: Center(
-                                            child: Text("${selectedDate.toLocal()}".split(' ')[0],
-                                            style: GoogleFonts.inter(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 11,
-                                              color: Colors.black
-                                            ),),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () => _selectDate(context),
-                                          child: Text('Change date'),
-                                        ),
-                                      ],
-                                    )
-
-                                  ],
-                                ),
-                              ),
-                            )),
-                        SizedBox(height: screenHeight*0.02,),
-                        Container(
-                            width: screenWidth,
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(4))
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.local_grocery_store_outlined,size: screenWidth*0.08,),
-                                        SizedBox(width: screenWidth*0.03,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Store Pickup',style: GoogleFonts.inter(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black
-                                            ),),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Radio(value: 'store pickup', groupValue: delivery,
-                                        onChanged: (value){
-                                          setState(() {
-                                            delivery=value.toString();
-                                            deliveryCharge=0;
-                                          });
-                                        })
                                   ],
                                 ),
                               ),
@@ -508,7 +523,7 @@ class _MyCartState extends State<MyCart> {
                         (){
                           PaymentService().checkOut(context,
                               '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
-                          delivery,(totalPrice+deliveryCharge+((9/totalPrice)*100)).toStringAsFixed(2),items);
+                          "$delivery,requested delivery date : ${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",(totalPrice+deliveryCharge+((9/totalPrice)*100)).toStringAsFixed(2),items);
                         }, screenWidth, screenHeight*0.05),
                     SizedBox(height: screenHeight*0.04,),
                   ],
@@ -574,6 +589,7 @@ class _MyCartState extends State<MyCart> {
      });
    }
    DateTime selectedDate = DateTime.now();
+   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
    Future<void> _selectDate(BuildContext context) async {
      final DateTime? picked = await showDatePicker(
          context: context,
@@ -585,5 +601,15 @@ class _MyCartState extends State<MyCart> {
          selectedDate = picked;
        });
      }
+   }
+   Future<void> _selectTime(BuildContext context) async {
+     final TimeOfDay ? picked = await showTimePicker(
+       context: context,
+       initialTime: selectedTime,
+     );
+     if (picked != null)
+       setState(() {
+         selectedTime = picked;
+       });
    }
 }
