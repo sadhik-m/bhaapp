@@ -124,6 +124,7 @@ print(values);
     },
       SetOptions(merge: true),
     ).then((value) {
+
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'Order placed successfully');
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()));
