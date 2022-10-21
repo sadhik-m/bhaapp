@@ -11,7 +11,7 @@ import '../../dashboard/dash_board_screen.dart';
 class RegisterService{
   CollectionReference users = FirebaseFirestore.instance.collection('customers');
 
-  Future<void> addUser(String name,String email,String phone,String country,String address,BuildContext context,String lattitude,String longitude) async{
+  Future<void> addUser(String name,String email,String phone,String country,String address,BuildContext context,String lattitude,String longitude,String pincode) async{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String uid=preferences.getString('uid')??'';
@@ -35,7 +35,7 @@ class RegisterService{
               print("data merged with existing data!");
                FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses')
                   .add(
-                AddressModel(name: name, mobile: phone, email: email, country: country, address: address, type: '', id: '').toJson(),
+                AddressModel(name: name, mobile: phone, email: email, country: country, address: address, type: '', id: '',pinCode: pincode).toJson(),
               ).then((value) {
                  FirebaseFirestore.instance.collection('customers').doc(uid).set({
                    'defualtAddressId':value.id.toString()

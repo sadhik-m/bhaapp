@@ -35,7 +35,8 @@ getVendorShopData()async{
               closeTime: "${documentSnapshot['closeTime.${'hour'}']}:${documentSnapshot['closeTime.${'minute'}']}",
               openTime: "${documentSnapshot['openTime.${'hour'}']}:${documentSnapshot['openTime.${'minute'}']}",
               phone: documentSnapshot['mobile'],
-              email: documentSnapshot['email'])
+              email: documentSnapshot['email'],
+          shopType: documentSnapshot['shopType'])
         );
       });
     } else {

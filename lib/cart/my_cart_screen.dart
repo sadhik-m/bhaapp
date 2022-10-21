@@ -7,6 +7,7 @@ import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/product/widget/benefit_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -265,24 +266,26 @@ class _MyCartState extends State<MyCart> {
                                           ],
                                         ),
                                         SizedBox(height: screenHeight*0.01,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        Column(
+
                                           children: [
                                             Row(
                                               children: [
-                                                Container(
-                                                  height: screenHeight*0.035,
-                                                  width: screenWidth*0.25,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(color: Colors.black)
-                                                  ),
-                                                  child: Center(
-                                                    child: Text("${DateFormat('d MMM y').format(selectedDate)}",
-                                                      style: GoogleFonts.inter(
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 11,
-                                                          color: Colors.black
-                                                      ),),
+                                                Expanded(
+                                                  child: Container(
+                                                    height: screenHeight*0.035,
+                                                    //width: screenWidth*0.25,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.black)
+                                                    ),
+                                                    child: Center(
+                                                      child: Text("${DateFormat('d MMM y').format(selectedDate)}",
+                                                        style: GoogleFonts.inter(
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 11,
+                                                            color: Colors.black
+                                                        ),),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(width: screenWidth*0.02,),
@@ -290,24 +293,33 @@ class _MyCartState extends State<MyCart> {
                                                     onTap: (){
                                                       _selectDate(context);
                                                     },
-                                                    child: Icon(Icons.date_range,color: Colors.blue,)),
+                                                    child: Icon(Icons.date_range,color: Colors.black,)),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                Text("(Weekly off day : $offDay)",
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.grey
+                                                ),)
                                               ],
                                             ),
+                                            SizedBox(height: screenHeight*0.01,),
                                             Row(
                                               children: [
-                                                Container(
-                                                  height: screenHeight*0.035,
-                                                  width: screenWidth*0.25,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(color: Colors.black)
-                                                  ),
-                                                  child: Center(
-                                                    child: Text("${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
-                                                      style: GoogleFonts.inter(
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 11,
-                                                          color: Colors.black
-                                                      ),),
+                                                Expanded(
+                                                  child: Container(
+                                                    height: screenHeight*0.035,
+                                                   // width: screenWidth*0.25,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.black)
+                                                    ),
+                                                    child: Center(
+                                                      child: Text("${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                                        style: GoogleFonts.inter(
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 11,
+                                                            color: Colors.black
+                                                        ),),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(width: screenWidth*0.02,),
@@ -315,7 +327,34 @@ class _MyCartState extends State<MyCart> {
                                                     onTap: (){
                                                       _selectTime(context);
                                                     },
-                                                    child: Icon(Icons.access_time,color: Colors.blue,)),
+                                                    child: Icon(Icons.access_time,color: Colors.black,)),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                Row(
+                                                  children: [
+                                                    Text("(Open:$openTime",
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(int.parse(openTime)<12 || int.parse(openTime)>23?
+                                                      'am':'pm',
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(",Close:$closeTime",
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(int.parse(closeTime)<12 || int.parse(closeTime)>23?
+                                                    'am)':'pm)',
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                  ],
+                                                )
                                               ],
                                             )
 
@@ -557,11 +596,59 @@ class _MyCartState extends State<MyCart> {
          });
        });
      });
+    getShopTiming();
+   }
+   String offDay='';
+   String openTime='';
+   String closeTime='';
+   getShopTiming()async{
+     SharedPreferences preferences=await SharedPreferences.getInstance();
+     String vendorDocId=preferences.getString('vendorDocId')??'';
+     await FirebaseFirestore.instance
+         .collection('vendors')
+         .doc(vendorDocId)
+         .get()
+         .then((DocumentSnapshot documentSnapshot) {
+       if (documentSnapshot.exists) {
+         setState(() {
+           offDay=documentSnapshot['weeklyOffDay'].toString();
+           openTime=documentSnapshot['openTime.${'hour'}'].toString();
+           closeTime=documentSnapshot['closeTime.${'hour'}'].toString();
+           if(isWeekend(DateTime.now())==false){
+             if(DateTime.now().hour < int.parse(closeTime) && DateTime.now().hour > int.parse(openTime)){
+               setState(() {
+                 selectedDate=DateTime.now();
+                 selectedTime = TimeOfDay(hour: DateTime.now().hour, minute: 00);
+               });
+             }else if(DateTime.now().hour < int.parse(closeTime) && DateTime.now().hour < int.parse(openTime)){
+               selectedDate=DateTime.now();
+               selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+             }else if(DateTime.now().hour > int.parse(closeTime)){
+               selectedDate=DateTime.now().add(const Duration(days: 1));
+               selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+             }
+
+           }else{
+             setState(() {
+               selectedDate=DateTime.now().add(const Duration(days: 1));
+               selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+             });
+           }
+
+
+         });
+       } else {
+         print('Document does not exist on the database');
+       }
+     });
      setState(() {
-       print("IIIITTTTT $items");
+       print("IIIITTTTT $offDay");
        loaded=true;
      });
    }
+
+
+
    clearCart()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      setState(() {
@@ -583,33 +670,56 @@ class _MyCartState extends State<MyCart> {
          .then((DocumentSnapshot doc) {
 
        setState(() {
-         addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString());
+         addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),pinCode: doc['pinCode']);
        });
 
      });
    }
-   DateTime selectedDate = DateTime.now();
-   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
+   late DateTime selectedDate;
+   late TimeOfDay selectedTime;
    Future<void> _selectDate(BuildContext context) async {
      final DateTime? picked = await showDatePicker(
          context: context,
          initialDate: selectedDate,
-         firstDate: DateTime(2015, 8),
+         firstDate: DateTime.now(),
          lastDate: DateTime(2101));
      if (picked != null && picked != selectedDate) {
-       setState(() {
-         selectedDate = picked;
-       });
+       if(isWeekend(picked)){
+         Fluttertoast.showToast(msg: 'Shop is closed on the selected day,please choose another date');
+       }else{
+         setState(() {
+           selectedDate = picked;
+         });
+       }
+
      }
    }
+
+   bool isWeekend(DateTime date) {
+     DateTime tempDate = DateFormat("yyyy-MM-dd hh:mm:ss").parse(date.toString());
+     DateFormat dateFormat = DateFormat("EEE");
+     String string = dateFormat.format(tempDate);
+     print(string);
+   if (string.toLowerCase() == offDay.toLowerCase()) return true;
+   return false;
+   }
+
+
+
    Future<void> _selectTime(BuildContext context) async {
      final TimeOfDay ? picked = await showTimePicker(
        context: context,
        initialTime: selectedTime,
+       initialEntryMode: TimePickerEntryMode.dialOnly
      );
-     if (picked != null)
-       setState(() {
-         selectedTime = picked;
-       });
+     if (picked != null) {
+       if(picked.hour > int.parse(closeTime) || picked.hour < int.parse(openTime)){
+         Fluttertoast.showToast(msg: 'Shop is closed on the selected time,please choose another time');
+       }else{
+         setState(() {
+           selectedTime = picked;
+         });
+       }
+     }
    }
 }

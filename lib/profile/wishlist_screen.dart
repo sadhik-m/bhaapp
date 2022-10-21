@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cart/my_cart_screen.dart';
 import '../product/model/cartModel.dart';
 
 class WishListScreen extends StatefulWidget {
@@ -57,7 +58,53 @@ class _WishListScreenState extends State<WishListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar('Wish List',
-          [],true),
+          [Stack(
+            alignment: Alignment.center,
+            children: [
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder:
+                      (context)=>MyCart(show_back: true,))).then((value) {
+                    setState(() {
+                      //getCartList();
+                    });
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:18.0),
+                  child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
+                    height: 24,width: 24,),
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: DashBoardScreen.cartValueNotifier.cartValueNotifier,
+                builder: (context, value, child) {
+                  return Positioned(
+                    top: 8,
+                    //bottom: 0,
+                    right: 8,
+                    child:value.toString()!='0'?
+                    Container(
+                      height: 14,width: 14,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: splashBlue
+                      ),
+                      child: Center(
+                        child: Text(
+                          value.toString(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8
+                          ),
+                        ),
+                      ),
+                    ):Container(),
+                  );
+                },
+              )
+            ],
+          )],true),
       body:loaded? Container(
         height: screenHeight,
         width: screenWidth,

@@ -6,11 +6,38 @@ import 'package:bhaapp/product/product_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class NewProducts extends StatelessWidget {
+import '../cart/my_cart_screen.dart';
+import '../product/model/cartModel.dart';
+
+class NewProducts extends StatefulWidget {
 
  const NewProducts({Key? key}) : super(key: key);
 
+  @override
+  State<NewProducts> createState() => _NewProductsState();
+}
+
+class _NewProductsState extends State<NewProducts> {
+  List<CartModel> cartHomeList=[];
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        List<CartModel> cartList=CartModel.decode(cartString);
+        DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+        cartHomeList=CartModel.decode(cartString);
+      }
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCartList();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).snapshots();
@@ -19,7 +46,53 @@ class NewProducts extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar('Products',
-          [],true),
+          [Stack(
+            alignment: Alignment.center,
+            children: [
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder:
+                      (context)=>MyCart(show_back: true,))).then((value) {
+                    setState(() {
+                      //getCartList();
+                    });
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:18.0),
+                  child: Image.asset('assets/home/shopping-bag-2.png',color: Colors.black,
+                    height: 24,width: 24,),
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: DashBoardScreen.cartValueNotifier.cartValueNotifier,
+                builder: (context, value, child) {
+                  return Positioned(
+                    top: 8,
+                    //bottom: 0,
+                    right: 8,
+                    child:value.toString()!='0'?
+                    Container(
+                      height: 14,width: 14,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: splashBlue
+                      ),
+                      child: Center(
+                        child: Text(
+                          value.toString(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8
+                          ),
+                        ),
+                      ),
+                    ):Container(),
+                  );
+                },
+              )
+            ],
+          )],true),
       body: Container(
         height: screenHeight,
         width: screenWidth,
@@ -69,7 +142,7 @@ class NewProducts extends StatelessWidget {
                             quantity: data['priceUnit'],
                             prodId: document.id.toString(),
                             fav: favouriteList!.contains(document.id.toString()),
-                          cartHomeList: [],);
+                          cartHomeList: cartHomeList,);
                       }).toList(),
 
                     ),

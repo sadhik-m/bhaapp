@@ -9,9 +9,11 @@ import 'package:bhaapp/shop_search/view/widgets/shop_listview_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/constants/colors.dart';
 import '../dashboard/dash_board_screen.dart';
+import '../product/model/cartModel.dart';
 
 class ProductSearchScreen extends StatefulWidget {
 
@@ -48,11 +50,24 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
       loaded=true;
     });
   }
+  List<CartModel> cartHomeList=[];
+  getCartList()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartString = await prefs.getString('cartList')??'null';
+    setState(() {
+      if(cartString != 'null'){
+        List<CartModel> cartList=CartModel.decode(cartString);
+        DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+        cartHomeList=CartModel.decode(cartString);
+      }
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 getInitialList();
+getCartList();
   }
 
   void searchOperation(String searchText) {
@@ -149,7 +164,8 @@ getInitialList();
                 screenWidth,
                 screenHeight,
                 searchList,
-                context
+                context,
+                cartHomeList
               ))
             ],
           ),

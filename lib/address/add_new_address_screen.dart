@@ -24,6 +24,7 @@ class AddAddress extends StatefulWidget {
 class _AddAddressState extends State<AddAddress> {
   String  address='';
   String  country='';
+  String  pincode='';
   List<AddressModel> addressList=[];
 bool isphone=true;
 bool loaded=false;
@@ -175,7 +176,13 @@ bool loaded=false;
                 ),
               ),
               SizedBox(height: screenHeight*0.015,),
-              textField('Address',TextInputType.streetAddress,(value){
+              textField('Address*',TextInputType.streetAddress,(value){
+                setState(() {
+                  address=value;
+                });
+              }),
+              SizedBox(height: screenHeight*0.015,),
+              textField('Pin Code*',TextInputType.streetAddress,(value){
                 setState(() {
                   address=value;
                 });
@@ -190,11 +197,13 @@ bool loaded=false;
                  Fluttertoast.showToast(msg: 'Enter Email');
                }else if(address.isEmpty){
                  Fluttertoast.showToast(msg: 'Enter address');
+               }else if(pincode.isEmpty){
+                 Fluttertoast.showToast(msg: 'Enter addrpin codeess');
                }else{
                  setState(() {
-                   addressList.add(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: ''));
+                   addressList.add(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: '',pinCode:pincode ));
                  });
-                 AddNewAddress().addAddress(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: ''), context).then((value) {
+                 AddNewAddress().addAddress(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: '',pinCode: pincode), context).then((value) {
                    Navigator.of(context).pop();
                  });
                }

@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../dashboard/dash_board_screen.dart';
+import '../../product/model/cartModel.dart';
 import '../../product/product_detail_screen.dart';
 import '../model/productModel.dart';
 
-SingleChildScrollView prodList(double screenWidth,double screenHeight, List<ProductModel> searchList,BuildContext context){
+SingleChildScrollView prodList(double screenWidth,double screenHeight, List<ProductModel> searchList,BuildContext context,List<CartModel> cartlist){
   return SingleChildScrollView(
     child: Container(
       width: screenWidth,
@@ -27,7 +28,7 @@ SingleChildScrollView prodList(double screenWidth,double screenHeight, List<Prod
               quantity: data.priceUnit,
               prodId: data.prodDocId.toString(),
               fav: favouriteList!.contains(data.prodDocId.toString()),
-            cartHomeList: [],);
+            cartHomeList: cartlist,);
         }).toList(),
 
       ),

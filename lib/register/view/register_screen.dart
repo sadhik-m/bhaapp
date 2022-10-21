@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String ? email;
   String   country='in';
   String ? address;
+  String ? pincode;
   var mobController=TextEditingController();
   var emailController=TextEditingController();
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
@@ -161,6 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         address=value;
                       });
                     }),
+                    SizedBox(height: screenHeight*0.015,),
+                    textField('Pin Code*',TextInputType.number,(value){
+                      setState(() {
+                        pincode=value;
+                      });
+                    }),
 
                   ],
                 ),
@@ -175,9 +182,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Fluttertoast.showToast(msg: 'Enter valid email');
               }else if(address==null) {
                 Fluttertoast.showToast(msg: 'Enter valid address');
+              }else if(pincode==null) {
+                Fluttertoast.showToast(msg: 'Enter valid pin code');
               }else{
                 RegisterService().addUser(name!, emailController.text, mobController.text, country,
-                    address!,context,current_lat.toString(),current_long.toString());
+                    address!,context,current_lat.toString(),current_long.toString(),pincode!);
               }
             }, screenWidth, screenHeight*0.05
             )
