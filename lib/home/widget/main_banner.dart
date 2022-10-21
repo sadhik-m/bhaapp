@@ -1,10 +1,12 @@
 import 'package:bhaapp/home/model/vendorShopModel.dart';
+import 'package:bhaapp/home/service/rateVendor.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class mainBanner extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -14,6 +16,9 @@ class mainBanner extends StatefulWidget {
 
 class _CarouselWithIndicatorState extends State<mainBanner> {
 List<VendorShopModel> shopData=[];
+int ratingCount=0;
+double ratingSum=0;
+double ratingSummary=0;
 
 getVendorShopData()async{
   SharedPreferences preferences=await SharedPreferences.getInstance();
@@ -44,10 +49,34 @@ getVendorShopData()async{
     }
   });
 }
+getRatingData()async{
+  SharedPreferences preferences=await SharedPreferences.getInstance();
+  String vendorDocId=preferences.getString('vendorDocId')??'';
+  await FirebaseFirestore.instance.collection('vendors').doc(vendorDocId).collection('rating').get()
+      .then((QuerySnapshot querySnapshot) {
+        setState(() {
+          setState(() {
+            ratingCount=querySnapshot.docs.length;
+            print("count $ratingCount");
+          });
+        });
+    querySnapshot.docs.forEach((doc) {
+      setState(() {
+        ratingSum+=double.parse(doc['rating']);
+      });
+    });
+  });
+  setState(() {
+    ratingSummary=ratingSum/ratingCount;
+  });
+
+
+}
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getRatingData();
     getVendorShopData();
   }
   @override
@@ -132,7 +161,32 @@ getVendorShopData()async{
                                       ),)
                                   ],
                                 ),
+
+                              ],
+                            ),
+                            SizedBox(height: screenHeight*0.005,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RatingBar.builder(
+                                  initialRating: ratingSummary,
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: screenHeight*0.028,
+                                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    showRatingDialog(context,rating.toString());
+                                    print(rating);
+                                  },
+                                ),
                                 Row(
+
                                   children: [
                                     InkWell(
                                       onTap: (){
@@ -158,10 +212,10 @@ getVendorShopData()async{
                                     InkWell(
                                       onTap: (){
                                         launchUrl(Uri(
-                                            scheme: 'mailto',
-                                            path: shopData[0].email,
-                                            query: 'Hello',
-                                            ),
+                                          scheme: 'mailto',
+                                          path: shopData[0].email,
+                                          query: 'Hello',
+                                        ),
                                         );
                                       },
                                       child: Container(
@@ -191,6 +245,56 @@ getVendorShopData()async{
           ),
         ));
   }
+showRatingDialog(BuildContext context,String rating) {
+  String comment='';
+  // set up the button
+  Widget okButton = TextButton(
+    child: Text("Rate Now"),
+    onPressed: () {
+      RateVendor().addRating(context, rating, comment);
+      Navigator.of(context).pop();
+    },
+  );
+  Widget cancelButton = TextButton(
+    child: Text("Not Now"),
+    onPressed: () {
+      Navigator.of(context).pop();
+      print(comment);
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Rate Vendor"),
+    content: TextField(
+      onChanged: (v){
+        setState(() {
+          comment=v;
+        });
+      },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(4))
+        ),
+        hintText: 'Comments if any',
+
+      ),
+    ),
+    actions: [
+      cancelButton,
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
 }
 
 

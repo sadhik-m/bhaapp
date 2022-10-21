@@ -5,6 +5,7 @@ import 'package:bhaapp/register/view/widget/text_field.dart';
 import 'package:bhaapp/shop_search/model/vendorModel.dart';
 import 'package:bhaapp/shop_search/view/shopSerachVendorId.dart';
 import 'package:bhaapp/shop_search/view/shop_result_screen.dart';
+import 'package:bhaapp/shop_search/view/widgets/shopTile.dart';
 import 'package:bhaapp/shop_search/view/widgets/shop_list_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -286,75 +287,10 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     onTap: (){
                       saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId);
                     },
-                    child: Container(
-                       margin: EdgeInsets.only(bottom: 10),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                          child: Container(
-                            width: 1000.0,
-                            decoration: BoxDecoration(
-                              color: const Color(0xff7c94b6),
-                              image: new DecorationImage(
-                                fit: BoxFit.cover,
-                                colorFilter:
-                                ColorFilter.mode(Colors.black.withOpacity(0.5),
-                                    BlendMode.dstATop),
-                                image: new NetworkImage(
-                                  vendorTypeList[index].image ,
-                                ),
-
-                              ),
-
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: screenWidth*0.04,vertical: screenHeight*0.01),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(vendorTypeList[index].shopName,
-                                        style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            fontSize: 18
-                                        ),),
-                                      SizedBox(height: screenHeight*0.003,),
-                                      Text(vendorTypeList[index].address,
-                                        style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white,
-                                            fontSize: 12
-                                        ),),
-                                      SizedBox(height: screenHeight*0.01,),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Image.asset('assets/home/clock.png',
-                                                width: 14,height: 14,),
-                                              SizedBox(width: screenWidth*0.013,),
-                                              Text('${vendorTypeList[index].openTime} AM - ${vendorTypeList[index].closeTime} PM',
-                                                style: GoogleFonts.inter(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 10
-                                                ),)
-                                            ],
-                                          ),
-
-                                        ],
-                                      ),
-                                      SizedBox(height: screenHeight*0.01,),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
+                    child: ShopDataListTile(
+                      vendorTypeList: vendorTypeList[index],
+                      screenHeight: screenHeight,
+                      screenWidth: screenWidth,
                     ),
                   );
                 }),
@@ -386,7 +322,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     });
     categoryList.add('All');
     await FirebaseFirestore.instance
-        .collection('vendors').where('deliveryAreas',arrayContains: pinCode)
+        .collection('vendors').where('deliveryAreas',arrayContains: '560064')//pinCode)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

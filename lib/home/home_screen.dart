@@ -20,6 +20,7 @@ import '../cart/service/cartLengthService.dart';
 import '../common/widgets/loading_indicator.dart';
 import '../dashboard/dash_board_screen.dart';
 import '../product/model/cartModel.dart';
+import 'model/ratingModel.dart';
 import 'newProductsViewAll.dart';
 
 class HomeScreen extends StatefulWidget {
