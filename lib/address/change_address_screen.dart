@@ -5,9 +5,12 @@ import 'package:bhaapp/address/services/getAddressList.dart';
 import 'package:bhaapp/address/widget/address_tile.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
+import 'package:bhaapp/common/widgets/loading_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../shop_search/view/shop_search_screen.dart';
 
 class ChangeAddress extends StatefulWidget {
   const ChangeAddress({Key? key}) : super(key: key);
@@ -54,15 +57,22 @@ class _ChangeAddressState extends State<ChangeAddress> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return addressTile(screenWidth, screenHeight, (){
-                          setState(() {
-                            AddNewAddress().makeDefualt(snapshot.data![index].id);
+
                             selectedAddressIndex=index;
-                          });
+                          showLoadingIndicator(context);
+                            AddNewAddress().makeDefualt(snapshot.data![index].id).then((value){
+                              Navigator.of(context).pop();
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+                                  (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
+                            });
+
+
                         },index,
                         snapshot.data![index].name,
                         snapshot.data![index].address,
                         snapshot.data![index].country,
-                        snapshot.data![index].mobile
+                        snapshot.data![index].mobile,
+                        snapshot.data![index].pinCode,
                         );
                       },
                     );

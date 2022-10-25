@@ -41,7 +41,8 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                    name: doc['productName'],
                    salePrice: doc['salesPrice'].toString(),
                    regularPrice: doc['regularPrice'].toString(),
-                   priceUnit: doc['priceUnit']));
+                   priceUnit: doc['priceUnit'],
+               subCategory: doc['subCategory']));
 
         });
       });

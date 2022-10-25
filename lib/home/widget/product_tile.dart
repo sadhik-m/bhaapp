@@ -192,7 +192,7 @@ class _ProductTileState extends State<ProductTile> {
     );
   }
   addToCart(String prodId,int prodQuantity,List<CartModel>cartHomeList)async{
-    showLoadingIndicator(context);
+    //showLoadingIndicator(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedData=CartModel.encode(cartHomeList);
     if(encodedData.contains(prodId)){
@@ -201,18 +201,20 @@ class _ProductTileState extends State<ProductTile> {
         setState(() {
           cartHomeList[index].productQuantity=cartHomeList[index].productQuantity+prodQuantity;
         });
+        Fluttertoast.showToast(msg: 'item quantity in cart changed to ${cartHomeList[index].productQuantity+prodQuantity}');
       }
     }else{
       setState(() {
         cartHomeList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
+        Fluttertoast.showToast(msg: "item added to cart");
       });
     }
     setState(() {
       DashBoardScreen.cartValueNotifier.updateNotifier(cartHomeList.length);
     });
     prefs.setString('cartList',CartModel.encode(cartHomeList) ).then((value){
-      Navigator.of(context).pop();
-      Fluttertoast.showToast(msg: 'item added to cart');
+      //Navigator.of(context).pop();
+
     });
   }
   toggleFavourites(String productID)async{

@@ -105,28 +105,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         pageIndex = 0;
                       });
                       }
-                    ,0, 'home'),
+                    ,0, 'home',height),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 1;
                   });
                 }
-                ,1, 'package'),
+                ,1, 'package',height),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 2;
                   });
                 }
-                ,2, 'user-check-2'),
+                ,2, 'user-check-2',height),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 3;
                   });
                 }
-                ,3, 'shopping-bag'),
+                ,3, 'shopping-bag',height),
 
           ],
         ),

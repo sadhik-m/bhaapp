@@ -182,9 +182,9 @@ bool loaded=false;
                 });
               }),
               SizedBox(height: screenHeight*0.015,),
-              textField('Pin Code*',TextInputType.streetAddress,(value){
+              textField('Pin Code*',TextInputType.number,(value){
                 setState(() {
-                  address=value;
+                  pincode=value;
                 });
               }),
               SizedBox(height: screenHeight*0.1,),
@@ -198,7 +198,7 @@ bool loaded=false;
                }else if(address.isEmpty){
                  Fluttertoast.showToast(msg: 'Enter address');
                }else if(pincode.isEmpty){
-                 Fluttertoast.showToast(msg: 'Enter addrpin codeess');
+                 Fluttertoast.showToast(msg: 'Enter pin code');
                }else{
                  setState(() {
                    addressList.add(AddressModel(name: nameController.text, mobile: mobController.text, email: emailController.text, country: country, address: address, type: 'home',id: '',pinCode:pincode ));

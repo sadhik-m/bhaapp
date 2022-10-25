@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../common/constants/colors.dart';
 
 Column addressTile(double width,double height,VoidCallback ontap,int index,
-    String name,String address,String country,String phone){
+    String name,String address,String country,String phone,String pincode){
   return Column(
     children: [
       Row(
@@ -40,7 +40,7 @@ Column addressTile(double width,double height,VoidCallback ontap,int index,
               SizedBox(height: height*0.005,),
               Container(
                 width: width*0.45,
-                child: Text('$address,$country\nph : $phone',style: GoogleFonts.inter(
+                child: Text('$address,$country\nph : $phone\npin : $pincode',style: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                     color: Colors.black.withOpacity(0.6)

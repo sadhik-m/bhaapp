@@ -3,6 +3,7 @@ import 'package:bhaapp/home/service/rateVendor.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -168,22 +169,29 @@ getRatingData()async{
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RatingBar.builder(
-                                  initialRating: ratingSummary,
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemSize: screenHeight*0.028,
-                                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    showRatingDialog(context,rating.toString());
-                                    print(rating);
+                                InkWell(
+                                  onTap: (){
+                                    showRatingDialog(context,screenHeight);
                                   },
+                                  child: IgnorePointer(
+                                    child: RatingBar.builder(
+                                      initialRating: ratingSummary,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: screenHeight*0.028,
+                                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      onRatingUpdate: (rating) {
+
+                                        print(rating);
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 Row(
 
@@ -245,14 +253,20 @@ getRatingData()async{
           ),
         ));
   }
-showRatingDialog(BuildContext context,String rating) {
+showRatingDialog(BuildContext context,double height) {
   String comment='';
+  String vendorRating='';
   // set up the button
   Widget okButton = TextButton(
     child: Text("Rate Now"),
     onPressed: () {
-      RateVendor().addRating(context, rating, comment);
-      Navigator.of(context).pop();
+      if(vendorRating==''){
+        Fluttertoast.showToast(msg: 'choose a rating');
+      }else{
+        RateVendor().addRating(context, vendorRating, comment);
+        Navigator.of(context).pop();
+      }
+
     },
   );
   Widget cancelButton = TextButton(
@@ -260,25 +274,54 @@ showRatingDialog(BuildContext context,String rating) {
     onPressed: () {
       Navigator.of(context).pop();
       print(comment);
+      print(vendorRating);
     },
   );
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16))
+    ),
     title: Text("Rate Vendor"),
-    content: TextField(
-      onChanged: (v){
-        setState(() {
-          comment=v;
-        });
-      },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4))
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RatingBar.builder(
+          initialRating: 0,
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemSize: height*0.042,
+          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+              setState(() {
+                vendorRating=rating.toString();
+              });
+            print(rating);
+          },
         ),
-        hintText: 'Comments if any',
+        SizedBox(height: height*0.02,),
+        TextField(
+          onChanged: (v){
+            setState(() {
+              comment=v;
+            });
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(4))
+            ),
+            hintText: 'Comments if any',
 
-      ),
+          ),
+        ),
+      ],
     ),
     actions: [
       cancelButton,

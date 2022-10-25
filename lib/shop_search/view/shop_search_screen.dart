@@ -1,18 +1,10 @@
-import 'package:bhaapp/common/widgets/appBar.dart';
-import 'package:bhaapp/common/widgets/black_button.dart';
-import 'package:bhaapp/register/view/widget/country_picker.dart';
-import 'package:bhaapp/register/view/widget/text_field.dart';
-import 'package:bhaapp/shop_search/model/vendorModel.dart';
-import 'package:bhaapp/shop_search/view/shopSerachVendorId.dart';
-import 'package:bhaapp/shop_search/view/shop_result_screen.dart';
+
 import 'package:bhaapp/shop_search/view/widgets/shopTile.dart';
-import 'package:bhaapp/shop_search/view/widgets/shop_list_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants/colors.dart';
 import '../../dashboard/dash_board_screen.dart';
@@ -91,7 +83,35 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
         child:loaded==false?
         const Center(
           child: Text("Loading..."),
-        ): Container(
+        ):
+            vendorInitialList.isEmpty?
+             Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                   child: Text("No shop available on your default address,change your address and try again!",
+                   textAlign: TextAlign.center,
+                   style: GoogleFonts.inter(
+                       fontWeight: FontWeight.w600,
+                       color: Colors.black,
+                       fontSize: 18
+                   ),),
+                 ),
+                 SizedBox(height: 10,),
+                 ElevatedButton(onPressed: (){
+                   Navigator.pushNamed(context, '/change_address').then((value){
+                     setState(() {
+                       print("JUIOP");
+                       loaded=false;
+                       loadInitialList();
+                     });
+
+                   });
+                 }, child: Text('Change Address'))
+               ],
+             ):
+        Container(
           height: screenHeight,
           width: screenWidth,
           padding: EdgeInsets.symmetric(
@@ -303,6 +323,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
   }
 
   loadInitialList()async{
+    categoryList.clear();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String ? uid=prefs.getString('uid');
     String ? addressId;
@@ -322,7 +343,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     });
     categoryList.add('All');
     await FirebaseFirestore.instance
-        .collection('vendors').where('deliveryAreas',arrayContains: '560064')//pinCode)
+        .collection('vendors').where('deliveryAreas',arrayContains: pinCode)//pinCode)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -400,6 +421,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     preferences.setString('vendorId', vendorIds);
     preferences.setString('vendorDocId', vendorDocId);
     preferences.setString('cartList',CartModel.encode([]));
+    pageIndex = 0;
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
         (context)=>DashBoardScreen()), (route) => false);
   }

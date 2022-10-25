@@ -12,8 +12,10 @@ class RateVendor{
     String ? uid=preferences.getString('uid');
     String vendorDocId=preferences.getString('vendorDocId')??'';
 
-    await FirebaseFirestore.instance.collection('vendors').doc(vendorDocId).collection('rating')
-        .add(
+
+
+    await FirebaseFirestore.instance.collection('vendors').doc(vendorDocId).collection('rating').doc(uid)
+        .set(
       RatingModel(
         rating: rating,
         cid: uid!,
@@ -21,7 +23,7 @@ class RateVendor{
         comment: comment
       ).toJson(),
     );
-    Fluttertoast.showToast(msg: 'rating posted successfully');
+    Fluttertoast.showToast(msg: 'rating added successfully');
     return 'success';
   }
 }

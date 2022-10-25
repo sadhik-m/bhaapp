@@ -12,8 +12,8 @@ import '../cart/my_cart_screen.dart';
 import '../product/model/cartModel.dart';
 
 class NewProducts extends StatefulWidget {
-
- const NewProducts({Key? key}) : super(key: key);
+ String catName;
+  NewProducts({Key? key,required this.catName}) : super(key: key);
 
   @override
   State<NewProducts> createState() => _NewProductsState();
@@ -45,7 +45,7 @@ class _NewProductsState extends State<NewProducts> {
     var screenWidth=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBar('Products',
+      appBar: appBar(widget.catName==''?'Products':widget.catName,
           [Stack(
             alignment: Alignment.center,
             children: [
@@ -101,7 +101,8 @@ class _NewProductsState extends State<NewProducts> {
             SizedBox(height: screenHeight*0.02,),
             Expanded(child: SingleChildScrollView(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _productStream,
+                stream: widget.catName==''?FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).snapshots():
+                FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('subCategory',isEqualTo: widget.catName).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return SizedBox.shrink();

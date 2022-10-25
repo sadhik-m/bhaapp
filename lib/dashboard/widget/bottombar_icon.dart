@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../cart/service/cartLengthService.dart';
 final stream_controller = StreamController<bool>();
-Column BottomIcon(VoidCallback onTap,int index,String image){
+Column BottomIcon(VoidCallback onTap,int index,String image,double height){
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -22,8 +22,8 @@ Column BottomIcon(VoidCallback onTap,int index,String image){
               icon:  Image.asset(
                 'assets/dashboard/$image.png',
                 color:pageIndex == index ?  Colors.white:bottom_grey,
-                height: 24,
-                width: 24,
+                height: height*0.035,
+                width: height*0.035,
               )
           ),
           if(index==3)
