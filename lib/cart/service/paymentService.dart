@@ -85,6 +85,7 @@ class PaymentService{
     try{
       CashfreePGSDK.doPayment(inputParams)
           .then((values) => values?.forEach((key, value) {
+
 print(values);
         if(key=='txStatus'){
           if(values['txStatus'] =='SUCCESS'){
@@ -102,6 +103,7 @@ print(values);
       print("ERROR +++++++++++++++ $e");
     }
   }
+
   saveOrderInfo(BuildContext context,String orderId,String deliveryAddress,String deliveryOption,String orderAmount,
       String paymentMode,String txnId,String txTime,Map<String, int> items,String uid,String vid)async{
 

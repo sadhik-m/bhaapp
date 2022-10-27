@@ -85,7 +85,7 @@ getRatingData()async{
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
     return Container(
-      height: screenHeight*0.18,
+      //height: screenHeight*0.18,
         width: screenWidth,
         child: shopData.isEmpty?
         Center(child: CircularProgressIndicator(),):
