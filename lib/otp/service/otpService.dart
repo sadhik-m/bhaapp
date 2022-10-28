@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../login/service/loginService.dart';
+
 class OtpService{
  signInWithPhoneNumber(String verificationId,String enteredOtp,BuildContext context) async {
    showLoadingIndicator(context);
@@ -23,13 +25,21 @@ class OtpService{
         print('Authentication successful${value.user!.uid}');
         prefs.setString("uid", value.user!.uid);
         prefs.setString('img','');
-        RegisterService().checkIfUserExists(value.user!.uid).then((value) {
-          Navigator.of(context).pop();
-          if(value==true){
-            setAsLoggedIn(true);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
-            Fluttertoast.showToast(msg: 'Logged in successfully');
+        RegisterService().checkIfUserExists(value.user!.uid).then((values) {
+          if(values==true){
+            RegisterService().checkIfUserActive(value.user!.uid).then((active) {
+              Navigator.of(context).pop();
+              if(active){
+                setAsLoggedIn(true);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
+                Fluttertoast.showToast(msg: 'Logged in successfully');
+              }else{
+                LoginService().showAccountStatusDialog(context);
+              }
+            });
+
           }else{
+            Navigator.of(context).pop();
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
             Fluttertoast.showToast(msg: 'Please register');
           }

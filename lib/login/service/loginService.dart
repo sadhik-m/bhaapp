@@ -11,7 +11,7 @@ import '../../dashboard/dash_board_screen.dart';
 import '../../register/services/registerService.dart';
 import '../../register/view/register_screen.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
-
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 class LoginService{
   fireBasePhoneAuth(String phoneNum,BuildContext context) async{
     showLoadingIndicator(context);
@@ -82,12 +82,22 @@ class LoginService{
         LoginScreen.emailId=user.email.toString();
 
         RegisterService().checkIfUserExists(user.uid).then((value) {
-          Navigator.of(context).pop();
+
           if(value==true){
-            setAsLoggedIn(true);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
-            Fluttertoast.showToast(msg: 'Logged in successfully');
+
+            RegisterService().checkIfUserActive(user!.uid).then((active) {
+              Navigator.of(context).pop();
+              if(active){
+                setAsLoggedIn(true);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
+                Fluttertoast.showToast(msg: 'Logged in successfully');
+              }else{
+                showAccountStatusDialog(context);
+              }
+            });
+
           }else{
+            Navigator.of(context).pop();
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
             Fluttertoast.showToast(msg: 'Please register');
           }
@@ -106,5 +116,53 @@ class LoginService{
   setAsLoggedIn(bool status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', status);
+  }
+  Future<void> _signOut(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool isphone=preferences.getBool('isPhone')??false;
+    if(isphone){
+      await FirebaseAuth.instance.signOut();
+    }else{
+      await _googleSignIn.signOut();
+    }
+    preferences.remove('isLoggedIn');
+    preferences.remove('vendorId');
+    pageIndex = 0;
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+        (context)=>LoginScreen()), (route) => false);
+  }
+  showAccountStatusDialog(BuildContext context) {
+
+    Widget cancelButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+
+          Navigator.of(context).pop();
+          _signOut(context);
+
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))
+      ),
+      title: Text("Your account has been suspended, contact admin for more details."),
+
+      actions: [
+        cancelButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

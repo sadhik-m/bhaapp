@@ -15,15 +15,21 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
           children: [
-            Container(
-              height: 35,
-              width: 35,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black,
-              ),
-              child: Center(
-                child: Icon(Icons.shop,color: Colors.white,),
+            InkWell(
+              onTap: (){
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+                    (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
+              },
+              child: Container(
+                height: 35,
+                width: 35,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black,
+                ),
+                child: Center(
+                  child: Icon(Icons.shopping_basket_outlined,color: Colors.white,),
+                ),
               ),
             ),
             Container(

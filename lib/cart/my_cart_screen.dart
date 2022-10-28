@@ -17,6 +17,9 @@ import '../dashboard/dash_board_screen.dart';
 import '../product/model/cartModel.dart';
 
 class MyCart extends StatefulWidget {
+  static List<CartModel> cartList=[];
+
+
   bool? show_back;
    MyCart({ this.show_back});
 
@@ -29,13 +32,14 @@ class _MyCartState extends State<MyCart> {
    bool showOption=false;
    String delivery='deliver now';
    bool loaded=false;
-   int totalItems=0;
-   double totalPrice=0;
+
    double deliveryCharge=6;
    AddressModel ? addressModel;
 
-   List<CartModel> cartList=[];
-    Map<String, int> items={};
+   int totalItems=0;
+   double totalPrice=0;
+   Map<String, int> items={};
+
 
    @override
    void initState() {
@@ -71,7 +75,7 @@ class _MyCartState extends State<MyCart> {
         height: screenHeight,
         width: screenWidth,
 
-        child: cartList.isNotEmpty?
+        child: MyCart.cartList.isNotEmpty?
         SingleChildScrollView(
           child: Column(
             children: [
@@ -82,11 +86,17 @@ class _MyCartState extends State<MyCart> {
                   horizontal: screenWidth*0.06,
                 ),
                 child: ListView.builder(
-                  itemCount: cartList.length,
+                  itemCount: MyCart.cartList.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return cartListTile(screenWidth, screenHeight,cartList[index].productId,cartList[index].productQuantity,index+1);
+                    return CartListTile(
+                        width:screenWidth,
+                        height:screenHeight,
+                        prodId:MyCart.cartList[index].productId,
+                        quantity:MyCart.cartList[index].productQuantity,
+                        index:index,
+                    );
                   },
                 ),
               ),
@@ -101,26 +111,39 @@ class _MyCartState extends State<MyCart> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Text('Total - ',style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black.withOpacity(0.8)
-                        ),),
-                        Text('$totalItems Items',style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: splashBlue
-                        ),),
-                      ],
+                    ValueListenableBuilder(
+                      valueListenable: DashBoardScreen.cartValueNotifier.cartValueNotifier,
+                      builder: (context, value, child) {
+                        return value.toString()!='0'?
+                        Row(
+                          children: [
+                            Text('Total - ',style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black.withOpacity(0.8)
+                            ),),
+                            Text('${value.toString()} Items',style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: splashBlue
+                            ),),
+                          ],
+                        ):Container();
+                      },
                     ),
                     SizedBox(width: screenWidth*0.15,),
-                    Text('\$ $totalPrice',style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        color: Colors.black
-                    ),),
+                    ValueListenableBuilder(
+                      valueListenable: DashBoardScreen.cartTotalNotifier.cartValueNotifier,
+                      builder: (context, value, child) {
+                        return value.toString()!='0'?
+                        Text('\$ ${value.toString()}',style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: Colors.black
+                        ),):Container();
+                      },
+                    ),
+
 
                   ],
                 ),
@@ -132,7 +155,7 @@ class _MyCartState extends State<MyCart> {
                 ),
                 child: Column(
                   children: [
-                    Row(
+                   /* Row(
                       children: [
                         Checkbox(
                             value: isGst,
@@ -157,7 +180,7 @@ class _MyCartState extends State<MyCart> {
                     ),
                     Divider(
                       color: Colors.black.withOpacity(0.2),
-                    ),
+                    ),*/
                     SizedBox(height: screenHeight*0.02,),
                     InkWell(
                       onTap: (){
@@ -485,85 +508,96 @@ class _MyCartState extends State<MyCart> {
                       ],
                     ),
                     SizedBox(height: screenHeight*0.01,),
+                    ValueListenableBuilder(
+                      valueListenable: DashBoardScreen.cartTotalNotifier.cartValueNotifier,
+                      builder: (context, value, child) {
+                        return value.toString()!='0'?
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Cart total',style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: Colors.black
+                                ),),
+                                Text('\$ ${value.toString()}',
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.black
+                                  ),),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight*0.01,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Tax (9%)',style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: Colors.black
+                                ),),
+                                Text('\$ ${((9/double.parse(value.toString()))*100).toStringAsFixed(2)}',
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.black
+                                  ),),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight*0.01,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Delivery charge',style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: Colors.black
+                                ),),
+                                Text('\$ $deliveryCharge',
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.black
+                                  ),),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight*0.01,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Total',style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black
+                                ),),
+                                Text((double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                      color: Colors.black
+                                  ),),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight*0.08,),
+                            blackButton('Checkout',
+                                    (){
+                                  PaymentService().checkOut(context,
+                                      '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                                      "$delivery,requested delivery date : ${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",(double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),items);
+                                }, screenWidth, screenHeight*0.05),
+                          ],
+                        ):Container();
+                      },
+                    ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Cart total',style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Colors.black
-                        ),),
-                        Text('\$ $totalPrice',
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.black
-                          ),),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight*0.01,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Tax (9%)',style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Colors.black
-                        ),),
-                        Text('\$ ${((9/totalPrice)*100).toStringAsFixed(2)}',
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.black
-                          ),),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight*0.01,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Delivery charge',style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Colors.black
-                        ),),
-                        Text('\$ $deliveryCharge',
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.black
-                          ),),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight*0.01,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Total',style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                            color: Colors.black
-                        ),),
-                        Text((totalPrice+deliveryCharge+((9/totalPrice)*100)).toStringAsFixed(2),
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: Colors.black
-                          ),),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight*0.08,),
-                    blackButton('Checkout',
-                        (){
-                          PaymentService().checkOut(context,
-                              '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
-                          "$delivery,requested delivery date : ${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",(totalPrice+deliveryCharge+((9/totalPrice)*100)).toStringAsFixed(2),items);
-                        }, screenWidth, screenHeight*0.05),
+
                     SizedBox(height: screenHeight*0.04,),
                   ],
                 ),
@@ -576,26 +610,38 @@ class _MyCartState extends State<MyCart> {
       Center(child: Text("Loading..."),),
     );
   }
+
    getCartList()async{
+
+     double totalAmount=0;
+
+
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      final String cartString = await prefs.getString('cartList')??'null';
      setState(() {
        if(cartString != 'null'){
-         cartList=CartModel.decode(cartString);
-         totalItems=cartList.length;
-         DashBoardScreen.cartValueNotifier.updateNotifier(cartList.length);
+         MyCart.cartList=CartModel.decode(cartString);
+         totalItems=MyCart.cartList.length;
+         DashBoardScreen.cartValueNotifier.updateNotifier(MyCart.cartList.length);
        }
      });
-     cartList.forEach((element) {
-       setState(() {
-         FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
-           setState(() {
-             totalPrice += (double.parse(value['salesPrice'].toString())*element.productQuantity);
-             items.addAll({'${value['sku']}':element.productQuantity});
+     if(MyCart.cartList.isNotEmpty){
+       MyCart.cartList.forEach((element) {
+         setState(() {
+           FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
+             setState(() {
+               totalAmount += (double.parse(value['salesPrice'].toString())*element.productQuantity);
+               items.addAll({'${value['sku']}':element.productQuantity});
+               DashBoardScreen.cartTotalNotifier.updateNotifier(totalAmount);
+               print("TTTTTTTTTTTTT $totalAmount");
+             });
            });
          });
        });
-     });
+       //print("TTTTTTTTTTTTT $totalAmount");
+
+     }
+
     getShopTiming();
    }
    String offDay='';
@@ -652,10 +698,10 @@ class _MyCartState extends State<MyCart> {
    clearCart()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      setState(() {
-       cartList.clear();
+       MyCart.cartList.clear();
        DashBoardScreen.cartValueNotifier.updateNotifier(0);
      });
-     prefs.setString('cartList',CartModel.encode(cartList));
+     prefs.setString('cartList',CartModel.encode(MyCart.cartList));
    }
    getDeliveryAddress()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -670,7 +716,8 @@ class _MyCartState extends State<MyCart> {
          .then((DocumentSnapshot doc) {
 
        setState(() {
-         addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),pinCode: doc['pinCode']);
+         addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),
+             pinCode: doc['pinCode'],latitude: doc['latitude'],longitude: doc['longitude']);
        });
 
      });

@@ -122,14 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       SizedBox(height: screenHeight*0.02,),
                       mainBanner(),
-                      SizedBox(height: screenHeight*0.02,),
-                      searchField(screenHeight, screenWidth,(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen())).then((value) {
-                            getCartList();
-                          });
-                      }),
+
                       SizedBox(height: screenHeight*0.024,),
                       smallBanner(),
+                      SizedBox(height: screenHeight*0.02,),
+                      searchField(screenHeight, screenWidth,(){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen())).then((value) {
+                          getCartList();
+                        });
+                      }),
                      /* SizedBox(height: screenHeight*0.02,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -186,6 +187,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),*/
+                      loaded==false?
+                      Padding(
+                        padding:  EdgeInsets.only(top: screenHeight*0.35),
+                        child: Text("Loading...."),
+                      ):
+                      initialList.isEmpty?
+                      Padding(
+                        padding:  EdgeInsets.only(top: screenHeight*0.35),
+                        child: Text('Nothing Found!'),
+                      ):
+                      Column(
+                        children: [
+                          SizedBox(height: screenHeight*0.024,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Products',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 19,
+                                    color: Colors.black
+                                ),),
+                            ],
+                          ),
+                          //SizedBox(height: screenHeight*0.024,),
+                        ],
+                      ),
                       categorisHome.isEmpty?SizedBox.shrink():
                       ListView.builder(
                         shrinkWrap: true,
@@ -268,44 +296,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: List.generate(2, (index) => productTile(screenHeight,screenWidth,(){Navigator.pushNamed(context, '/product_detail');})),
                         ),
                       )*/
-                      loaded==false?
-                      Padding(
-                        padding:  EdgeInsets.only(top: screenHeight*0.35),
-                        child: Text("Loading...."),
-                      ):
-                          initialList.isEmpty?
-                          Padding(
-                            padding:  EdgeInsets.only(top: screenHeight*0.35),
-                            child: Text('Nothing Found!'),
-                          ):
-                      Column(
+
+                     /* Column(
                         children: [
-                          SizedBox(height: screenHeight*0.024,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Products',
-                                style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black
-                                ),),
-                              InkWell(
-                                onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts(catName: '',))).then((value) {
-                                    getCartList();
-                                  });
-                                },
-                                child: Text('View All',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 10,
-                                      color: splashBlue
-                                  ),),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: screenHeight*0.024,),
+
                           SizedBox(
 
                             width: screenWidth,
@@ -336,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ],
-                      ),
+                      ),*/
                   /*StreamBuilder<QuerySnapshot>(
                     stream: _productStream,
                     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -6,10 +6,11 @@ import 'package:bhaapp/register/view/widget/country_picker.dart';
 import 'package:bhaapp/register/view/widget/text_field.dart';
 import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:geocoding/geocoding.dart';
 import '../../login/view/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -22,11 +23,11 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   String ? name;
   String ? email;
-  String   country='in';
-  String ? address;
-  String ? pincode;
+  String   country='india';
   var mobController=TextEditingController();
   var emailController=TextEditingController();
+  var addressController=TextEditingController();
+  var pinCodeController=TextEditingController();
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   @override
   void initState() {
@@ -157,17 +158,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     SizedBox(height: screenHeight*0.015,),
-                    textField('Address*',TextInputType.streetAddress,(value){
-                      setState(() {
-                        address=value;
-                      });
-                    }),
+
+                    TextField(
+                      keyboardType: TextInputType.streetAddress,
+                      onChanged:(value){} ,
+                      controller:
+                      addressController,
+                      readOnly:false,
+                      enabled: true,
+                      decoration: InputDecoration(
+                          label:Text('Address*') ,
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                          labelStyle: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            //color: label_blue
+                          )
+                      ),
+                      style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black
+                      ),
+                    ),
                     SizedBox(height: screenHeight*0.015,),
-                    textField('Pin Code*',TextInputType.number,(value){
-                      setState(() {
-                        pincode=value;
-                      });
-                    }),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      onChanged:(value){} ,
+                      controller:
+                      pinCodeController,
+                      readOnly:false,
+                      enabled: true,
+                      decoration: InputDecoration(
+                          label:Text('Pin Code*') ,
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                          labelStyle: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            //color: label_blue
+                          )
+                      ),
+                      style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black
+                      ),
+                    ),
 
                   ],
                 ),
@@ -180,13 +216,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Fluttertoast.showToast(msg: 'Enter valid mobile');
               }else if(emailController.text.isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid email');
-              }else if(address==null) {
+              }else if(addressController.text.toString().isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid address');
-              }else if(pincode==null) {
+              }else if(pinCodeController.text.toString().isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid pin code');
               }else{
                 RegisterService().addUser(name!, emailController.text, mobController.text, country,
-                    address!,context,current_lat.toString(),current_long.toString(),pincode!);
+                    addressController.text,context,current_lat.toString(),current_long.toString(),pinCodeController.text);
               }
             }, screenWidth, screenHeight*0.05
             )
@@ -231,9 +267,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
-
+  void showLocationLoadingIndicator(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async => false,
+            child: SizedBox(
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0))
+                      ),
+                      backgroundColor: Colors.white,
+                      title: Text("Fetching Your location info.......",
+                        style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14
+                        ),),
+                      content: SpinKitWave(color: Colors.black)
+                  ),
+                ],
+              ),
+            )
+        );
+      },
+    );
+  }
   Future<void> _getCurrentPosition() async {
-    showLoadingIndicator(context);
+    showLocationLoadingIndicator(context);
     var hasPermission = await _handlePermission().then((value) {
       print("ERRRRRR  $value");
       if(value==false){
@@ -249,12 +315,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     try{
-      final position = await _geolocatorPlatform.getCurrentPosition().then((value) {
+      final position = await _geolocatorPlatform.getCurrentPosition().then((pos)async {
         setState(() {
-          current_lat=value.latitude;
-          current_long=value.longitude;
+          current_lat=pos.latitude;
+          current_long=pos.longitude;
+
           print('lat $current_lat,long $current_long');
+
         });
+        List<Placemark> placemarks = await placemarkFromCoordinates(pos.latitude,pos.longitude).then((value) {
+          setState(() {
+            addressController.text="${value[0].locality} ${value[0].thoroughfare} ${value[0].administrativeArea}";
+            pinCodeController.text="${value[0].postalCode}";
+          });
+          return value;
+        });
+
         Navigator.of(context, rootNavigator: true).pop();
       });
     }catch(e){

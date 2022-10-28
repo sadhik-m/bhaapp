@@ -201,7 +201,7 @@ class _ProductTileState extends State<ProductTile> {
         setState(() {
           cartHomeList[index].productQuantity=cartHomeList[index].productQuantity+prodQuantity;
         });
-        Fluttertoast.showToast(msg: 'item quantity in cart changed to ${cartHomeList[index].productQuantity+prodQuantity}');
+        Fluttertoast.showToast(msg: 'item quantity in cart changed to ${cartHomeList[index].productQuantity}');
       }
     }else{
       setState(() {

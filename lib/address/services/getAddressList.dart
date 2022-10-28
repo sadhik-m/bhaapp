@@ -12,7 +12,7 @@ class GetAddress{
     await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        adressList.add(AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),pinCode: doc['pinCode']));
+        adressList.add(AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),pinCode: doc['pinCode'],latitude: doc['latitude'],longitude: doc['longitude']));
       });
     });
 

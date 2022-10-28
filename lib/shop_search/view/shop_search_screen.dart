@@ -215,7 +215,12 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     itemBuilder: (context,index){
                       return InkWell(
                         onTap: (){
-                          saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId);
+                          if(vendorId!=null && vendorId!.isNotEmpty){
+                            showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId);
+                          }
+                          else{
+                            saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId);
+                          }
                         },
                         child: Container(
                           margin: EdgeInsets.only(bottom: 10),
@@ -305,7 +310,12 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
-                      saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId);
+                      if(vendorId!=null && vendorId!.isNotEmpty){
+                        showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId);
+                      }else{
+                        saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId);
+                      }
+
                     },
                     child: ShopDataListTile(
                       vendorTypeList: vendorTypeList[index],
@@ -321,7 +331,6 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
       )
     );
   }
-
   loadInitialList()async{
     categoryList.clear();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -424,5 +433,47 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     pageIndex = 0;
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
         (context)=>DashBoardScreen()), (route) => false);
+  }
+  showVendorDialog(BuildContext context,String vendorIds,String vendorDocId) {
+    Widget okButton = TextButton(
+      child: Text("Yes"),
+      onPressed: () {
+
+        Navigator.of(context).pop();
+        saveVendorId(vendorIds, context, vendorDocId);
+
+      },
+    );
+    Widget cancelButton = TextButton(
+      child: Text("No"),
+      onPressed: () {
+
+        Navigator.of(context).pop();
+
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))
+      ),
+      title: Text("Changing the shop will clear the cart, Do you want to proceed?"),
+
+      actions: [
+        cancelButton,
+        okButton
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

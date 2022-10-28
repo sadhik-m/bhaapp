@@ -20,12 +20,11 @@ class RegisterService{
     // existing document in 'users' collection: "ABC123"
         .doc(uid)
         .set({
+      'active':true,
       'name': name,
       'email': email,
       'phone': phone,
       'country': country,
-      'latitude': lattitude,
-      'longitude': longitude,
       'image': img,
     },
       SetOptions(merge: true),
@@ -35,7 +34,7 @@ class RegisterService{
               print("data merged with existing data!");
                FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses')
                   .add(
-                AddressModel(name: name, mobile: phone, email: email, country: country, address: address, type: '', id: '',pinCode: pincode).toJson(),
+                AddressModel(name: name, mobile: phone, email: email, country: country, address: address, type: '', id: '',pinCode: pincode,latitude: lattitude,longitude: longitude).toJson(),
               ).then((value) {
                  FirebaseFirestore.instance.collection('customers').doc(uid).set({
                    'defualtAddressId':value.id.toString()
@@ -59,6 +58,14 @@ class RegisterService{
     try {
       var doc = await users.doc(docId).get();
       return doc.exists;
+    } catch (e) {
+      return false;
+    }
+  }
+  Future<bool> checkIfUserActive(String docId) async {
+    try {
+      var doc = await users.doc(docId).get();
+      return doc['active'];
     } catch (e) {
       return false;
     }

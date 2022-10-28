@@ -7,6 +7,8 @@ class AddressModel {
   String type;
   String id;
   String pinCode;
+  String latitude;
+  String longitude;
 
 
   AddressModel({
@@ -18,6 +20,8 @@ class AddressModel {
     required this.type,
     required this.id,
     required this.pinCode,
+    required this.latitude,
+    required this.longitude,
 
   });
 
@@ -30,6 +34,8 @@ class AddressModel {
     'type': type,
     'id': id,
     'pinCode': pinCode,
+    'latitude': latitude,
+    'longitude': longitude,
 
   };
 
@@ -43,6 +49,8 @@ class AddressModel {
       type: json['type'],
       id: json['id'],
       pinCode: json['pinCode'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
 
     );
   }
