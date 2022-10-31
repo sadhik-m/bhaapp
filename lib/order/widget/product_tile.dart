@@ -72,7 +72,7 @@ StreamBuilder productListTile(double width,double height,String sku,String quant
                               fontWeight: FontWeight.w500,
                               color: splashBlue
                           ),),
-                          Text(' - \$${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity)}',style: GoogleFonts.inter(
+                          Text(' - ₹${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity)}',style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: Colors.black.withOpacity(0.8)

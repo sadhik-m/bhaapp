@@ -31,6 +31,7 @@ class _MyCartState extends State<MyCart> {
    bool isGst=false;
    bool showOption=false;
    String delivery='deliver now';
+   String service='service now';
    bool loaded=false;
 
    double deliveryCharge=6;
@@ -40,13 +41,20 @@ class _MyCartState extends State<MyCart> {
    double totalPrice=0;
    Map<String, int> items={};
 
-
+   String categoryType='';
+   getCategoryType()async{
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     setState(() {
+       categoryType=preferences.getString('categoryType')??'';
+     });
+   }
    @override
    void initState() {
      // TODO: implement initState
      super.initState();
      getCartList();
      getDeliveryAddress();
+     getCategoryType();
    }
   @override
   Widget build(BuildContext context) {
@@ -96,6 +104,7 @@ class _MyCartState extends State<MyCart> {
                         prodId:MyCart.cartList[index].productId,
                         quantity:MyCart.cartList[index].productQuantity,
                         index:index,
+                      categoryType: categoryType,
                     );
                   },
                 ),
@@ -136,7 +145,7 @@ class _MyCartState extends State<MyCart> {
                       valueListenable: DashBoardScreen.cartTotalNotifier.cartValueNotifier,
                       builder: (context, value, child) {
                         return value.toString()!='0'?
-                        Text('\$ ${value.toString()}',style: GoogleFonts.inter(
+                        Text('₹ ${value.toString()}',style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: Colors.black
@@ -191,7 +200,8 @@ class _MyCartState extends State<MyCart> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Choose Delivery Option',
+                          Text(categoryType.toString().toLowerCase()=='services'?
+                          'Choose Service Option':'Choose Delivery Option',
                             style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
@@ -207,6 +217,193 @@ class _MyCartState extends State<MyCart> {
                       ),
                     ),
                     showOption?
+                    categoryType.toString().toLowerCase()=='services'?
+                    Column(
+                      children: [
+                        SizedBox(height: screenHeight*0.02,),
+                        Container(
+                            width: screenWidth,
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(4))
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.asset('assets/home/Group 78.png',
+                                              width: screenWidth*0.1,),
+                                            SizedBox(width: screenWidth*0.03,),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Service Now | ₹6',style: GoogleFonts.inter(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black
+                                                ),),
+                                                Text('Get in next 30-35 mins',style: GoogleFonts.inter(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: splashBlue
+                                                ),),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        Radio(value: 'service now', groupValue: service,
+                                            onChanged: (value){
+                                              setState(() {
+                                                service=value.toString();
+                                                deliveryCharge=6;
+                                              });
+                                            })
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight*0.02,),
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          //crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Image.asset('assets/home/Group 78.png',
+                                                  width: screenWidth*0.1,),
+                                                SizedBox(width: screenWidth*0.03,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Service Later | ₹25',style: GoogleFonts.inter(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Colors.black
+                                                    ),),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Radio(value: 'service later', groupValue: service,
+                                                onChanged: (value){
+                                                  setState(() {
+                                                    service=value.toString();
+                                                    deliveryCharge=25;
+                                                  });
+                                                })
+                                          ],
+                                        ),
+                                        SizedBox(height: screenHeight*0.01,),
+                                        Column(
+
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    height: screenHeight*0.035,
+                                                    //width: screenWidth*0.25,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.black)
+                                                    ),
+                                                    child: Center(
+                                                      child: Text("${DateFormat('d MMM y').format(selectedDate)}",
+                                                        style: GoogleFonts.inter(
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 11,
+                                                            color: Colors.black
+                                                        ),),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                InkWell(
+                                                    onTap: (){
+                                                      _selectDate(context);
+                                                    },
+                                                    child: Icon(Icons.date_range,color: Colors.black,)),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                Text("(Weekly off day : $offDay)",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.grey
+                                                  ),)
+                                              ],
+                                            ),
+                                            SizedBox(height: screenHeight*0.01,),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    height: screenHeight*0.035,
+                                                    // width: screenWidth*0.25,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.black)
+                                                    ),
+                                                    child: Center(
+                                                      child: Text("${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                                        style: GoogleFonts.inter(
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 11,
+                                                            color: Colors.black
+                                                        ),),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                InkWell(
+                                                    onTap: (){
+                                                      _selectTime(context);
+                                                    },
+                                                    child: Icon(Icons.access_time,color: Colors.black,)),
+                                                SizedBox(width: screenWidth*0.02,),
+                                                Row(
+                                                  children: [
+                                                    Text("(Open:$openTime",
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(int.parse(openTime)<12 || int.parse(openTime)>23?
+                                                    'am':'pm',
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(",Close:$closeTime",
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                    Text(int.parse(closeTime)<12 || int.parse(closeTime)>23?
+                                                    'am)':'pm)',
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.grey
+                                                      ),),
+                                                  ],
+                                                )
+                                              ],
+                                            )
+
+                                          ],
+                                        )
+
+                                      ],
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            )),
+                      ],
+                    ):
                     Column(
                       children: [
                         SizedBox(height: screenHeight*0.02,),
@@ -232,7 +429,7 @@ class _MyCartState extends State<MyCart> {
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Deliver Now | \$6',style: GoogleFonts.inter(
+                                                Text('Deliver Now | ₹6',style: GoogleFonts.inter(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
@@ -270,7 +467,7 @@ class _MyCartState extends State<MyCart> {
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('Deliver Later | \$25',style: GoogleFonts.inter(
+                                                    Text('Deliver Later | ₹25',style: GoogleFonts.inter(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.w500,
                                                         color: Colors.black
@@ -420,7 +617,8 @@ class _MyCartState extends State<MyCart> {
                               ),
                             )),
                       ],
-                    ):SizedBox.shrink(),
+                    ):
+                    SizedBox.shrink(),
                     addressModel==null?
                     SizedBox.shrink():
                     Column(
@@ -429,7 +627,7 @@ class _MyCartState extends State<MyCart> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Delivery Address',
+                            Text(categoryType.toString().toLowerCase()=='services'?'Service Address':'Delivery Address',
                               style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
@@ -523,7 +721,7 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
-                                Text('\$ ${value.toString()}',
+                                Text('₹ ${value.toString()}',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12,
@@ -541,7 +739,7 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
-                                Text('\$ ${((9/double.parse(value.toString()))*100).toStringAsFixed(2)}',
+                                Text('₹ ${((9/double.parse(value.toString()))*100).toStringAsFixed(2)}',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12,
@@ -559,7 +757,7 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
-                                Text('\$ $deliveryCharge',
+                                Text('₹ $deliveryCharge',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12,
@@ -588,9 +786,14 @@ class _MyCartState extends State<MyCart> {
                             SizedBox(height: screenHeight*0.08,),
                             blackButton('Checkout',
                                     (){
-                                  PaymentService().checkOut(context,
+                                  PaymentService().checkOut(
+                                      context,
                                       '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
-                                      "$delivery,requested delivery date : ${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",(double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),items);
+                                      categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
+                                      (double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
+                                      items,
+                                  "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                  '${addressModel!.mobile}',categoryType.toString().toLowerCase());
                                 }, screenWidth, screenHeight*0.05),
                           ],
                         ):Container();

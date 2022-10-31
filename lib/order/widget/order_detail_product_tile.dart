@@ -74,6 +74,23 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
                         color: Colors.black
                     ),),
                     SizedBox(height: height*0.02,),
+                    snapshot.data!.docs[0]['category'].toString().toLowerCase()=='services'?
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('$quantity ${snapshot.data!.docs[0]['priceUnit']}',style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: splashBlue
+                        ),),
+                        SizedBox(height: height*0.005,),
+                        Text('₹${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity.toString())}',style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black.withOpacity(0.8)
+                        ),),
+                      ],
+                    ):
                     Row(
                       children: [
                         Text('$quantity ${snapshot.data!.docs[0]['priceUnit']}',style: GoogleFonts.inter(
@@ -81,7 +98,7 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
                             fontWeight: FontWeight.w500,
                             color: splashBlue
                         ),),
-                        Text(' - \$${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity.toString())}',style: GoogleFonts.inter(
+                        Text(' - ₹${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity.toString())}',style: GoogleFonts.inter(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.black.withOpacity(0.8)

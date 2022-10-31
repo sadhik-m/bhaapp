@@ -123,7 +123,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('\$${data['salesPrice']}',
+                          Text('₹${data['salesPrice']}',
                             style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                                 color: text_green,
@@ -189,6 +189,8 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           SizedBox(width: screenWidth*0.05,),*/
+                          categoryType.toLowerCase().toString()=='services'?
+                              SizedBox.shrink():
                           Row(
                             children: [
                               InkWell(
@@ -361,10 +363,12 @@ class _ProductDetailState extends State<ProductDetail> {
       }
     });
   }
+  String categoryType='';
   gatWishList()async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       favouriteList=preferences.getStringList('favList')??[];
+      categoryType=preferences.getString('categoryType')??'';
     });
   }
   addToCart(String prodId,int prodQuantity)async{
@@ -372,12 +376,17 @@ class _ProductDetailState extends State<ProductDetail> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedData=CartModel.encode(cartList);
     if(encodedData.contains(prodId)){
-      int index = cartList.indexWhere((element) => element.productId == prodId);
-      if (index != -1) {
-       setState(() {
-         cartList[index].productQuantity=cartList[index].productQuantity+prodQuantity;
-       });
+      if(categoryType.toLowerCase().toString()=='services'){
+
+      }else{
+        int index = cartList.indexWhere((element) => element.productId == prodId);
+        if (index != -1) {
+          setState(() {
+            cartList[index].productQuantity=cartList[index].productQuantity+prodQuantity;
+          });
+        }
       }
+
     }else{
       setState(() {
         cartList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
@@ -388,7 +397,12 @@ class _ProductDetailState extends State<ProductDetail> {
     });
     prefs.setString('cartList',CartModel.encode(cartList) ).then((value){
       Navigator.of(context).pop();
-      Fluttertoast.showToast(msg: 'item added to cart');
+      if(categoryType.toLowerCase().toString()=='services'){
+        Fluttertoast.showToast(msg: 'service added to cart');
+      }else{
+        Fluttertoast.showToast(msg: 'item added to cart');
+      }
+
     });
   }
   toggleFavourites(String productID)async{

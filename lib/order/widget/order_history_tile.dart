@@ -147,7 +147,7 @@ Container orderHistoryTile(double width,double height,DocumentSnapshot snapshot,
                             ),),
                         ),
                         Expanded(
-                          child: Text('\$${snapshot['orderAmount']}',
+                          child: Text('₹${snapshot['orderAmount']}',
                             style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,

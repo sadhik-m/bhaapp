@@ -82,10 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
     gatWishList();
     getCartList();
   }
+  String categoryType='';
   gatWishList()async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       favouriteList=preferences.getStringList('favList')??[];
+      categoryType=preferences.getString('categoryType')??'';
+      print("VVVV $categoryType");
     });
   }
   @override
@@ -127,10 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       smallBanner(),
                       SizedBox(height: screenHeight*0.02,),
                       searchField(screenHeight, screenWidth,(){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen())).then((value) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen(label: categoryType.toString().toLowerCase()=='services'?'Services':'Products',))).then((value) {
                           getCartList();
                         });
-                      }),
+                      },
+                          categoryType.toString().toLowerCase()=='services'?'Services':'Products'),
                      /* SizedBox(height: screenHeight*0.02,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -203,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Products',
+                              Text(categoryType.toString().toLowerCase()=='services'?'Services':'Products',
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 19,

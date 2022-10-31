@@ -60,7 +60,7 @@ Container orderSummaryTile(double width,double height,List<String>sku,List<Strin
                           fontSize: 12,
                           color: Color(0xff030303)
                       ),),
-                    Text('\$$total',
+                    Text('₹$total',
                       style: GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,

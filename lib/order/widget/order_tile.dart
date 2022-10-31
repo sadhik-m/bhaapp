@@ -149,7 +149,7 @@ Container orderTile(double width,double height,DocumentSnapshot snapshot,BuildCo
                          ),),
                      ),
                      Expanded(
-                       child: Text('\$${snapshot['orderAmount']}',
+                       child: Text('₹${snapshot['orderAmount']}',
                          style: GoogleFonts.inter(
                              fontWeight: FontWeight.w600,
                              fontSize: 12,

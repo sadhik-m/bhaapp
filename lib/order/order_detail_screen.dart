@@ -1,14 +1,17 @@
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
+import 'package:bhaapp/order/model/orderStatusModel.dart';
 import 'package:bhaapp/order/widget/order_detail_product_tile.dart';
 import 'package:bhaapp/order/widget/order_tracker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets/appBar.dart';
 
-class OrderDetail extends StatelessWidget {
+class OrderDetail extends StatefulWidget {
   String orderid;
   List<String>sku=[];
   List<String>quqntity=[];
@@ -17,6 +20,31 @@ class OrderDetail extends StatelessWidget {
   String orderStatusDate;
    OrderDetail({Key? key,required this.orderid,required this.sku,required this.quqntity,required this.shopContact,required this.orderStatus,required this.orderStatusDate}) : super(key: key);
 
+  @override
+  State<OrderDetail> createState() => _OrderDetailState();
+}
+
+class _OrderDetailState extends State<OrderDetail> {
+  bool loaded=false;
+  List<OrderStatusModel> satatusList=[];
+  getStatusList()async{
+    await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).collection('DeliveryStatus').get().then((QuerySnapshot querySnapshot){
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          satatusList.add(OrderStatusModel(name: doc['name'], status: doc['status'], date: doc['date']));
+        });
+      });
+    });
+    setState(() {
+      loaded=true;
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getStatusList();
+  }
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -34,7 +62,8 @@ class OrderDetail extends StatelessWidget {
               ],
             ),
           )*/],true),
-      body: Container(
+      body: loaded?
+      Container(
         height: screenHeight,
         width: screenWidth,
 
@@ -60,7 +89,7 @@ class OrderDetail extends StatelessWidget {
                             color: Colors.black
                           ),) ,
                           Expanded(
-                            child: Text(orderid,
+                            child: Text(widget.orderid,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -79,11 +108,11 @@ class OrderDetail extends StatelessWidget {
                       child: Column(
                         children: [
                           ListView.builder(
-                            itemCount: sku.length,
+                            itemCount: widget.sku.length,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return orderDetailProductListTile(screenWidth, screenHeight,sku[index],quqntity[index]);
+                              return orderDetailProductListTile(screenWidth, screenHeight,widget.sku[index],widget.quqntity[index]);
                             },
                           ),
                           Row(
@@ -114,8 +143,8 @@ class OrderDetail extends StatelessWidget {
                                  ),),
                                ],
                              ),
-                             Image.asset('assets/home/356674 1.png',
-                             height: 25,width: 74,)
+                             /*Image.asset('assets/home/356674 1.png',
+                             height: 25,width: 74,)*/
                            ],
                          ),
                           SizedBox(height: 10,),
@@ -125,7 +154,7 @@ class OrderDetail extends StatelessWidget {
                                 onTap: (){
                                   launchUrl(Uri(
                                     scheme: 'tel',
-                                    path: shopContact,
+                                    path: widget.shopContact,
                                   ));
                                 },
                                 child: Container(
@@ -145,7 +174,12 @@ class OrderDetail extends StatelessWidget {
                             ],
                           ),
                           SizedBox(height: 20,),
-                          OrderTracker(orderStatus: orderStatus,orderStatusDate: orderStatusDate,)
+                          widget.orderStatus.toLowerCase()=='order cancelled'?
+                              Text("Order Cancelled",style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.red
+                              ),):
+                          OrderTracker(orderStatus: widget.orderStatus,orderStatusDate: widget.orderStatusDate,statusList: satatusList,)
                         ],
                       ),
                     ),
@@ -153,17 +187,72 @@ class OrderDetail extends StatelessWidget {
                 ),
               ),
             ),
+            widget.orderStatus.toString().toLowerCase()=="order placed"?
             Padding(
                padding: EdgeInsets.symmetric(
                  horizontal: screenWidth*0.07,
                  vertical: screenHeight*0.01
                ),
-              child: blackButton("Cancel Order", (){}, screenWidth, screenHeight*0.05),
-            )
+              child: blackButton("Cancel Order", (){
+                showCancelDialog(context);
+              }, screenWidth, screenHeight*0.05),
+            ):SizedBox.shrink()
 
           ],
         ),
+      ):Center(child: Text("Loading..."),),
+    );
+  }
+  cancelOrder()async{
+    await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).set({
+      'status':'Order Cancelled'
+    },
+      SetOptions(merge: true),
+    ).then((value) {
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: 'Order cancelled successfully');
+    });
+  }
+  showCancelDialog(BuildContext context) {
+    Widget okButton = TextButton(
+      child: Text("Yes"),
+      onPressed: () {
+
+        Navigator.of(context).pop();
+        cancelOrder();
+
+      },
+    );
+    Widget cancelButton = TextButton(
+      child: Text("No"),
+      onPressed: () {
+
+        Navigator.of(context).pop();
+
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))
       ),
+      title: Text("Are you sure,you want to cancell this order?"),
+
+      actions: [
+        cancelButton,
+        okButton
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

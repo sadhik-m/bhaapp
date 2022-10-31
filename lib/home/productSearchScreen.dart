@@ -16,8 +16,8 @@ import '../dashboard/dash_board_screen.dart';
 import '../product/model/cartModel.dart';
 
 class ProductSearchScreen extends StatefulWidget {
-
-const  ProductSearchScreen({Key? key}) : super(key: key);
+String label;
+  ProductSearchScreen({Key? key,required this.label}) : super(key: key);
 
   @override
   State<ProductSearchScreen> createState() => _ProductSearchScreenState();
@@ -128,7 +128,7 @@ getCartList();
                           ),
                         ],
                       ),
-                      hintText: 'Search Products',
+                      hintText: 'Search ${widget.label}',
                       hintStyle: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

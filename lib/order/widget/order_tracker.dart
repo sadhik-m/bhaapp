@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
+
+import '../model/orderStatusModel.dart';
 class OrderTracker extends StatefulWidget {
 
 
   String orderStatus;
   String orderStatusDate;
-  OrderTracker({Key? key,required this.orderStatus,required this.orderStatusDate}) : super(key: key);
+  List<OrderStatusModel> statusList;
+  OrderTracker({Key? key,required this.orderStatus,required this.orderStatusDate,required this.statusList}) : super(key: key);
   @override
   OrderTrackerState createState() => OrderTrackerState();
 }
@@ -31,7 +34,7 @@ class OrderTrackerState extends State<OrderTracker> {
       ),
       builder: TimelineTileBuilder.connected(
         connectionDirection: ConnectionDirection.before,
-        itemCount: deliverySteps.length,
+        itemCount: widget.statusList.length,
         contentsBuilder: (_, index) {
 
           return Padding(
@@ -41,17 +44,17 @@ class OrderTrackerState extends State<OrderTracker> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  deliverySteps[index],
+                    widget.statusList[index].name,
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
-                    color:deliverySteps[index].toString().toLowerCase()==widget.orderStatus?
+                    color:widget.statusList[index].status==true?
                     Colors.black.withOpacity(0.8):Colors.grey
                   )
                 ),
-                deliverySteps[index].toString().toLowerCase()==widget.orderStatus?
+                widget.statusList[index].date!=''?
                 Text(
-                    DateFormat('d MMM y, hh:mm a').format(DateTime.parse(widget.orderStatusDate)),
+                    DateFormat('d MMM y, hh:mm a').format(DateTime.parse(widget.statusList[index].date)),
                     style: GoogleFonts.inter(
                         fontWeight: FontWeight.w400,
                         fontSize: 10,
@@ -70,12 +73,12 @@ class OrderTrackerState extends State<OrderTracker> {
                 height: 34.0,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color:deliverySteps[index].toString().toLowerCase()==widget.orderStatus?
+                  color:widget.statusList[index].status==true?
                   splashBlue.withOpacity(0.2):Colors.grey.withOpacity(0.2)
                 ),
                 child: Center(
                   child: Image.asset('assets/dashboard/package.png',
-                  height: 24,width: 24,color: deliverySteps[index].toString().toLowerCase()==widget.orderStatus?
+                  height: 24,width: 24,color: widget.statusList[index].status==true?
                     splashBlue:Colors.grey,),
                 ),
               ),
@@ -85,7 +88,7 @@ class OrderTrackerState extends State<OrderTracker> {
         connectorBuilder: (_, index, ___) => Padding(
           padding: EdgeInsets.all(5),
           child: SolidLineConnector(
-            color:deliverySteps[index].toString().toLowerCase()==widget.orderStatus?
+            color:widget.statusList[index].status==true?
             splashBlue:Colors.grey,
             
           ),
@@ -99,5 +102,5 @@ List<String> deliverySteps=[
   'Order Packed',
   'Shipped',
   'Out For Delivery',
-  'Delivery'
+  'Delivered'
 ];

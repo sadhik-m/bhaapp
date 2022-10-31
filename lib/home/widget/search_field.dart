@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Container searchField(double height,double width,VoidCallback ontap){
+Container searchField(double height,double width,VoidCallback ontap,String label){
   return Container(
     width: width,
     height: height*0.06,
@@ -34,7 +34,7 @@ Container searchField(double height,double width,VoidCallback ontap){
             ),
           ],
         ),
-        hintText: 'Search Products',
+        hintText: 'Search $label',
         hintStyle: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w400,

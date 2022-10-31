@@ -216,10 +216,10 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                       return InkWell(
                         onTap: (){
                           if(vendorId!=null && vendorId!.isNotEmpty){
-                            showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId);
+                            showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType);
                           }
                           else{
-                            saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId);
+                            saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType);
                           }
                         },
                         child: Container(
@@ -311,9 +311,9 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                   return InkWell(
                     onTap: (){
                       if(vendorId!=null && vendorId!.isNotEmpty){
-                        showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId);
+                        showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
                       }else{
-                        saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId);
+                        saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
                       }
 
                     },
@@ -424,23 +424,25 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
 
   }
 
-  saveVendorId(String vendorIds,BuildContext context,String vendorDocId)async{
+  saveVendorId(String vendorIds,BuildContext context,String vendorDocId,String cateType)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     vendorId=vendorIds;
     preferences.setString('vendorId', vendorIds);
     preferences.setString('vendorDocId', vendorDocId);
+    preferences.setString('categoryType', cateType);
+    preferences.remove('favList');
     preferences.setString('cartList',CartModel.encode([]));
     pageIndex = 0;
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
         (context)=>DashBoardScreen()), (route) => false);
   }
-  showVendorDialog(BuildContext context,String vendorIds,String vendorDocId) {
+  showVendorDialog(BuildContext context,String vendorIds,String vendorDocId,String cateType) {
     Widget okButton = TextButton(
       child: Text("Yes"),
       onPressed: () {
 
         Navigator.of(context).pop();
-        saveVendorId(vendorIds, context, vendorDocId);
+        saveVendorId(vendorIds, context, vendorDocId,cateType);
 
       },
     );

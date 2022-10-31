@@ -79,7 +79,7 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                               fontWeight: FontWeight.w500,
                               color: splashBlue
                           ),),
-                          Text(' - \$${quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
+                          Text(' - ₹${quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: Colors.black.withOpacity(0.8)
@@ -158,6 +158,7 @@ class CartListTile extends StatefulWidget {
   String prodId;
   int quantity;
   int index;
+  String categoryType;
 
    CartListTile({Key? key,
     required this.width,
@@ -165,6 +166,7 @@ class CartListTile extends StatefulWidget {
     required this.prodId,
     required this.quantity,
     required this.index,
+     required this.categoryType
 
   }) : super(key: key);
 
@@ -205,7 +207,7 @@ class _CartListTileState extends State<CartListTile> {
                   RotatedBox(
                     quarterTurns: 5,
                     child: Container(
-                      child: Text('Item ${widget.index}',style: GoogleFonts.inter(
+                      child: Text('Item ${widget.index+1}',style: GoogleFonts.inter(
                           fontWeight: FontWeight.w500,
                           color: splashBlue,
                           fontSize: 12
@@ -247,20 +249,42 @@ class _CartListTileState extends State<CartListTile> {
                         SizedBox(height: widget.height*0.004,),
                         Row(
                           children: [
-                            Text('${widget.quantity} Kg',style: GoogleFonts.inter(
+                            Text('Price : ',style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: splashBlue
+                                color: Colors.black.withOpacity(0.8)
                             ),),
-                            Text(' - \$${widget.quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
+                            Text('₹${widget.quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black.withOpacity(0.8)
+                                color: Colors.black
                             ),),
                           ],
                         ),
+                        widget.categoryType.toString().toLowerCase()=='services'?
                         Row(
                           children: [
+                            Center(
+                              child: Text(
+                                '${data['priceUnit'].toString()}',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: Colors.black
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ):
+                        Row(
+                          children: [
+                            Text('Quantity :',style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black.withOpacity(0.8)
+                            ),),
+                            SizedBox(width: widget.width*0.015,),
                             InkWell(
                               onTap: (){
                                 setState(() {
@@ -279,10 +303,10 @@ class _CartListTileState extends State<CartListTile> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: widget.width*0.03,),
+                            SizedBox(width: widget.width*0.015,),
                             Center(
                               child: Text(
-                                '${widget.quantity.toString().padLeft(2,'0')}  ${data['priceUnit'].toString()}',
+                                '${widget.quantity.toString().padLeft(2,'0')} ${data['priceUnit'].toString()}',
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
@@ -290,7 +314,7 @@ class _CartListTileState extends State<CartListTile> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: widget.width*0.03,),
+                            SizedBox(width: widget.width*0.015,),
                             InkWell(
                               onTap: (){
 

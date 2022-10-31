@@ -42,6 +42,19 @@ class WishProductTile extends StatefulWidget {
 }
 
 class _WishProductTileState extends State<WishProductTile> {
+  String categoryType='';
+  getCategoryType()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      categoryType=preferences.getString('categoryType')??'';
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCategoryType();
+  }
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -139,7 +152,7 @@ class _WishProductTileState extends State<WishProductTile> {
                                         ),
                                         textAlign: TextAlign.center,),
                                       SizedBox(height: widget.height*0.0005,),
-                                      Text('\$${widget.salePrize}/${widget.quantity}',
+                                      Text('₹${widget.salePrize}/${widget.quantity}',
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.w700,
                                             fontSize: 11,
@@ -194,17 +207,26 @@ class _WishProductTileState extends State<WishProductTile> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedData=CartModel.encode(cartHomeList);
     if(encodedData.contains(prodId)){
-      int index = cartHomeList.indexWhere((element) => element.productId == prodId);
-      if (index != -1) {
-        setState(() {
-          cartHomeList[index].productQuantity=cartHomeList[index].productQuantity+prodQuantity;
-        });
-        Fluttertoast.showToast(msg: 'item quantity in cart changed to ${cartHomeList[index].productQuantity+prodQuantity}');
+      if(categoryType.toLowerCase().toString()=='services'){
+
+      }else{
+        int index = cartHomeList.indexWhere((element) => element.productId == prodId);
+        if (index != -1) {
+          setState(() {
+            cartHomeList[index].productQuantity=cartHomeList[index].productQuantity+prodQuantity;
+          });
+          Fluttertoast.showToast(msg: 'item quantity in cart changed to ${cartHomeList[index].productQuantity+prodQuantity}');
+        }
       }
+
     }else{
       setState(() {
         cartHomeList.add(CartModel(productId: prodId, productQuantity: prodQuantity));
-        Fluttertoast.showToast(msg: "item added to cart");
+        if(categoryType.toLowerCase().toString()=='services'){
+          Fluttertoast.showToast(msg: "service added to cart");
+        }else{
+          Fluttertoast.showToast(msg: "item added to cart");
+        }
       });
     }
     setState(() {
