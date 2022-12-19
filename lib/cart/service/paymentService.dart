@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:bhaapp/cart/service/cartLengthService.dart';
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
 import 'package:bhaapp/dashboard/dash_board_screen.dart';
+import 'package:bhaapp/payment/payment_screen.dart';
 import 'package:bhaapp/payment/payment_success_screen.dart';
-import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../order/model/orderStatusModel.dart';
 import '../../product/model/cartModel.dart';
 import '../../profile/model/profileModel.dart';
+
+
+
 
 class PaymentService{
   // WEB Intent
@@ -41,25 +44,38 @@ class PaymentService{
   getTolken(BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,
       String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,String customerPhone,String categoryType)async{
 
-  var url='https://test.cashfree.com/api/v2/cftoken/order';
+ // var url='https://test.cashfree.com/api/v2/cftoken/order';
+  var url='https://sandbox.cashfree.com/pg/orders';
   var body=json.encode({
-    "orderId": orderid,
-    "orderAmount":"$orderAmount",
-    "orderCurrency": "INR"
+    "order_id": orderid,
+    "order_amount":double.parse(orderAmount.toString()),
+    "order_currency": "INR",
+  "customer_details": {
+  "customer_id": uid,
+  "customer_name": name,
+  "customer_email": email,
+  "customer_phone": phone
+  },
+  "order_meta": {
+  "notify_url": "https://test.cashfree.com"
+  },
+  "order_note": "some order note here",
   });
   var response= await http.post(Uri.parse(url),
   headers: {
     'Content-Type': 'application/json',
-     'x-client-id' :'2411033c07cfdc7fbd356f3644301142',
-     'x-client-secret': '02f7f17e85b21829be898a7dc4e5dc8d780739ae'
+     'x-client-id' :'280475a5b573c10a4016818b7d574082',
+     'x-client-secret': '2235fabf990fddb9e46dfe101f9a84ec9c0dbad2',
+    'x-api-version': "2022-09-01",
+    'x-request-id': "BhaApp"
   },
   body:body ).then((value)  {
     print(value.body.toString());
-    if(value.body.contains('"status":"OK"')){
+    if(value.body.contains('payment_session_id')){
       Navigator.of(context).pop();
       var data=json.decode(value.body.toString());
-      print(data['cftoken']);
-      makePayment(data['cftoken'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,
+      print(data['payment_session_id']);
+      makePayment(data['payment_session_id'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,
           orderAmount,items,uid,vid,deliveryTime,customerPhone,categoryType);
     }else{
       Navigator.of(context).pop();
@@ -72,21 +88,10 @@ class PaymentService{
 
   makePayment(String tolken,BuildContext context,String phone,String email,String name,String orderid,
       String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,String customerPhone,String categoryType) {
-    Map<String, dynamic> inputParams = {
-      "orderId": orderid,
-      "orderAmount": double.parse(orderAmount),
-      "customerName": name,
-      "orderNote": '',
-      "orderCurrency": 'INR',
-      "appId": "2411033c07cfdc7fbd356f3644301142",
-      "customerPhone": phone,
-      "customerEmail": email,
-      "stage": 'TEST',
-      "tokenData": tolken,
-      "notifyUrl": "https://test.gocashfree.com/notify"
-    };
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>PayScreen(orderId: orderid, paymentSessionId: tolken,
+          deliveryAddress: deliveryAddress, deliveryOption: deliveryOption, orderAmount: orderAmount, items: items, uid: uid, vid: vid, deliveryTime: deliveryTime, customerPhone: customerPhone, categoryType: categoryType)));
 
-    try{
+ /*   try{
       CashfreePGSDK.doPayment(inputParams)
           .then((values) => values?.forEach((key, value) {
 
@@ -106,7 +111,7 @@ print(values);
       }));
     }catch(e){
       print("ERROR +++++++++++++++ $e");
-    }
+    }*/
   }
 
   saveOrderInfo(BuildContext context,String orderId,String deliveryAddress,String deliveryOption,String orderAmount,

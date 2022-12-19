@@ -352,7 +352,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     });
     categoryList.add('All');
     await FirebaseFirestore.instance
-        .collection('vendors').where('deliveryAreas',arrayContains: pinCode)//pinCode)
+        .collection('vendors').where('${'deliveryDetails'}.${'deliveryAreas'}',arrayContains: pinCode)//pinCode)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

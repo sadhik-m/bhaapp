@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'orderProductTile.dart';
 
-Container orderTile(double width,double height,DocumentSnapshot snapshot,BuildContext context){
+StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,BuildContext context){
 
 
   Map<String, dynamic> items=snapshot['items']as Map<String, dynamic>;
@@ -20,34 +20,32 @@ Container orderTile(double width,double height,DocumentSnapshot snapshot,BuildCo
   });
   DateTime date= DateTime.parse(snapshot['txTime'].toString());
 
-  return Container(
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance.collection('vendors').where('vendorId',isEqualTo: snapshot['vendorId']).snapshots(),
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotShop) {
+      if (snapshotShop.hasError) {
+        return SizedBox.shrink();
+      }
 
-    decoration:BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.3),
-          width: 2
-        )
-    ),
-    child:StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('vendors').where('vendorId',isEqualTo: snapshot['vendorId']).snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotShop) {
-        if (snapshotShop.hasError) {
-          return SizedBox.shrink();
-        }
+      if (snapshotShop.connectionState == ConnectionState.waiting) {
+        return Padding(
+          padding:  EdgeInsets.only(top: height*0.35),
+          child: Center(child: Text('Loading...')),
+        );
+      }
+      if (snapshotShop.data!.docs.isEmpty) {
+        return SizedBox.shrink();
+      }
+      return  Container(
 
-        if (snapshotShop.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding:  EdgeInsets.only(top: height*0.35),
-            child: Center(child: Text('Loading...')),
-          );
-        }
-        if (snapshotShop.data!.docs.isEmpty) {
-          return Padding(
-            padding:  EdgeInsets.only(top: height*0.35),
-            child: Center(child: Text('Nothing Found!')),
-          );
-        }
-        return  Column(
+        decoration:BoxDecoration(
+            border: Border.all(
+                color: Colors.grey.withOpacity(0.3),
+                width: 2
+            )
+        ),
+
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
            Padding(
@@ -185,8 +183,8 @@ Container orderTile(double width,double height,DocumentSnapshot snapshot,BuildCo
               ),
             )
           ],
-        );
-      },
-    )
+        ),
+      );
+    },
   );
 }
