@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
 import 'package:bhaapp/order/model/orderStatusModel.dart';
@@ -28,13 +30,25 @@ class _OrderDetailState extends State<OrderDetail> {
   bool loaded=false;
   List<OrderStatusModel> satatusList=[];
   getStatusList()async{
-    await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).collection('DeliveryStatus').get().then((QuerySnapshot querySnapshot){
+    String stsList=  await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).get().then((value) {
+      return value['DeliveryStatus'].toString();
+    });
+    setState(() {
+      var convert=json.decode(stsList);
+      print(convert);
+      print(convert[0]['name']);
+      for(var i=0;i<convert.length;i++){
+        satatusList.add(OrderStatusModel(name: convert[i]['name'], status: convert[i]['status'], date: convert[i]['date']));
+      }
+    });
+
+   /* await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).collection('DeliveryStatus').get().then((QuerySnapshot querySnapshot){
       querySnapshot.docs.forEach((doc) {
         setState(() {
           satatusList.add(OrderStatusModel(name: doc['name'], status: doc['status'], date: doc['date']));
         });
       });
-    });
+    });*/
     setState(() {
       loaded=true;
     });
@@ -187,7 +201,7 @@ class _OrderDetailState extends State<OrderDetail> {
                 ),
               ),
             ),
-            widget.orderStatus.toString().toLowerCase()=="order placed"?
+            satatusList[1].status==false?
             Padding(
                padding: EdgeInsets.symmetric(
                  horizontal: screenWidth*0.07,

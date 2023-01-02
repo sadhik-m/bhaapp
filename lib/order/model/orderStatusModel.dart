@@ -22,4 +22,5 @@ class OrderStatusModel {
       date: json['date'],
     );
   }
+
 }

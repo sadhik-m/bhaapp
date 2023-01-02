@@ -150,10 +150,15 @@ print(values);
     });
   }
   Future<void> uploadStatusesToFirebase(List<OrderStatusModel> statusList,String txnId) async {
-    for(OrderStatusModel model in statusList) {
+    String encoded = jsonEncode(statusList);
+    print(encoded);
+    await FirebaseFirestore.instance.collection('orders').doc(txnId).set({
+      'DeliveryStatus':encoded
+    },SetOptions(merge: true),);
+   /* for(OrderStatusModel model in statusList) {
       await FirebaseFirestore.instance.collection('orders').doc(txnId).collection('DeliveryStatus').doc()
           .set(model.toJson());
-    }
+    }*/
   }
 
 List<OrderStatusModel> productStatusList=[
