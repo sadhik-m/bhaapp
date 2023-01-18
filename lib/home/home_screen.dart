@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       categorisHome.clear();
     });
     await FirebaseFirestore.instance
-        .collection('products').where('seller.${'vid'}',isEqualTo: vendorId)
+        .collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('approved',isEqualTo: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -59,7 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   salePrice: doc['salesPrice'].toString(),
                   regularPrice: doc['regularPrice'].toString(),
                   priceUnit: doc['priceUnit'],
-                  subCategory:doc['subCategory']));
+                  subCategory:doc['subCategory'],
+                availableInStock:doc['availableInStock'],
+              ));
           if(categorisHome.contains(doc["subCategory"])){
 
           }else{
@@ -279,7 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                              quantity:initialList[ind].priceUnit,
                                              prodId:initialList[ind].prodDocId.toString(),
                                              fav:favouriteList!.contains(initialList[ind].prodDocId.toString()),
-                                             cartHomeList:cartHomeList
+                                             cartHomeList:cartHomeList,
+                                               availableInStock:initialList[ind].availableInStock
                                        ),
                                          ):SizedBox.shrink();
                                      }),

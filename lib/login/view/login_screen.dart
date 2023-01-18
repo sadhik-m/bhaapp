@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/authentication/app_logo_old(1) 1-2.png',
+                Image.asset('assets/home/newlogo.png',
                 height: screenHeight*0.035,),
                 Text('Login',
                 style: GoogleFonts.inter(
@@ -79,7 +79,7 @@ class LoginScreen extends StatelessWidget {
                 )
               ],
             ),
-            Column(
+            /*Column(
               children: [
                 socialMediaButton(
                     'Continue with Google',
@@ -102,7 +102,8 @@ class LoginScreen extends StatelessWidget {
                     screenWidth,(){}
                 ),
               ],
-            )
+            )*/
+            Container()
           ],
         ),
       ),

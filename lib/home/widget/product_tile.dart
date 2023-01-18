@@ -21,6 +21,7 @@ class ProductTile extends StatefulWidget {
   String prodId;
   bool fav;
   List<CartModel>cartHomeList;
+  bool availableInStock;
   ProductTile({
     Key? key,
     required this.height,
@@ -32,7 +33,9 @@ class ProductTile extends StatefulWidget {
     required this.reguarPrize,
     required this.quantity,
     required this.prodId,
-    required this.fav,required this.cartHomeList
+    required this.fav,
+    required this.cartHomeList,
+    required this.availableInStock,
   }) : super(key: key);
 
   @override
@@ -58,7 +61,7 @@ class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap:widget.ontap ,
+      onTap:widget.availableInStock?widget.ontap:(){} ,
       child: Container(
         height: widget.height*0.26,
         width: widget.width*0.435,
@@ -159,7 +162,7 @@ class _ProductTileState extends State<ProductTile> {
                                       Text('₹${widget.salePrize}/${widget.quantity}',
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.w700,
-                                            fontSize: 11,
+                                            fontSize: 9,
                                             color: Colors.black
                                         ),),
                                     ],
@@ -169,6 +172,7 @@ class _ProductTileState extends State<ProductTile> {
                               ),
                             ],
                           ),
+                          widget.availableInStock?
                           Positioned(
                             bottom: 0,
                             left: 0,right: 0,
@@ -194,13 +198,25 @@ class _ProductTileState extends State<ProductTile> {
                                 ),
                               ],
                             ),
-                          )
+                          ):SizedBox.shrink()
                         ],
                       )
                   ),
                 ],
               ),
-            )
+            ),
+            widget.availableInStock?
+                SizedBox.shrink():
+                Positioned(
+                    top: 5,
+                    left: 0,right: 0,
+                    child: Text('Not in Stock',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      color: Colors.red
+                    ),
+                    textAlign: TextAlign.center,))
           ],
         ),
       ),

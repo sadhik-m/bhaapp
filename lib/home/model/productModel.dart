@@ -18,6 +18,7 @@ class ProductModel {
     required this.regularPrice,
     required this.priceUnit,
     required this.subCategory,
+    required this.availableInStock,
   });
 
   String prodDocId;
@@ -27,6 +28,7 @@ class ProductModel {
   String regularPrice;
   String priceUnit;
   String subCategory;
+  bool availableInStock;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
     prodDocId: json["prodDocId"],
@@ -36,6 +38,7 @@ class ProductModel {
     regularPrice: json["regularPrice"],
     priceUnit: json["priceUnit"],
     subCategory: json["subCategory"],
+    availableInStock: json["availableInStock"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -46,5 +49,6 @@ class ProductModel {
     "regularPrice": regularPrice,
     "priceUnit": priceUnit,
     "subCategory": subCategory,
+    "availableInStock": availableInStock,
   };
 }

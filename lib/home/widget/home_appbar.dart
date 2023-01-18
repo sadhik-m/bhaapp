@@ -43,7 +43,7 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
                   ColorFilter.mode(Colors.black.withOpacity(0.6),
                       BlendMode.dstATop),
                   image: new AssetImage(
-                    'assets/authentication/app_logo_old(1) 1-2.png',
+                    'assets/home/newlogo.png',
                   ),
                 ),
               ),

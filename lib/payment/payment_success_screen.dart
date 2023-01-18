@@ -4,16 +4,23 @@ import 'package:bhaapp/order/my_orders_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PaymentSuccess extends StatelessWidget {
+import '../dashboard/dash_board_screen.dart';
+
+class PaymentSuccess extends StatefulWidget {
   const PaymentSuccess({Key? key}) : super(key: key);
 
+  @override
+  State<PaymentSuccess> createState() => _PaymentSuccessState();
+}
+
+class _PaymentSuccessState extends State<PaymentSuccess> {
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
     var screenWidth=MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: appBar('', [], true),
+        appBar: appBar('', [], false),
         body: Container(
           padding: EdgeInsets.symmetric(
               horizontal: screenWidth*0.05,
@@ -41,7 +48,10 @@ class PaymentSuccess extends StatelessWidget {
               Container(),
 
               blackButton("View my Orders", (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderScreen(show_back: true,)));
+                setState(() {
+                  pageIndex=1;
+                });
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
               }, screenWidth, screenHeight*0.05),
             ],
           ),

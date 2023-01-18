@@ -158,7 +158,12 @@ print(values);
       if(categoryType=='services'){
         uploadStatusesToFirebase(serviceStatusList,orderId);
       }else{
-        uploadStatusesToFirebase(productStatusList,orderId);
+        if(deliveryOption=='store pickup'){
+          uploadStatusesToFirebase(productStatusStorePickupList,orderId);
+        }else{
+          uploadStatusesToFirebase(productStatusDeliverByBhaappList,orderId);
+        }
+
       }
 
       await FirebaseFirestore.instance
@@ -177,7 +182,7 @@ print(values);
 
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'Order placed successfully');
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()), (route) => false);
     });
   }
   Future<void> uploadStatusesToFirebase(List<OrderStatusModel> statusList,String txnId) async {
@@ -192,18 +197,26 @@ print(values);
     }*/
   }
 
-List<OrderStatusModel> productStatusList=[
-  OrderStatusModel(name: 'Order Placed', status: true, date: DateTime.now().toString()),
-  OrderStatusModel(name: 'Order Packed', status: false, date: ''),
-  OrderStatusModel(name: 'Shipped', status: false, date: ''),
+List<OrderStatusModel> productStatusDeliverByBhaappList=[
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
+  OrderStatusModel(name: 'Accepted', status: false, date: ''),
+  OrderStatusModel(name: 'Ready For Pickup', status: false, date: ''),
   OrderStatusModel(name: 'Out For Delivery', status: false, date: ''),
   OrderStatusModel(name: 'Delivered', status: false, date: ''),
   //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
 ];
+  List<OrderStatusModel> productStatusStorePickupList=[
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
+  OrderStatusModel(name: 'Accepted', status: false, date: ''),
+  OrderStatusModel(name: 'Ready For Pickup', status: false, date: ''),
+  OrderStatusModel(name: 'Delivered', status: false, date: ''),
+  //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
+];
 List<OrderStatusModel> serviceStatusList=[
-  OrderStatusModel(name: 'Request Received', status: true, date: DateTime.now().toString()),
-  OrderStatusModel(name: 'Service in Progress', status: false, date: ''),
-  OrderStatusModel(name: 'Service Completed', status: false, date: ''),
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
+  OrderStatusModel(name: 'Accepted', status: false, date: ''),
+  OrderStatusModel(name: 'InProgress', status: false, date: ''),
+  OrderStatusModel(name: 'Done', status: false, date: ''),
   //OrderStatusModel(name: 'Service Canceled', status: false, date: ''),
 ];
 

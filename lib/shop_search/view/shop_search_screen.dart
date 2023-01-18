@@ -62,7 +62,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset('assets/authentication/app_logo_old(1) 1-2.png',
+            Image.asset('assets/home/newlogo.png',
               width: screenWidth*0.2,
             ),
             Text('Find Shop',
@@ -355,7 +355,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
     });
     categoryList.add('All');
     await FirebaseFirestore.instance
-        .collection('vendors').where('${'deliveryDetails'}.${'deliveryAreas'}',arrayContains: pinCode)//pinCode)
+        .collection('vendors').where('${'deliveryDetails'}.${'deliveryAreas'}',arrayContains: pinCode).where('approved',isEqualTo: true)//pinCode)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

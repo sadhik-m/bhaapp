@@ -28,7 +28,8 @@ SingleChildScrollView prodList(double screenWidth,double screenHeight, List<Prod
               quantity: data.priceUnit,
               prodId: data.prodDocId.toString(),
               fav: favouriteList!.contains(data.prodDocId.toString()),
-            cartHomeList: cartlist,);
+            cartHomeList: cartlist,
+          availableInStock: data.availableInStock,);
         }).toList(),
 
       ),

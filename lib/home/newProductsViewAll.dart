@@ -143,7 +143,8 @@ class _NewProductsState extends State<NewProducts> {
                             quantity: data['priceUnit'],
                             prodId: document.id.toString(),
                             fav: favouriteList!.contains(document.id.toString()),
-                          cartHomeList: cartHomeList,);
+                          cartHomeList: cartHomeList,
+                            availableInStock:data['availableInStock']);
                       }).toList(),
 
                     ),
