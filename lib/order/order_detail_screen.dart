@@ -20,7 +20,16 @@ class OrderDetail extends StatefulWidget {
   String shopContact;
   String orderStatus;
   String orderStatusDate;
-   OrderDetail({Key? key,required this.orderid,required this.sku,required this.quqntity,required this.shopContact,required this.orderStatus,required this.orderStatusDate}) : super(key: key);
+  String deliveryAddress;
+  String deliveryTime;
+  String orderTotal;
+   OrderDetail({Key? key,required this.orderid,required this.sku,required this.quqntity,
+     required this.shopContact,required this.orderStatus,
+     required this.orderStatusDate,
+     required this.deliveryAddress,
+     required this.deliveryTime,
+     required this.orderTotal,
+   }) : super(key: key);
 
   @override
   State<OrderDetail> createState() => _OrderDetailState();
@@ -30,6 +39,7 @@ class _OrderDetailState extends State<OrderDetail> {
   bool loaded=false;
   List<OrderStatusModel> satatusList=[];
   getStatusList()async{
+    print(widget.orderid);
     String stsList=  await FirebaseFirestore.instance.collection('orders').doc(widget.orderid).get().then((value) {
       return value['DeliveryStatus'].toString();
     });
@@ -130,6 +140,61 @@ class _OrderDetailState extends State<OrderDetail> {
                             },
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Total',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(0.8)
+                                ),),
+                              Text('₹${widget.orderTotal}',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                    color: Colors.black.withOpacity(0.8)
+                                ),)
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Delivery time',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(0.8)
+                                ),),
+                              Text('${widget.deliveryTime}',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    color: Colors.black.withOpacity(0.8)
+                                ),)
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Delivery Address',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(0.8)
+                                ),),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Text(widget.deliveryAddress,
+                            style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: Colors.black.withOpacity(0.8)
+                            ),textAlign: TextAlign.left,),
+                          SizedBox(height: 30,),
+                          Row(
                             children: [
                               Text('Tracking Details',
                               style: GoogleFonts.inter(
@@ -139,7 +204,7 @@ class _OrderDetailState extends State<OrderDetail> {
                               ),)
                             ],
                           ),
-                          SizedBox(height: 10,),
+                          /*SizedBox(height: 10,),
                          Row(
                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                            children: [
@@ -157,10 +222,10 @@ class _OrderDetailState extends State<OrderDetail> {
                                  ),),
                                ],
                              ),
-                             /*Image.asset('assets/home/356674 1.png',
-                             height: 25,width: 74,)*/
+                             *//*Image.asset('assets/home/356674 1.png',
+                             height: 25,width: 74,)*//*
                            ],
-                         ),
+                         ),*/
                           SizedBox(height: 10,),
                           Row(
                             children: [

@@ -215,7 +215,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     itemBuilder: (context,index){
                       return InkWell(
                         onTap: (){
-                          if(vendorId!=null && vendorId!.isNotEmpty){
+                          if(DashBoardScreen.cartValueNotifier.cartValueNotifier.value!=0){
                             showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType);
                           }
                           else{
@@ -310,11 +310,13 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
                     itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
-                      if(vendorId!=null && vendorId!.isNotEmpty){
+                      if(DashBoardScreen.cartValueNotifier.cartValueNotifier.value!=0){
+
                         showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
                       }else{
                         saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
                       }
+
 
                     },
                     child: ShopDataListTile(
@@ -347,6 +349,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
 
       setState(() {
         pinCode=doc['pinCode'];
+        print('PPPPPPPPPPP $pinCode');
       });
 
     });

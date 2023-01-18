@@ -25,6 +25,8 @@ class PayScreen extends StatefulWidget {
   String deliveryTime;
   String customerPhone;
   String categoryType;
+  double amountToVendor;
+  double amountToBhaApp;
    PayScreen({Key? key,required this.orderId,required this.paymentSessionId,
    required this.deliveryAddress,
   required this.deliveryOption,
@@ -34,7 +36,10 @@ class PayScreen extends StatefulWidget {
   required this.vid,
   required this.deliveryTime,
   required this.customerPhone,
-  required this.categoryType}) : super(key: key);
+  required this.categoryType,
+  required this.amountToVendor,
+  required this.amountToBhaApp,
+   }) : super(key: key);
 
   @override
   State<PayScreen> createState() => _PayScreenState();
@@ -80,7 +85,8 @@ class _PayScreenState extends State<PayScreen> {
               widget.deliveryAddress, widget.deliveryOption, widget.orderAmount,
               'CashFree',
               data['payment_session_id'],
-              DateTime.now().toString(),widget.items,widget.uid,widget.vid,widget.deliveryTime,widget.customerPhone,widget.categoryType);
+              DateTime.now().toString(),widget.items,widget.uid,widget.vid,widget.deliveryTime,widget.customerPhone,widget.categoryType,
+          widget.amountToVendor,widget.amountToBhaApp);
 
         }else{
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Transaction Failed')));

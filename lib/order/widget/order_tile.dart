@@ -168,7 +168,10 @@ StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,Bui
 
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot['orderId'], sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot['status'],orderStatusDate: snapshot['txTime'],)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot['orderId'], sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot['status'],
+                        orderStatusDate: snapshot['txTime'],deliveryAddress: snapshot['deliveryAddress'],
+                        deliveryTime: snapshot['deliveryTime'],orderTotal: snapshot['orderAmount'],
+                      )));
                     },
                     child: Center(
                       child: Text('View Order Details',

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bhaapp/cart/service/cartLengthService.dart';
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
@@ -21,19 +22,27 @@ import '../../profile/model/profileModel.dart';
 
 class PaymentService{
   // WEB Intent
-  checkOut(BuildContext context,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String deliveryTime,String customerPhone,String categoryType)async{
+  checkOut(BuildContext context,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String deliveryTime,
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp)async{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String ? uid= preferences.getString('uid');
     String ? vendorId = preferences.getString('vendorId');
+    var rndnumberOrder="";
+    var rnd= new Random();
+    for (var i = 0; i < 4; i++) {
+      rndnumberOrder = rndnumberOrder + rnd.nextInt(9).toString();
+    }
     await FirebaseFirestore.instance
         .collection('customers')
         .doc(uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-       getTolken(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'], '$uid${DateTime.now().toString().replaceAll(RegExp('[^A-Za-z0-9]'), '').replaceAll(' ', '')}',
-       deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,customerPhone,categoryType);
+       getTolken(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'],
+           '${documentSnapshot['phone'].toString().substring(3,10)}_${((double.parse(documentSnapshot['orderCount']))+1).toInt()}',
+       deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,
+           customerPhone,categoryType,amountToVendor,amountToBhaApp);
       } else {
         print('Document does not exist on the database');
         Navigator.of(context).pop();
@@ -42,7 +51,8 @@ class PaymentService{
     });
   }
   getTolken(BuildContext context,String phone,String email,String name,String orderid,String deliveryAddress,String deliveryOption,
-      String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,String customerPhone,String categoryType)async{
+      String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp)async{
 
  // var url='https://test.cashfree.com/api/v2/cftoken/order';
   var url='https://sandbox.cashfree.com/pg/orders';
@@ -76,7 +86,7 @@ class PaymentService{
       var data=json.decode(value.body.toString());
       print(data['payment_session_id']);
       makePayment(data['payment_session_id'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,
-          orderAmount,items,uid,vid,deliveryTime,customerPhone,categoryType);
+          orderAmount,items,uid,vid,deliveryTime,customerPhone,categoryType,amountToVendor,amountToBhaApp);
     }else{
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'payment failed');
@@ -87,9 +97,12 @@ class PaymentService{
 
 
   makePayment(String tolken,BuildContext context,String phone,String email,String name,String orderid,
-      String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,String customerPhone,String categoryType) {
+      String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp) {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>PayScreen(orderId: orderid, paymentSessionId: tolken,
-          deliveryAddress: deliveryAddress, deliveryOption: deliveryOption, orderAmount: orderAmount, items: items, uid: uid, vid: vid, deliveryTime: deliveryTime, customerPhone: customerPhone, categoryType: categoryType)));
+          deliveryAddress: deliveryAddress, deliveryOption: deliveryOption, orderAmount: orderAmount, items: items,
+          uid: uid, vid: vid, deliveryTime: deliveryTime, customerPhone: customerPhone,
+          categoryType: categoryType,amountToVendor: amountToVendor,amountToBhaApp: amountToBhaApp,)));
 
  /*   try{
       CashfreePGSDK.doPayment(inputParams)
@@ -115,14 +128,15 @@ print(values);
   }
 
   saveOrderInfo(BuildContext context,String orderId,String deliveryAddress,String deliveryOption,String orderAmount,
-      String paymentMode,String txnId,String txTime,Map<String, int> items,String uid,String vid,String deliveryTime,String customerPhone,String categoryType)async{
+      String paymentMode,String txnId,String txTime,Map<String, int> items,String uid,String vid,
+      String deliveryTime,String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp)async{
 
     showLoadingIndicator(context);
     SharedPreferences preferences =await SharedPreferences.getInstance();
     preferences.setString('cartList',CartModel.encode([]));
     DashBoardScreen.cartValueNotifier.updateNotifier(0);
-    await FirebaseFirestore.instance.collection('orders').doc(txnId).set({
-      'orderId': txnId,
+    await FirebaseFirestore.instance.collection('orders').doc(orderId).set({
+      'orderId':orderId ,
       'deliveryAddress': deliveryAddress,
       'deliveryType': deliveryOption,
       'deliveryTime': deliveryTime,
@@ -130,20 +144,37 @@ print(values);
       'customerPhone': customerPhone,
       'orderAmount': orderAmount,
       'paymentMode': paymentMode,
-      'txnId': orderId,
+      'txnId': txnId,
       'txTime': txTime,
       'items':items,
       'userId':uid,
       'vendorId':vid,
-      'status':'In Progress'
+      'status':'In Progress',
+      'AmountToVendor':'$amountToVendor',
+      'AmountToBhaApp':'$amountToBhaApp'
     },
       SetOptions(merge: true),
-    ).then((value) {
+    ).then((value) async{
       if(categoryType=='services'){
-        uploadStatusesToFirebase(serviceStatusList,txnId);
+        uploadStatusesToFirebase(serviceStatusList,orderId);
       }else{
-        uploadStatusesToFirebase(productStatusList,txnId);
+        uploadStatusesToFirebase(productStatusList,orderId);
       }
+
+      await FirebaseFirestore.instance
+          .collection('customers')
+          .doc(uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          FirebaseFirestore.instance.collection('customers').doc(uid).update({'orderCount': '${((double.parse(documentSnapshot['orderCount']))+1).toInt()}'});
+        } else {
+          print('Document does not exist on the database');
+        }
+      });
+
+
+
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'Order placed successfully');
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()));

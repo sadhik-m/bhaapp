@@ -26,6 +26,7 @@ class RegisterService{
       'phone': phone,
       'country': country,
       'image': img,
+      'orderCount': '0',
     },
       SetOptions(merge: true),
     )

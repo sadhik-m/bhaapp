@@ -34,7 +34,11 @@ class _MyCartState extends State<MyCart> {
    String service='service now';
    bool loaded=false;
 
-   double deliveryCharge=6;
+   double deliveryCharge=0;
+   double deliveryChargeSelected=0;
+   double bhaAppCharges=0;
+   double amountToBhaApp=0;
+   double amountToVendor=0;
    AddressModel ? addressModel;
 
    int totalItems=0;
@@ -53,6 +57,7 @@ class _MyCartState extends State<MyCart> {
      // TODO: implement initState
      super.initState();
      getCartList();
+     getDeliveryCharge();
      getDeliveryAddress();
      getCategoryType();
    }
@@ -243,7 +248,7 @@ class _MyCartState extends State<MyCart> {
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Service Now | ₹6',style: GoogleFonts.inter(
+                                                Text('Service Now',style: GoogleFonts.inter(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
@@ -261,7 +266,7 @@ class _MyCartState extends State<MyCart> {
                                             onChanged: (value){
                                               setState(() {
                                                 service=value.toString();
-                                                deliveryCharge=6;
+                                                //deliveryCharge=6;
                                               });
                                             })
                                       ],
@@ -281,7 +286,7 @@ class _MyCartState extends State<MyCart> {
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('Service Later | ₹25',style: GoogleFonts.inter(
+                                                    Text('Service Later',style: GoogleFonts.inter(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.w500,
                                                         color: Colors.black
@@ -294,7 +299,7 @@ class _MyCartState extends State<MyCart> {
                                                 onChanged: (value){
                                                   setState(() {
                                                     service=value.toString();
-                                                    deliveryCharge=25;
+                                                   // deliveryCharge=25;
                                                   });
                                                 })
                                           ],
@@ -429,7 +434,7 @@ class _MyCartState extends State<MyCart> {
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Deliver Now | ₹6',style: GoogleFonts.inter(
+                                                Text('Deliver Now',style: GoogleFonts.inter(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
@@ -447,7 +452,7 @@ class _MyCartState extends State<MyCart> {
                                             onChanged: (value){
                                           setState(() {
                                             delivery=value.toString();
-                                            deliveryCharge=6;
+                                            deliveryChargeSelected=deliveryCharge;
                                           });
                                             })
                                       ],
@@ -461,13 +466,13 @@ class _MyCartState extends State<MyCart> {
                                           children: [
                                             Row(
                                               children: [
-                                                Image.asset('assets/home/Group 78.png',
-                                                  width: screenWidth*0.1,),
+                                                Image.asset('assets/home/delivery-icon-21.png',
+                                                  width: screenWidth*0.09,),
                                                 SizedBox(width: screenWidth*0.03,),
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('Deliver Later | ₹25',style: GoogleFonts.inter(
+                                                    Text('Deliver Later',style: GoogleFonts.inter(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.w500,
                                                         color: Colors.black
@@ -480,7 +485,8 @@ class _MyCartState extends State<MyCart> {
                                                 onChanged: (value){
                                                   setState(() {
                                                     delivery=value.toString();
-                                                    deliveryCharge=25;
+                                                    deliveryChargeSelected=deliveryCharge;
+                                                   // deliveryCharge=25;
                                                   });
                                                 })
                                           ],
@@ -607,7 +613,7 @@ class _MyCartState extends State<MyCart> {
                                             onChanged: (value){
                                               setState(() {
                                                 delivery=value.toString();
-                                                deliveryCharge=0;
+                                                deliveryChargeSelected=0;
                                               });
                                             })
                                       ],
@@ -757,7 +763,7 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
-                                Text('₹ $deliveryCharge',
+                                Text('₹ $deliveryChargeSelected',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12,
@@ -775,7 +781,7 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 14,
                                     color: Colors.black
                                 ),),
-                                Text((double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
+                                Text((double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 15,
@@ -786,14 +792,21 @@ class _MyCartState extends State<MyCart> {
                             SizedBox(height: screenHeight*0.08,),
                             blackButton('Checkout',
                                     (){
+
+                              setState(() {
+                                amountToVendor=((double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100))-(deliveryChargeSelected+bhaAppCharges));
+                                amountToBhaApp=deliveryChargeSelected+bhaAppCharges;
+                              });
                                   PaymentService().checkOut(
                                       context,
                                       '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
                                       categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
-                                      (double.parse(value.toString())+deliveryCharge+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
+                                      (double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
                                       items,
                                   "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
-                                  '${addressModel!.mobile}',categoryType.toString().toLowerCase());
+                                  '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
+                                    amountToVendor,amountToBhaApp
+                                  );
                                 }, screenWidth, screenHeight*0.05),
                           ],
                         ):Container();
@@ -851,6 +864,7 @@ class _MyCartState extends State<MyCart> {
    String openTime='';
    String closeTime='';
    getShopTiming()async{
+     print('hhhh000000');
      SharedPreferences preferences=await SharedPreferences.getInstance();
      String vendorDocId=preferences.getString('vendorDocId')??'';
      await FirebaseFirestore.instance
@@ -864,20 +878,35 @@ class _MyCartState extends State<MyCart> {
            openTime=documentSnapshot['openTime.${'hour'}'].toString();
            closeTime=documentSnapshot['closeTime.${'hour'}'].toString();
            if(isWeekend(DateTime.now())==false){
+             print('FGGGG');
              if(DateTime.now().hour < int.parse(closeTime) && DateTime.now().hour > int.parse(openTime)){
+               print('object1');
                setState(() {
                  selectedDate=DateTime.now();
                  selectedTime = TimeOfDay(hour: DateTime.now().hour, minute: 00);
                });
              }else if(DateTime.now().hour < int.parse(closeTime) && DateTime.now().hour < int.parse(openTime)){
-               selectedDate=DateTime.now();
-               selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+               print('object2');
+               setState(() {
+                 selectedDate=DateTime.now();
+                 selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+               });
              }else if(DateTime.now().hour > int.parse(closeTime)){
-               selectedDate=DateTime.now().add(const Duration(days: 1));
-               selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+               print('object3');
+               setState(() {
+                 selectedDate=DateTime.now().add(const Duration(days: 1));
+                 selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+               });
+             }else{
+               print('object4');
+               setState(() {
+                 selectedDate=DateTime.now().add(const Duration(days: 1));
+                 selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
+               });
              }
 
            }else{
+             print('yGGGG');
              setState(() {
                selectedDate=DateTime.now().add(const Duration(days: 1));
                selectedTime = TimeOfDay(hour: int.parse(openTime), minute: 00);
@@ -892,11 +921,32 @@ class _MyCartState extends State<MyCart> {
      });
      setState(() {
        print("IIIITTTTT $offDay");
+       print("IIIITTTTT $selectedTime");
+       print("IIIITTTTT $selectedDate");
        loaded=true;
      });
    }
 
+   getDeliveryCharge()async{
+     SharedPreferences preferences=await SharedPreferences.getInstance();
+     String vendorDocId=preferences.getString('vendorDocId')??'';
+     FirebaseFirestore.instance
+         .collection('vendors')
+         .doc(vendorDocId)
+         .get()
+         .then((DocumentSnapshot documentSnapshot) {
+       if (documentSnapshot.exists) {
+         setState(() {
+           deliveryCharge=double.parse(documentSnapshot['deliveryDetails.${'deliveryCharges'}'].toString());
+           deliveryChargeSelected=deliveryCharge;
+           bhaAppCharges=double.parse(documentSnapshot['BhaAppCharges'].toString());
 
+         });
+       } else {
+         print('Document does not exist on the database');
+       }
+     });
+   }
 
    clearCart()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();

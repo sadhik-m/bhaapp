@@ -40,7 +40,7 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
                 image: new DecorationImage(
                   fit: BoxFit.fill,
                   colorFilter:
-                  ColorFilter.mode(Colors.black.withOpacity(0.2),
+                  ColorFilter.mode(Colors.black.withOpacity(0.6),
                       BlendMode.dstATop),
                   image: new AssetImage(
                     'assets/authentication/app_logo_old(1) 1-2.png',
