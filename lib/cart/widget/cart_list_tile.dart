@@ -254,7 +254,7 @@ class _CartListTileState extends State<CartListTile> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black.withOpacity(0.8)
                             ),),
-                            Text('₹${widget.quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
+                            Text('₹${(widget.quantity*double.parse(data['salesPrice'].toString())).toStringAsFixed(2)}',style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black

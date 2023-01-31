@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: screenHeight*0.01,),
                 profileTile(
-                    'My Wishlists',
+                    'My Wish List',
                         (){
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>WishListScreen()));
                     }

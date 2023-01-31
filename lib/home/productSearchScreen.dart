@@ -29,7 +29,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
   bool loaded=false;
   getInitialList()async{
     await FirebaseFirestore.instance
-        .collection('products').where('seller.${'vid'}',isEqualTo: vendorId)
+        .collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('approved',isEqualTo: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

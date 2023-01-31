@@ -69,7 +69,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             color: orderType=='my_orders'?splashBlue:Colors.black)
                     ),
                     child: Center(
-                      child: Text('My Orders',
+                      child: Text('Active Orders',
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,

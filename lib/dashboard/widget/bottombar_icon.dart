@@ -20,6 +20,8 @@ Column BottomIcon(VoidCallback onTap,int index,String image,double height){
               enableFeedback: false,
               onPressed:onTap,
               icon:  Image.asset(
+                image=='search'?
+                'assets/home/$image.png':
                 'assets/dashboard/$image.png',
                 color:pageIndex == index ?  Colors.white:bottom_grey,
                 height: height*0.035,

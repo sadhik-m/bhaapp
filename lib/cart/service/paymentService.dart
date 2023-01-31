@@ -44,6 +44,7 @@ class PaymentService{
        deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,
            customerPhone,categoryType,amountToVendor,amountToBhaApp);
       } else {
+
         print('Document does not exist on the database');
         Navigator.of(context).pop();
         Fluttertoast.showToast(msg: 'payment failed');
@@ -88,6 +89,17 @@ class PaymentService{
       makePayment(data['payment_session_id'],context, phone, email, name, orderid,deliveryAddress,deliveryOption,
           orderAmount,items,uid,vid,deliveryTime,customerPhone,categoryType,amountToVendor,amountToBhaApp);
     }else{
+      FirebaseFirestore.instance
+          .collection('customers')
+          .doc(uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          FirebaseFirestore.instance.collection('customers').doc(uid).update({'orderCount': '${((double.parse(documentSnapshot['orderCount']))+1).toInt()}'});
+        } else {
+          print('Document does not exist on the database');
+        }
+      });
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'payment failed');
     }
@@ -99,6 +111,17 @@ class PaymentService{
   makePayment(String tolken,BuildContext context,String phone,String email,String name,String orderid,
       String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
       String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp) {
+    FirebaseFirestore.instance
+        .collection('customers')
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        FirebaseFirestore.instance.collection('customers').doc(uid).update({'orderCount': '${((double.parse(documentSnapshot['orderCount']))+1).toInt()}'});
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
       Navigator.push(context, MaterialPageRoute(builder: (context)=>PayScreen(orderId: orderid, paymentSessionId: tolken,
           deliveryAddress: deliveryAddress, deliveryOption: deliveryOption, orderAmount: orderAmount, items: items,
           uid: uid, vid: vid, deliveryTime: deliveryTime, customerPhone: customerPhone,
@@ -166,7 +189,7 @@ print(values);
 
       }
 
-      await FirebaseFirestore.instance
+      /*await FirebaseFirestore.instance
           .collection('customers')
           .doc(uid)
           .get()
@@ -176,7 +199,7 @@ print(values);
         } else {
           print('Document does not exist on the database');
         }
-      });
+      });*/
 
 
 

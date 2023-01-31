@@ -20,16 +20,26 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
                     (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
               },
-              child: Container(
-                height: 35,
-                width: 35,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black,
-                ),
-                child: Center(
-                  child: Icon(Icons.shopping_basket_outlined,color: Colors.white,),
-                ),
+              child: Column(
+                children: [
+                  Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      //color: Colors.black,
+                    ),
+                    child: Center(
+                      child: Image.asset('assets/dashboard/findshops.png'),
+                    ),
+                  ),
+                  Text('Find Shop',
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 10,
+                        color: Colors.black
+                    ),)
+                ],
               ),
             ),
             Container(

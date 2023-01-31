@@ -136,7 +136,7 @@ class _MyCartState extends State<MyCart> {
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black.withOpacity(0.8)
                             ),),
-                            Text('${value.toString()} Items',style: GoogleFonts.inter(
+                            Text('${value.toString()} Item(s)',style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: splashBlue
@@ -150,7 +150,7 @@ class _MyCartState extends State<MyCart> {
                       valueListenable: DashBoardScreen.cartTotalNotifier.cartValueNotifier,
                       builder: (context, value, child) {
                         return value.toString()!='0'?
-                        Text('₹ ${value.toString()}',style: GoogleFonts.inter(
+                        Text('₹ ${(double.parse(value.toString())).toStringAsFixed(2)}',style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: Colors.black
@@ -253,7 +253,7 @@ class _MyCartState extends State<MyCart> {
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
                                                 ),),
-                                                Text('Get in next 30-35 mins',style: GoogleFonts.inter(
+                                                Text('Within 24 hours',style: GoogleFonts.inter(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w400,
                                                     color: splashBlue
@@ -439,7 +439,7 @@ class _MyCartState extends State<MyCart> {
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.black
                                                 ),),
-                                                Text('Get in next 30-35 mins',style: GoogleFonts.inter(
+                                                Text('Get in next 60-90 mins',style: GoogleFonts.inter(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w400,
                                                     color: splashBlue
@@ -671,7 +671,7 @@ class _MyCartState extends State<MyCart> {
                                 SizedBox(height: screenHeight*0.005,),
                                 Container(
                                   width: screenWidth*0.45,
-                                  child: Text('${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',style: GoogleFonts.inter(
+                                  child: Text('${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPh : ${addressModel!.mobile}',style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12,
                                       color: Colors.black.withOpacity(0.6)
@@ -722,12 +722,12 @@ class _MyCartState extends State<MyCart> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('Cart total',style: GoogleFonts.inter(
+                                Text('Cart Total',style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12,
                                     color: Colors.black
                                 ),),
-                                Text('₹ ${value.toString()}',
+                                Text('₹ ${(double.parse(value.toString())).toStringAsFixed(2)}',
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12,
@@ -736,41 +736,101 @@ class _MyCartState extends State<MyCart> {
                               ],
                             ),
                             SizedBox(height: screenHeight*0.01,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text('Tax (9%)',style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    color: Colors.black
-                                ),),
-                                Text('₹ ${((9/double.parse(value.toString()))*100).toStringAsFixed(2)}',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                      color: Colors.black
-                                  ),),
-                              ],
-                            ),
-                            SizedBox(height: screenHeight*0.01,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text('Delivery charge',style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    color: Colors.black
-                                ),),
-                                Text('₹ $deliveryChargeSelected',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                      color: Colors.black
-                                  ),),
-                              ],
-                            ),
+                            categoryType.toString().toLowerCase()=='services'?
+                                Column(children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text('SGST (9%)',style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: Colors.black
+                                      ),),
+                                      Text('₹ ${((9/100)*double.parse(value.toString())).toStringAsFixed(2)}',
+                                        style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12,
+                                            color: Colors.black
+                                        ),),
+                                    ],
+                                  ),
+                                  SizedBox(height: screenHeight*0.01,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text('IGST (9%)',style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: Colors.black
+                                      ),),
+                                      Text('₹ ${((9/100)*double.parse(value.toString())).toStringAsFixed(2)}',
+                                        style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12,
+                                            color: Colors.black
+                                        ),),
+                                    ],
+                                  ),
+                                  SizedBox(height: screenHeight*0.01,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text('Delivery Charges',style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: Colors.black
+                                      ),),
+                                      Text('₹ ${double.parse(deliveryChargeSelected.toString()).toStringAsFixed(2)}',
+                                        style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12,
+                                            color: Colors.black
+                                        ),),
+                                    ],
+                                  ),
+                                ],):
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text('GST (0%)',style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            color: Colors.black
+                                        ),),
+                                        Text('₹ 0.00',
+                                          style: GoogleFonts.inter(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12,
+                                              color: Colors.black
+                                          ),),
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight*0.01,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text('Delivery Charges',style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            color: Colors.black
+                                        ),),
+                                        Text('₹ 0.00',
+                                          style: GoogleFonts.inter(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12,
+                                              color: Colors.black
+                                          ),),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                             SizedBox(height: screenHeight*0.01,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -781,7 +841,14 @@ class _MyCartState extends State<MyCart> {
                                     fontSize: 14,
                                     color: Colors.black
                                 ),),
-                                Text((double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
+                                categoryType.toString().toLowerCase()=='services'?
+                                Text('₹ ${((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2)}',
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                      color: Colors.black
+                                  ),):
+                                Text('₹ '+(double.parse(value.toString())).toStringAsFixed(2),
                                   style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 15,
@@ -792,21 +859,38 @@ class _MyCartState extends State<MyCart> {
                             SizedBox(height: screenHeight*0.08,),
                             blackButton('Checkout',
                                     (){
-
-                              setState(() {
-                                amountToVendor=((double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100))-(deliveryChargeSelected+bhaAppCharges));
-                                amountToBhaApp=deliveryChargeSelected+bhaAppCharges;
-                              });
-                                  PaymentService().checkOut(
-                                      context,
-                                      '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
-                                      categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
-                                      (double.parse(value.toString())+deliveryChargeSelected+((9/double.parse(value.toString()))*100)).toStringAsFixed(2),
-                                      items,
-                                  "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
-                                  '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
+                              if(categoryType.toString().toLowerCase()=='services'){
+                                setState(() {
+                                  amountToVendor=(((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected)-(deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))));
+                                  amountToBhaApp=deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()));
+                                });
+                                PaymentService().checkOut(
+                                    context,
+                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                                    categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
+                                    ((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2),
+                                    items,
+                                    "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                    '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
                                     amountToVendor,amountToBhaApp
-                                  );
+                                );
+                              }else{
+                                setState(() {
+                                  amountToVendor=((double.parse(value.toString()))-(deliveryChargeSelected+bhaAppCharges));
+                                  amountToBhaApp=deliveryChargeSelected+bhaAppCharges;
+                                });
+                                PaymentService().checkOut(
+                                    context,
+                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                                    categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
+                                    (double.parse(value.toString())).toStringAsFixed(2),
+                                    items,
+                                    "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                    '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
+                                    amountToVendor,amountToBhaApp
+                                );
+                              }
+
                                 }, screenWidth, screenHeight*0.05),
                           ],
                         ):Container();

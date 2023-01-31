@@ -101,8 +101,8 @@ class _NewProductsState extends State<NewProducts> {
             SizedBox(height: screenHeight*0.02,),
             Expanded(child: SingleChildScrollView(
               child: StreamBuilder<QuerySnapshot>(
-                stream: widget.catName==''?FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).snapshots():
-                FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('subCategory',isEqualTo: widget.catName).snapshots(),
+                stream: widget.catName==''?FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('approved',isEqualTo: true).snapshots():
+                FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('subCategory',isEqualTo: widget.catName).where('approved',isEqualTo: true).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return SizedBox.shrink();

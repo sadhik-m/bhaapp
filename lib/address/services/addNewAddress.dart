@@ -37,4 +37,21 @@ class AddNewAddress{
     );
     return 'success';
   }
+  Future<String> EditAddress(AddressModel addressModel,String adrsId,BuildContext context)async{
+    showLoadingIndicator(context);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String ? uid=preferences.getString('uid');
+
+
+    await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').doc(adrsId)
+        .set(
+      addressModel.toJson(),
+      SetOptions(merge: true),
+    );
+
+
+    Navigator.of(context).pop();
+    Fluttertoast.showToast(msg: 'address updated successfully');
+    return 'success';
+  }
 }

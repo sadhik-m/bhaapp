@@ -17,6 +17,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../address/model/addressModel.dart';
 import '../cart/service/cartLengthService.dart';
 import '../common/widgets/loading_indicator.dart';
 import '../dashboard/dash_board_screen.dart';
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProductModel> initialList=[];
   List<String> categorisHome=[];
   bool loaded=false;
+  AddressModel ? addressModel;
   getInitialList()async{
     setState(() {
       initialList.clear();
@@ -75,12 +77,32 @@ class _HomeScreenState extends State<HomeScreen> {
       loaded=true;
     });
   }
+  getDeliveryAddress()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ? uid=prefs.getString('uid');
+    String ? addressId;
+    await FirebaseFirestore.instance.collection('customers').doc(uid).get().then((value) {
+      setState(() {
+        addressId=value['defualtAddressId'].toString();
+      });
+    });
+    await FirebaseFirestore.instance.collection('customers').doc(uid).collection('customerAddresses').doc(addressId).get()
+        .then((DocumentSnapshot doc) {
+
+      setState(() {
+        addressModel=AddressModel(name: doc['name'], mobile: doc['mobile'], email: doc['email'], country: doc['country'], address: doc['address'], type: doc['type'],id: doc.id.toString(),
+            pinCode: doc['pinCode'],latitude: doc['latitude'],longitude: doc['longitude']);
+      });
+
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getInitialList();
+    getDeliveryAddress();
     gatWishList();
     getCartList();
   }
@@ -125,12 +147,56 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: screenHeight*0.02,),
+                      SizedBox(height: screenHeight*0.020,),
+                      addressModel==null?
+                      SizedBox.shrink():
+                      InkWell(
+                        onTap: (){
+                          Navigator.pushNamed(context, '/change_address').then((value) {
+                            setState(() {
+                              getDeliveryAddress();
+                            });
+                          });
+                        },
+                        child: Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.location_on_sharp,color: Colors.red,size: 29,),
+                            SizedBox(width: 5,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Selected Address',
+                                    style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700
+                                    ),),
+                                    Icon(Icons.keyboard_arrow_down_sharp,color: Colors.black,size: 19,),
+                                  ],
+                                ),
+                                Container(
+                                  width: screenWidth*0.65,
+                                  child: Text('${addressModel!.address},${addressModel!.country.toString().toUpperCase()},Ph : ${addressModel!.mobile}',style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.black
+                                  ),overflow: TextOverflow.ellipsis,),
+                                ),
+                              ],
+                            ),
+
+
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenHeight*0.019,),
                       mainBanner(),
 
+                      //SizedBox(height: screenHeight*0.024,),
+                      //smallBanner(),
                       SizedBox(height: screenHeight*0.024,),
-                      smallBanner(),
-                      SizedBox(height: screenHeight*0.02,),
                       searchField(screenHeight, screenWidth,(){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen(label: categoryType.toString().toLowerCase()=='services'?'Services':'Products',))).then((value) {
                           getCartList();

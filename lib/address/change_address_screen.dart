@@ -20,7 +20,20 @@ class ChangeAddress extends StatefulWidget {
 }
 
 class _ChangeAddressState extends State<ChangeAddress> {
-  final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('customers').snapshots();
+  //final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('customers').snapshots();
+  late Future<List<AddressModel>> adresFuture;
+  getAddressList()async{
+    setState(() {
+      adresFuture=GetAddress().getAddress();
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getAddressList();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight=MediaQuery.of(context).size.height;
@@ -36,7 +49,7 @@ class _ChangeAddressState extends State<ChangeAddress> {
           children: [
             Expanded(child:
             FutureBuilder<List<AddressModel>>(
-              future: GetAddress().getAddress(),
+              future:adresFuture ,
               builder: (
                   BuildContext context,
                    snapshot,
@@ -57,14 +70,29 @@ class _ChangeAddressState extends State<ChangeAddress> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return addressTile(screenWidth, screenHeight, (){
+                          if(selectedAddressIndex==index){
 
-                            selectedAddressIndex=index;
-                          showLoadingIndicator(context);
-                            AddNewAddress().makeDefualt(snapshot.data![index].id).then((value){
-                              Navigator.of(context).pop();
-                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
-                                  (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
-                            });
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Changing the address redirects to Find Shop screen for a shop selection.'),
+                              action: SnackBarAction(
+                                label: 'Yes',
+                                onPressed: (){
+                                  setState(() {
+                                    selectedAddressIndex=index;
+                                    showLoadingIndicator(context);
+                                    AddNewAddress().makeDefualt(snapshot.data![index].id).then((value){
+                                      Navigator.of(context).pop();
+                                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+                                          (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
+                                    });
+                                  });
+                                },
+                              ),duration: Duration(seconds: 4),)
+                            );
+                          }
+
+
 
 
                         },index,
@@ -73,6 +101,9 @@ class _ChangeAddressState extends State<ChangeAddress> {
                         snapshot.data![index].country,
                         snapshot.data![index].mobile,
                         snapshot.data![index].pinCode,
+                          context,
+                          snapshot.data![index].email,
+                          snapshot.data![index].id
                         );
                       },
                     );
