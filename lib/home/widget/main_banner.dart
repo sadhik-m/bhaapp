@@ -42,7 +42,9 @@ getVendorShopData()async{
               openTime: "${documentSnapshot['openTime.${'hour'}']}:${documentSnapshot['openTime.${'minute'}']}",
               phone: documentSnapshot['mobile'],
               email: documentSnapshot['email'],
-          shopType: documentSnapshot['shopType'])
+          shopType: documentSnapshot['shopType'],
+              razorpayId: documentSnapshot['razorpayId']
+          )
         );
       });
     } else {

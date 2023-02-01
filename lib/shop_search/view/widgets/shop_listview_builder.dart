@@ -21,7 +21,7 @@ ListView ShopListView(double width,double height,BuildContext context,List<Vendo
           width,
           height,
             (){
-              saveVendorId(data[index].vendorId,context,data[index].vendorDocId);
+              saveVendorId(data[index].vendorId,context,data[index].vendorDocId,data[index].razorpayId);
             }
         ),
       );
@@ -29,10 +29,11 @@ ListView ShopListView(double width,double height,BuildContext context,List<Vendo
   );
 
 }
-saveVendorId(String vendorIds,BuildContext context,String vendorDocId)async{
+saveVendorId(String vendorIds,BuildContext context,String vendorDocId,String razorpayId)async{
   SharedPreferences preferences = await SharedPreferences.getInstance();
   vendorId=vendorIds;
   preferences.setString('vendorId', vendorIds);
+  preferences.setString('razorpayId', razorpayId);
   preferences.setString('vendorDocId', vendorDocId);
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
       (context)=>DashBoardScreen()), (route) => false);

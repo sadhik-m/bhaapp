@@ -198,10 +198,12 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                     return InkWell(
                       onTap: (){
                         if(DashBoardScreen.cartValueNotifier.cartValueNotifier.value!=0){
-                          showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType);
+                          showVendorDialog(context,vendorSearchList[index].vendorId,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType,
+                          vendorSearchList[index].razorpayId);
                         }
                         else{
-                          saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType);
+                          saveVendorId(vendorSearchList[index].vendorId,context,vendorSearchList[index].vendorDocId,vendorSearchList[index].shopType,
+                          vendorSearchList[index].razorpayId);
                         }
                       },
                       child: Container(
@@ -294,9 +296,11 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                       onTap: (){
                         if(DashBoardScreen.cartValueNotifier.cartValueNotifier.value!=0){
 
-                          showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
+                          showVendorDialog(context,vendorTypeList[index].vendorId,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType,
+                          vendorTypeList[index].razorpayId);
                         }else{
-                          saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType);
+                          saveVendorId(vendorTypeList[index].vendorId,context,vendorTypeList[index].vendorDocId,vendorTypeList[index].shopType,
+                          vendorTypeList[index].razorpayId);
                         }
 
 
@@ -352,7 +356,9 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                   openTime: "${doc['openTime.${'hour'}']}:${doc['openTime.${'minute'}']}",
                   phone: doc['mobile'],
                   email: doc['email'],
-                  shopType: doc['shopType'])
+                  shopType: doc['shopType'],
+                razorpayId: doc['razorpayId']
+              )
           );
           if(categoryList.contains(doc['shopType'])){
             print('Already Added');
@@ -408,10 +414,11 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
 
   }
 
-  saveVendorId(String vendorIds,BuildContext context,String vendorDocId,String cateType)async{
+  saveVendorId(String vendorIds,BuildContext context,String vendorDocId,String cateType,String razorpayId)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     vendorId=vendorIds;
     preferences.setString('vendorId', vendorIds);
+    preferences.setString('razorpayId', razorpayId);
     preferences.setString('vendorDocId', vendorDocId);
     preferences.setString('categoryType', cateType);
     preferences.remove('favList');
@@ -420,13 +427,13 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
         (context)=>DashBoardScreen()), (route) => false);
   }
-  showVendorDialog(BuildContext context,String vendorIds,String vendorDocId,String cateType) {
+  showVendorDialog(BuildContext context,String vendorIds,String vendorDocId,String cateType,String razorpayId) {
     Widget okButton = TextButton(
       child: Text("Yes"),
       onPressed: () {
 
         Navigator.of(context).pop();
-        saveVendorId(vendorIds, context, vendorDocId,cateType);
+        saveVendorId(vendorIds, context, vendorDocId,cateType,razorpayId);
 
       },
     );
