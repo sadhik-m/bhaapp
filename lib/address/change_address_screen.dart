@@ -74,7 +74,7 @@ class _ChangeAddressState extends State<ChangeAddress> {
 
                           }else{
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Changing the address redirects to Find Shop screen for a shop selection.'),
+                              SnackBar(content: Text('Changing the address will redirect you to "Find Shop" screen to show you new shops'),
                               action: SnackBarAction(
                                 label: 'Yes',
                                 onPressed: (){

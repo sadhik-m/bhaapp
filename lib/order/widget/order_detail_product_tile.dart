@@ -36,7 +36,7 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(height: height*0.015,),
+                    /*SizedBox(height: height*0.015,),
                     Text(snapshot.data!.docs[0]['seller.${'name'}'],style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
                             color: Colors.black.withOpacity(0.8)
                         ),),
                       ],
-                    ),
+                    ),*/
                     SizedBox(height: height*0.015,),
                     Row(
                       children: [
@@ -98,7 +98,7 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
                             fontWeight: FontWeight.w500,
                             color: splashBlue
                         ),),
-                        Text(' - ₹${double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity.toString())}',style: GoogleFonts.inter(
+                        Text(' - ₹${(double.parse(snapshot.data!.docs[0]['salesPrice'].toString())*int.parse(quantity.toString())).toStringAsFixed(2)}',style: GoogleFonts.inter(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.black.withOpacity(0.8)

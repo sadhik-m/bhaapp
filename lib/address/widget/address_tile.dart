@@ -43,7 +43,7 @@ Column addressTile(double width,double height,VoidCallback ontap,int index,
               SizedBox(height: height*0.005,),
               Container(
                 width: width*0.45,
-                child: Text('$address,$country\nph : $phone\npin : $pincode',style: GoogleFonts.inter(
+                child: Text('$address,${country.toString().toUpperCase()}\nPh : $phone\nPincode : $pincode',style: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                     color: Colors.black.withOpacity(0.6)

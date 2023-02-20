@@ -15,6 +15,7 @@ import '../common/widgets/appBar.dart';
 
 class OrderDetail extends StatefulWidget {
   String orderid;
+  String shopName;
   List<String>sku=[];
   List<String>quqntity=[];
   String shopContact;
@@ -23,7 +24,7 @@ class OrderDetail extends StatefulWidget {
   String deliveryAddress;
   String deliveryTime;
   String orderTotal;
-   OrderDetail({Key? key,required this.orderid,required this.sku,required this.quqntity,
+   OrderDetail({Key? key,required this.orderid,required this.shopName,required this.sku,required this.quqntity,
      required this.shopContact,required this.orderStatus,
      required this.orderStatusDate,
      required this.deliveryAddress,
@@ -99,27 +100,52 @@ class _OrderDetailState extends State<OrderDetail> {
                   children: [
                     Container(
                       width: screenWidth,
-                      height: screenHeight*0.065,
+                      //height: screenHeight*0.065,
                       color: splashBlue.withOpacity(0.1),
-                      padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05,vertical: 10),
+                      child: Column(
                         children: [
-                          Text('Order ID:',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Colors.black
-                          ),) ,
-                          Expanded(
-                            child: Text(widget.orderid,
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: splashBlue
-                            ),),
-                          )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Order ID : ',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Colors.black
+                              ),) ,
+                              Expanded(
+                                child: Text(widget.orderid,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: splashBlue
+                                ),),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Shop : ',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Colors.black
+                              ),) ,
+                              Expanded(
+                                child: Text(widget.shopName,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: splashBlue
+                                ),),
+                              )
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -160,10 +186,10 @@ class _OrderDetailState extends State<OrderDetail> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Delivery time',
+                              Text('Expected Delivery Time',
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     color: Colors.black.withOpacity(0.8)
                                 ),),
                               Text('${widget.deliveryTime}',
@@ -181,7 +207,7 @@ class _OrderDetailState extends State<OrderDetail> {
                               Text('Delivery Address',
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     color: Colors.black.withOpacity(0.8)
                                 ),),
                             ],

@@ -92,7 +92,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   }
   Container buildMyNavBar(BuildContext context,double height,double width) {
     return Container(
-      height: height*0.075,
+      height: height*0.095,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: const BorderRadius.only(
@@ -112,28 +112,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         pageIndex = 0;
                       });
                       }
-                    ,0, 'home',height),
+                    ,0, 'home',height,'Home'),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 1;
                   });
                 }
-                ,1, 'package',height),
+                ,1, 'package',height,'My Orders'),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 2;
                   });
                 }
-                ,2, 'user-check-2',height),
+                ,2, 'user-check-2',height,'My Account'),
             BottomIcon(
                     (){
                   setState(() {
                     pageIndex = 3;
                   });
                 }
-                ,3, 'shopping-bag',height),
+                ,3, 'shopping-bag',height,'My Cart'),
 
           ],
         ),

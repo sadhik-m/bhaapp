@@ -4,10 +4,11 @@ import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/dashboard/widget/bottombar_dot_selection.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../cart/service/cartLengthService.dart';
 final stream_controller = StreamController<bool>();
-Column BottomIcon(VoidCallback onTap,int index,String image,double height){
+Column BottomIcon(VoidCallback onTap,int index,String image,double height,String title){
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -18,6 +19,7 @@ Column BottomIcon(VoidCallback onTap,int index,String image,double height){
 
           IconButton(
               enableFeedback: false,
+              padding: EdgeInsets.zero,
               onPressed:onTap,
               icon:  Image.asset(
                 image=='search'?
@@ -58,7 +60,12 @@ Column BottomIcon(VoidCallback onTap,int index,String image,double height){
             )
 
         ],
-      )
+      ),
+      Text(title,
+      style: GoogleFonts.inter(
+        color:pageIndex == index ?  Colors.white:bottom_grey,
+        fontSize: 10
+      ),)
     ],
   );
 }

@@ -202,7 +202,7 @@ class _CartListTileState extends State<CartListTile> {
           return Column(
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   RotatedBox(
                     quarterTurns: 5,

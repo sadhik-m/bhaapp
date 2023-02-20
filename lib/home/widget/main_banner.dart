@@ -156,7 +156,7 @@ getRatingData()async{
                                     Image.asset('assets/home/clock.png',
                                       width: 14,height: 14,),
                                     SizedBox(width: screenWidth*0.013,),
-                                    Text('${shopData[0].openTime} AM - ${shopData[0].closeTime} PM',
+                                    Text('${shopData[0].openTime.toString().padLeft(4,'0').padRight(5,'0')} ${getTimeLabel(shopData[0].openTime)} - ${shopData[0].closeTime.toString().padLeft(4,'0').padRight(5,'0')} ${getTimeLabel(shopData[0].closeTime)}',
                                       style: GoogleFonts.inter(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w400,
@@ -255,6 +255,16 @@ getRatingData()async{
           ),
         ));
   }
+
+  String getTimeLabel(String time){
+    int hour = int.parse(time.split(":")[0]);
+    if(hour<12){
+      return 'AM';
+    }else{
+      return 'PM';
+    }
+  }
+
 showRatingDialog(BuildContext context,double height) {
   String comment='';
   String vendorRating='';

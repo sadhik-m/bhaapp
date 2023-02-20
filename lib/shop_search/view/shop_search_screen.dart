@@ -62,7 +62,7 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
 
   Container buildMyNavBar(BuildContext context,double height,double width) {
     return Container(
-      height: height*0.075,
+      height: height*0.095,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: const BorderRadius.only(
@@ -76,47 +76,77 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-                enableFeedback: false,
-                onPressed:(){
-                  setState(() {
-                    pageNumber = 0;
-                  });
-                },
-                icon:  Image.asset(
-                  'assets/home/search.png',
-                  color:pageNumber == 0 ?  Colors.white:bottom_grey,
-                  height: height*0.035,
-                  width: height*0.035,
-                )
+            Column(
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                    enableFeedback: false,
+                    onPressed:(){
+                      setState(() {
+                        pageNumber = 0;
+                      });
+                    },
+                    icon:  Image.asset(
+                      'assets/home/search.png',
+                      color:pageNumber == 0 ?  Colors.white:bottom_grey,
+                      height: height*0.035,
+                      width: height*0.035,
+                    )
+                ),
+                Text('Search',
+                  style: GoogleFonts.inter(
+                      color:pageNumber == 0 ?  Colors.white:bottom_grey,
+                      fontSize: 10
+                  ),)
+              ],
             ),
-            IconButton(
-                enableFeedback: false,
-                onPressed:(){
-                  setState(() {
-                    pageNumber = 1;
-                  });
-                },
-                icon:  Image.asset(
-                  'assets/dashboard/package.png',
-                  color:pageNumber == 1 ?  Colors.white:bottom_grey,
-                  height: height*0.035,
-                  width: height*0.035,
-                )
+            Column(
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                    enableFeedback: false,
+                    onPressed:(){
+                      setState(() {
+                        pageNumber = 1;
+                      });
+                    },
+                    icon:  Image.asset(
+                      'assets/dashboard/package.png',
+                      color:pageNumber == 1 ?  Colors.white:bottom_grey,
+                      height: height*0.035,
+                      width: height*0.035,
+                    )
+                ),
+                Text('My Orders',
+                  style: GoogleFonts.inter(
+                      color:pageNumber == 1 ?  Colors.white:bottom_grey,
+                      fontSize: 10
+                  ),)
+              ],
             ),
-            IconButton(
-                enableFeedback: false,
-                onPressed:(){
-                  setState(() {
-                    pageNumber = 2;
-                  });
-                },
-                icon:  Image.asset(
-                  'assets/dashboard/user-check-2.png',
-                  color:pageNumber == 2 ?  Colors.white:bottom_grey,
-                  height: height*0.035,
-                  width: height*0.035,
-                )
+            Column(
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                    enableFeedback: false,
+                    onPressed:(){
+                      setState(() {
+                        pageNumber = 2;
+                      });
+                    },
+                    icon:  Image.asset(
+                      'assets/dashboard/user-check-2.png',
+                      color:pageNumber == 2 ?  Colors.white:bottom_grey,
+                      height: height*0.035,
+                      width: height*0.035,
+                    )
+                ),
+                Text('My Account',
+                  style: GoogleFonts.inter(
+                      color:pageNumber == 2 ?  Colors.white:bottom_grey,
+                      fontSize: 10
+                  ),)
+              ],
             ),
 
 

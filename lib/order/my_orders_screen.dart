@@ -69,7 +69,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             color: orderType=='my_orders'?splashBlue:Colors.black)
                     ),
                     child: Center(
-                      child: Text('Active Orders',
+                      child: Text('Ongoing Orders',
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -108,7 +108,7 @@ class _OrderScreenState extends State<OrderScreen> {
             Expanded(child:
             orderType=='my_orders'?
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isNotEqualTo: 'order delivered').orderBy('status').orderBy('txTime',descending: true).snapshots(),
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isNotEqualTo: 'order delivered').orderBy('status').orderBy('orderId',descending: true).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return SizedBox.shrink();
@@ -127,14 +127,12 @@ class _OrderScreenState extends State<OrderScreen> {
                   );
                 }
                 return ListView.builder(
+                  padding: EdgeInsets.zero,
                   itemCount: snapshot.data!.docs.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom:14.0),
-                      child: orderTile(screenWidth, screenHeight,
-                          snapshot.data!.docs[index],context),
-                    );
+                    return orderTile(screenWidth, screenHeight,
+                        snapshot.data!.docs[index],context);
                   },
                 );
               },

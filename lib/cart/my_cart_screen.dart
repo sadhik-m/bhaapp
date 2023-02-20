@@ -866,7 +866,7 @@ class _MyCartState extends State<MyCart> {
                                 });
                                 PaymentService().checkOut(
                                     context,
-                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
                                     categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
                                     ((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2),
                                     items,
@@ -881,7 +881,7 @@ class _MyCartState extends State<MyCart> {
                                 });
                                 PaymentService().checkOut(
                                     context,
-                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country}\nph : ${addressModel!.mobile}',
+                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
                                     categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
                                     (double.parse(value.toString())).toStringAsFixed(2),
                                     items,
@@ -1037,8 +1037,10 @@ class _MyCartState extends State<MyCart> {
      setState(() {
        MyCart.cartList.clear();
        DashBoardScreen.cartValueNotifier.updateNotifier(0);
+       prefs.remove('cartList');
      });
-     prefs.setString('cartList',CartModel.encode(MyCart.cartList));
+    // prefs.setString('cartList',CartModel.encode(MyCart.cartList));
+
    }
    getDeliveryAddress()async{
      final SharedPreferences prefs = await SharedPreferences.getInstance();
