@@ -30,11 +30,11 @@ class PaymentService{
     String ? uid= preferences.getString('uid');
     String ? vendorId = preferences.getString('vendorId');
     String ? razorpayId = preferences.getString('razorpayId');
-    var rndnumberOrder="";
+    /*var rndnumberOrder="";
     var rnd= new Random();
     for (var i = 0; i < 4; i++) {
       rndnumberOrder = rndnumberOrder + rnd.nextInt(9).toString();
-    }
+    }*/
     await FirebaseFirestore.instance
         .collection('customers')
         .doc(uid)
