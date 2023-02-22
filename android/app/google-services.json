@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "711167476501",
+    "firebase_url": "https://bha-app-e35ef-default-rtdb.firebaseio.com",
     "project_id": "bha-app-e35ef",
     "storage_bucket": "bha-app-e35ef.appspot.com"
   },
@@ -22,6 +23,14 @@
           }
         },
         {
+          "client_id": "711167476501-e09gvbt3h3i9og0vc03t876vamimiu50.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_customer",
+            "certificate_hash": "62be2fe57e83bbd213f6c70052b89b79f5786fbf"
+          }
+        },
+        {
           "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -37,6 +46,57 @@
             {
               "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "711167476501-d6q3b5ics33opkheeb33su36obkbsu6d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopAppAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711167476501:android:e630eb1dcc70dbb115df1c",
+        "android_client_info": {
+          "package_name": "com.bhaapp.bha_app_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711167476501-994ir01btnje15e08j9jcb00builkmru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_driver",
+            "certificate_hash": "177ff4856bac22540d8dcb07a77e611e6bf14fb5"
+          }
+        },
+        {
+          "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKRGvNh1MbpNCc4eMgQ9sunroJ13Jo36o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "711167476501-d6q3b5ics33opkheeb33su36obkbsu6d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopAppAdmin"
+              }
             }
           ]
         }
@@ -90,6 +150,49 @@
             {
               "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "711167476501-d6q3b5ics33opkheeb33su36obkbsu6d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopAppAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711167476501:android:a49db1d52cb1cd8415df1c",
+        "android_client_info": {
+          "package_name": "com.example.shop_app_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKRGvNh1MbpNCc4eMgQ9sunroJ13Jo36o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711167476501-93umohico74ag3qk5kcmnd27non0kkpj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "711167476501-d6q3b5ics33opkheeb33su36obkbsu6d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopAppAdmin"
+              }
             }
           ]
         }
