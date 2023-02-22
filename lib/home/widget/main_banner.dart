@@ -43,7 +43,7 @@ getVendorShopData()async{
               phone: documentSnapshot['mobile'],
               email: documentSnapshot['email'],
           shopType: documentSnapshot['shopType'],
-              razorpayId: documentSnapshot['razorpayId']
+              razorpayId: '${documentSnapshot['bankDetails.${'razorpayId'}']}'
           )
         );
       });

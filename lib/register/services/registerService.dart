@@ -14,6 +14,7 @@ class RegisterService{
   Future<void> addUser(String name,String email,String phone,String country,String address,BuildContext context,String lattitude,String longitude,String pincode) async{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    String dev_id=preferences.getString('dev_id')??'';
     String uid=preferences.getString('uid')??'';
     String img=preferences.getString('img')??'';
     return users
@@ -27,6 +28,7 @@ class RegisterService{
       'country': country,
       'image': img,
       'orderCount': '0',
+      'device_id':dev_id
     },
       SetOptions(merge: true),
     )

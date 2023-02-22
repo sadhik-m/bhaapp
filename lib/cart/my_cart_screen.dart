@@ -39,6 +39,7 @@ class _MyCartState extends State<MyCart> {
    double bhaAppCharges=0;
    double amountToBhaApp=0;
    double amountToVendor=0;
+   double minOrderValue=0;
    AddressModel ? addressModel;
 
    int totalItems=0;
@@ -859,37 +860,43 @@ class _MyCartState extends State<MyCart> {
                             SizedBox(height: screenHeight*0.08,),
                             blackButton('Checkout',
                                     (){
-                              if(categoryType.toString().toLowerCase()=='services'){
-                                setState(() {
-                                  amountToVendor=(((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected)-(deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))));
-                                  amountToBhaApp=deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()));
-                                });
-                                PaymentService().checkOut(
-                                    context,
-                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
-                                    categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
-                                    ((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2),
-                                    items,
-                                    "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
-                                    '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
-                                    amountToVendor,amountToBhaApp
-                                );
+                              if(double.parse(value.toString())>=minOrderValue){
+                                if(categoryType.toString().toLowerCase()=='services'){
+                                  setState(() {
+                                    amountToVendor=(((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected)-(deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))));
+                                    amountToBhaApp=deliveryChargeSelected+bhaAppCharges+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()));
+                                  });
+                                  PaymentService().checkOut(
+                                      context,
+                                      '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
+                                      categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
+                                      ((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2),
+                                      items,
+                                      "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                      '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
+                                      amountToVendor,amountToBhaApp
+                                  );
+                                }
+                                else{
+                                  setState(() {
+                                    amountToVendor=((double.parse(value.toString()))-(deliveryChargeSelected+bhaAppCharges));
+                                    amountToBhaApp=deliveryChargeSelected+bhaAppCharges;
+                                  });
+                                  PaymentService().checkOut(
+                                      context,
+                                      '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
+                                      categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
+                                      (double.parse(value.toString())).toStringAsFixed(2),
+                                      items,
+                                      "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                      '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
+                                      amountToVendor,amountToBhaApp
+                                  );
+                                }
                               }else{
-                                setState(() {
-                                  amountToVendor=((double.parse(value.toString()))-(deliveryChargeSelected+bhaAppCharges));
-                                  amountToBhaApp=deliveryChargeSelected+bhaAppCharges;
-                                });
-                                PaymentService().checkOut(
-                                    context,
-                                    '${addressModel!.name},${addressModel!.address},${addressModel!.country.toString().toUpperCase()}\nPH : ${addressModel!.mobile}',
-                                    categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
-                                    (double.parse(value.toString())).toStringAsFixed(2),
-                                    items,
-                                    "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
-                                    '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
-                                    amountToVendor,amountToBhaApp
-                                );
+                                Fluttertoast.showToast(msg: 'You need to purchase for a mininimum of ₹ $minOrderValue to place the order ');
                               }
+
 
                                 }, screenWidth, screenHeight*0.05),
                           ],
@@ -1024,7 +1031,8 @@ class _MyCartState extends State<MyCart> {
            deliveryCharge=double.parse(documentSnapshot['deliveryDetails.${'deliveryCharges'}'].toString());
            deliveryChargeSelected=deliveryCharge;
            bhaAppCharges=double.parse(documentSnapshot['BhaAppCharges'].toString());
-
+           minOrderValue=double.parse(documentSnapshot['minOrderValue'].toString());
+           print('MMINN OORDDERRRR value   $minOrderValue');
          });
        } else {
          print('Document does not exist on the database');

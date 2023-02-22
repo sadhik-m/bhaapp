@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bhaapp/common/constants/colors.dart';
+import 'package:bhaapp/common/services/send_push_notification_service.dart';
 import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/shop_search/view/shop_search_screen.dart';
@@ -9,11 +10,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
+  NotificationService().saveNotifications(message.notification!.title!, message.notification!.body!);
+  //print('Handling a background message ${message.data}');
 }
+final navigatorKey = GlobalKey<NavigatorState>();
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -41,10 +41,31 @@ class _SplashScreenState extends State<SplashScreen> {
           color: Colors.white,
           image: DecorationImage(
             image: AssetImage(
-              'assets/authentication/Splash_White.png',
+              'assets/home/bg-white.png',
             ),
             fit: BoxFit.fill
           )
+        ),
+        child: Center(
+          child: Container(
+               height:  120,
+            width: 120,
+            decoration: BoxDecoration(
+              color: Colors.white,
+             borderRadius: BorderRadius.all(Radius.circular(28)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Color(0xff151515).withOpacity(0.1),
+                    blurRadius: 20.0,
+                    offset: Offset(0, 4)
+                )
+              ],
+            ),
+            child: Center(
+              child: Image.asset('assets/home/newlogo.png',
+              height: 29,width: 94,),
+            ),
+          ),
         ),
       ),
     );
@@ -71,9 +92,9 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
   pushNotification() async{
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -82,6 +103,7 @@ class _SplashScreenState extends State<SplashScreen> {
       provisional: false,
       sound: true,
     );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
@@ -92,7 +114,7 @@ class _SplashScreenState extends State<SplashScreen> {
         .getInitialMessage()
         .then(( message) {
       if (message != null) {
-        print("VVVVVVVVVV ${message.data.toString()}");
+        NotificationService().saveNotifications(message.notification!.title!, message.notification!.body!);
       }
     });
 
@@ -101,12 +123,26 @@ class _SplashScreenState extends State<SplashScreen> {
       AndroidNotification? android = message.notification?.android;
 
       if (notification != null && android != null) {
-        print('A new XXXXXXXX event was published!');
-        print(notification.title);
-        print(notification.body.toString());
-        print(notification.body.toString());
-        print(notification.body.toString());
-
+        // print('<><><><><> ${notification.title}');
+        if (message.notification != null && navigatorKey.currentContext != null) {
+          NotificationService().saveNotifications(message.notification!.title!, message.notification!.body!);
+          showDialog(
+              context: navigatorKey.currentContext!,
+              builder: (_) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                backgroundColor: Colors.black,
+                title: Text(message.notification!.title!,style: TextStyle(color: Colors.white),),
+                content: Text(message.notification!.body!,style: TextStyle(color: Colors.white),),
+                actions: [
+                  TextButton(
+                    child: Text("Okay",style: TextStyle(color: Colors.blue)),
+                    onPressed: () {
+                      Navigator.of(navigatorKey.currentContext!).pop();
+                    },
+                  )
+                ],
+              ));
+        }
       }
     });
     FirebaseMessaging.instance.getToken().then((token) {
@@ -114,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      NotificationService().saveNotifications(message.notification!.title!, message.notification!.body!);
     });
 
   }

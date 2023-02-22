@@ -113,12 +113,21 @@ class _ProductDetailState extends State<ProductDetail> {
                       Image.network(data['productImageUrl'],
                           height: screenHeight*0.28),
                       SizedBox(height: screenHeight*0.01),
-                      Text(data['productName'],
-                        style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                            fontSize: 21
-                        ),textAlign: TextAlign.center,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          data['mainCategory'].toString().toLowerCase()=='meat'?
+                              Image.asset('assets/home/nonveg.png',height: 30,):Image.asset('assets/home/veg.png',height: 30,),
+                          Expanded(
+                            child: Text(data['productName'],
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                  fontSize: 21
+                              ),textAlign: TextAlign.center,),
+                          ),
+                        ],
+                      ),
                       SizedBox(height: screenHeight*0.01),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

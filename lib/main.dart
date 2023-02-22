@@ -15,13 +15,16 @@ import 'package:bhaapp/register/view/register_screen.dart';
 import 'package:bhaapp/shop_search/view/shop_result_screen.dart';
 import 'package:bhaapp/shop_search/view/shop_search_screen.dart';
 import 'package:bhaapp/splash/view/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'category/category_detail_screen.dart';
 import 'category/category_list_screen.dart';
 import 'payment/payment_success_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -32,6 +35,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
       routes: {

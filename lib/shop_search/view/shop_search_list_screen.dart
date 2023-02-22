@@ -357,7 +357,7 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                   phone: doc['mobile'],
                   email: doc['email'],
                   shopType: doc['shopType'],
-                razorpayId: doc['razorpayId']
+                razorpayId:'${doc['bankDetails.${'razorpayId'}']}'
               )
           );
           if(categoryList.contains(doc['shopType'])){

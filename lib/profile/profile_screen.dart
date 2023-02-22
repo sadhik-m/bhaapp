@@ -1,3 +1,4 @@
+import 'package:bhaapp/common/notification_screen.dart';
 import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/order/my_orders_screen.dart';
 import 'package:bhaapp/profile/model/profileModel.dart';
@@ -11,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../common/constants/colors.dart';
+import '../common/services/send_push_notification_service.dart';
 import '../common/widgets/appBar.dart';
 import '../dashboard/dash_board_screen.dart';
 import 'editProfile.dart';
@@ -166,6 +168,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 profileTile(
                     'Notifications',
                         (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>NotificationScreen()));
+                         //
                     }
                 ),
                 SizedBox(height: screenHeight*0.01,),

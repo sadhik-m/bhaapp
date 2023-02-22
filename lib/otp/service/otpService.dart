@@ -3,6 +3,7 @@ import 'package:bhaapp/dashboard/dash_board_screen.dart';
 import 'package:bhaapp/otp/view/otp_screen.dart';
 import 'package:bhaapp/register/services/registerService.dart';
 import 'package:bhaapp/register/view/register_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class OtpService{
    showLoadingIndicator(context);
     FirebaseAuth firebaseAuth = await FirebaseAuth.instance;
     SharedPreferences prefs = await SharedPreferences.getInstance();
+   String dev_id=prefs.getString('dev_id')??'';
     final AuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationId,
       smsCode: enteredOtp,
@@ -28,17 +30,23 @@ class OtpService{
         RegisterService().checkIfUserExists(value.user!.uid).then((values) {
           if(values==true){
             RegisterService().checkIfUserActive(value.user!.uid).then((active) {
-              Navigator.of(context).pop();
+
               if(active){
-                setAsLoggedIn(true);
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
-                Fluttertoast.showToast(msg: 'Logged in successfully');
+                updateDeviceId(value.user!.uid,dev_id).then((value) {
+                  Navigator.of(context).pop();
+                  setAsLoggedIn(true);
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
+                  Fluttertoast.showToast(msg: 'Logged in successfully');
+                });
+
               }else{
+                Navigator.of(context).pop();
                 LoginService().showAccountStatusDialog(context);
               }
             });
 
           }else{
+
             Navigator.of(context).pop();
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
             Fluttertoast.showToast(msg: 'Please register');
@@ -93,5 +101,14 @@ class OtpService{
  setAsLoggedIn(bool status) async {
    SharedPreferences prefs = await SharedPreferences.getInstance();
    prefs.setBool('isLoggedIn', status);
+ }
+ Future<bool>updateDeviceId(String userId,String dev_id)async{
+   await FirebaseFirestore.instance.collection('customers')
+       .doc(userId)
+       .update({
+     'device_id': dev_id,
+   },
+   );
+   return true;
  }
 }

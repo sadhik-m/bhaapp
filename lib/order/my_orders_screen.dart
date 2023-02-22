@@ -108,7 +108,7 @@ class _OrderScreenState extends State<OrderScreen> {
             Expanded(child:
             orderType=='my_orders'?
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isNotEqualTo: 'order delivered').orderBy('status').orderBy('orderId',descending: true).snapshots(),
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isNotEqualTo: 'order delivered').orderBy('status').orderBy('txTime',descending: true).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return SizedBox.shrink();
