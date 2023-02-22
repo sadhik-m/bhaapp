@@ -39,10 +39,12 @@ class NotificationService{
   saveNotifications(String title,String body)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String uid=preferences.getString('uid')??'';
-   await FirebaseFirestore.instance.collection('customers').doc(uid).collection('notifications')
-        .add(
-      NotificationModel(title: title,body: body).toJson(),
-    );
+    try{
+      await FirebaseFirestore.instance.collection('customers').doc(uid).collection('notifications')
+          .add(
+        NotificationModel(title: title,body: body).toJson(),
+      );
+    }catch(e){}
   }
 
   Future<List<NotificationModel>> getNotificationList()async{
