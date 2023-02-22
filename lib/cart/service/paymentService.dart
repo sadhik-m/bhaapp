@@ -42,7 +42,7 @@ class PaymentService{
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         makePayment(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'],
-           '${documentSnapshot['phone'].toString().substring(3,10)}_${((double.parse(documentSnapshot['orderCount']))+1).toInt()}',
+           '${documentSnapshot['phone'].toString().replaceAll(' ', '').replaceAll('+', '').replaceAll('(', '').replaceAll(')', '')}_${((double.parse(documentSnapshot['orderCount']))+1).toInt()}',
        deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,
            customerPhone,categoryType,amountToVendor,amountToBhaApp,razorpayId!);
       } else {
