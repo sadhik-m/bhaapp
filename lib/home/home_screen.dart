@@ -194,8 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: screenHeight*0.019,),
                       mainBanner(),
 
-                      //SizedBox(height: screenHeight*0.024,),
-                      //smallBanner(),
+                      SizedBox(height: screenHeight*0.024,),
+                      smallBanner(),
                       SizedBox(height: screenHeight*0.024,),
                       searchField(screenHeight, screenWidth,(){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductSearchScreen(label: categoryType.toString().toLowerCase()=='services'?'Services':'Products',))).then((value) {

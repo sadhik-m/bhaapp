@@ -49,7 +49,7 @@ class _OrderDetailState extends State<OrderDetail> {
       print(convert);
       print(convert[0]['name']);
       for(var i=0;i<convert.length;i++){
-        satatusList.add(OrderStatusModel(name: convert[i]['name'], status: convert[i]['status'], date: convert[i]['date']));
+        satatusList.add(OrderStatusModel(name: convert[i]['name'], status: convert[i]['status'], date: convert[i]['date'],image: convert[i]['image']));
       }
     });
 
@@ -192,7 +192,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                     fontSize: 13,
                                     color: Colors.black.withOpacity(0.8)
                                 ),),
-                              Text('${widget.deliveryTime}',
+                              Text("${widget.deliveryTime.toString().split(',')[0]},${widget.deliveryTime.toString().split(',')[1].split(':')[0].toString().replaceAll(' ', '').padLeft(2,'0')}:${widget.deliveryTime.toString().split(',')[1].split(':')[1].toString().replaceAll(' ', '').padLeft(4,'0')}",
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 13,

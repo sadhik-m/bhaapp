@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "711167476501-dmplable3vs5m2dghjjhsd48ecnt2bbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_customer",
+            "certificate_hash": "c3448ade87ee234cc1a4b080aaa925376625d1c0"
+          }
+        },
+        {
           "client_id": "711167476501-e09gvbt3h3i9og0vc03t876vamimiu50.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -132,6 +140,14 @@
           "android_info": {
             "package_name": "com.bhaapp.bha_app_vendor",
             "certificate_hash": "c0e0792af7d39ce9c7a3097acef6d40e4bfdd869"
+          }
+        },
+        {
+          "client_id": "711167476501-ongkaa3qq4b7cn6u19nh7anqdh6kut3o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bhaapp.bha_app_vendor",
+            "certificate_hash": "49c911fd6e2af56db286ed057e2b5e26b0f9a524"
           }
         },
         {

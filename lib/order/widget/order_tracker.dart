@@ -61,6 +61,9 @@ class OrderTrackerState extends State<OrderTracker> {
                         color: Colors.black.withOpacity(0.6)
                     )
                 ):SizedBox.shrink(),
+                widget.statusList[index].image!=''?
+                Image.network(widget.statusList[index].image,
+                height: 70,) :SizedBox.shrink(),
               ],
             ),
           );

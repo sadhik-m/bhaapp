@@ -216,25 +216,25 @@ class PaymentService{
 
 
 List<OrderStatusModel> productStatusDeliverByBhaappList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
-  OrderStatusModel(name: 'Accepted', status: false, date: ''),
-  OrderStatusModel(name: 'Ready For Pickup', status: false, date: ''),
-  OrderStatusModel(name: 'Out For Delivery', status: false, date: ''),
-  OrderStatusModel(name: 'Delivered', status: false, date: ''),
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Ready For Pickup', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Out For Delivery', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Delivered', status: false, date: '',image: ''),
   //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
 ];
   List<OrderStatusModel> productStatusStorePickupList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
-  OrderStatusModel(name: 'Accepted', status: false, date: ''),
-  OrderStatusModel(name: 'Ready For Pickup', status: false, date: ''),
-  OrderStatusModel(name: 'Delivered', status: false, date: ''),
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Ready For Pickup', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Delivered', status: false, date: '',image: ''),
   //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
 ];
 List<OrderStatusModel> serviceStatusList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString()),
-  OrderStatusModel(name: 'Accepted', status: false, date: ''),
-  OrderStatusModel(name: 'InProgress', status: false, date: ''),
-  OrderStatusModel(name: 'Done', status: false, date: ''),
+  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'InProgress', status: false, date: '',image: ''),
+  OrderStatusModel(name: 'Done', status: false, date: '',image: ''),
   //OrderStatusModel(name: 'Service Canceled', status: false, date: ''),
 ];
 
