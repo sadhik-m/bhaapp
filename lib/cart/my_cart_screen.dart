@@ -35,6 +35,7 @@ class _MyCartState extends State<MyCart> {
    bool loaded=false;
 
    double deliveryCharge=0;
+   String deliveringService='';
    double deliveryChargeSelected=0;
    double bhaAppCharges=0;
    double amountToBhaApp=0;
@@ -874,7 +875,8 @@ class _MyCartState extends State<MyCart> {
                                       items,
                                       "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
                                       '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
-                                      amountToVendor,amountToBhaApp
+                                      amountToVendor,amountToBhaApp,
+                                    addressModel!.pinCode,deliveringService
                                   );
                                 }
                                 else{
@@ -890,7 +892,8 @@ class _MyCartState extends State<MyCart> {
                                       items,
                                       "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
                                       '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
-                                      amountToVendor,amountToBhaApp
+                                      amountToVendor,amountToBhaApp,
+                                      addressModel!.pinCode,deliveringService
                                   );
                                 }
                               }else{
@@ -1028,7 +1031,9 @@ class _MyCartState extends State<MyCart> {
          .then((DocumentSnapshot documentSnapshot) {
        if (documentSnapshot.exists) {
          setState(() {
+
            deliveryCharge=double.parse(documentSnapshot['deliveryDetails.${'deliveryCharges'}'].toString());
+           deliveringService=documentSnapshot['deliveryDetails.${'deliveryBy'}'].toString();
            deliveryChargeSelected=deliveryCharge;
            bhaAppCharges=double.parse(documentSnapshot['BhaAppCharges'].toString());
            minOrderValue=double.parse(documentSnapshot['minOrderValue'].toString());

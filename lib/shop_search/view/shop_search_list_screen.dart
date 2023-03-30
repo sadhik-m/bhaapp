@@ -599,8 +599,10 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
         .collection('vendors').where('${'deliveryDetails'}.${'deliveryAreas'}',arrayContains: pinCode).where('approved',isEqualTo: true)//pinCode)
         .get()
         .then((QuerySnapshot querySnapshot) {
+
       querySnapshot.docs.forEach((doc) {
         setState(() {
+          print("HJIOOOPPPPPPPPPPP   ${doc['bankDetails.${'razorpayId'}']}");
           vendorInitialList.add(
               VendorShopModel(
                   vendorId: doc['vendorId'],

@@ -24,7 +24,7 @@ import '../../profile/model/profileModel.dart';
 class PaymentService{
   // WEB Intent
   checkOut(BuildContext context,String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String deliveryTime,
-      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp)async{
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,String pinCode,String deliveryType)async{
     showLoadingIndicator(context);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String ? uid= preferences.getString('uid');
@@ -44,7 +44,7 @@ class PaymentService{
         makePayment(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'],
            '${documentSnapshot['phone'].toString().replaceAll(' ', '').replaceAll('+', '').replaceAll('(', '').replaceAll(')', '')}_${((double.parse(documentSnapshot['orderCount']))+1).toInt()}',
        deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,
-           customerPhone,categoryType,amountToVendor,amountToBhaApp,razorpayId!);
+           customerPhone,categoryType,amountToVendor,amountToBhaApp,razorpayId!, pinCode, deliveryType);
       } else {
 
         print('Document does not exist on the database');
@@ -57,7 +57,8 @@ class PaymentService{
 
   makePayment(BuildContext context,String phone,String email,String name,String orderid,
       String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
-      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,String razorpayId) {
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,String razorpayId,
+      String pinCode,String deliveryType) {
 
     Razorpay razorpay = Razorpay();
     var options = {
@@ -96,6 +97,7 @@ class PaymentService{
           }
       ).then((value) {
         print("CCCCAAAAAAAAAAAA   ${value.body.toString()}");
+        print("razorpayId   ${razorpayId.toString()}");
         if(value.statusCode==200){
           http.post(Uri.parse('https://api.razorpay.com/v1/payments/${response.paymentId}/transfers',),
               body: json.encode({
@@ -128,7 +130,10 @@ class PaymentService{
                   'RazorPay',
                   response.paymentId.toString(),
                   DateTime.now().toString(),items,uid,vid,deliveryTime,customerPhone,categoryType,
-                  amountToVendor,amountToBhaApp);
+                  amountToVendor,amountToBhaApp, pinCode, deliveryType);
+            }else{
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('payment failed')));
+              Navigator.of(context).pop();
             }
           });
         }
@@ -144,7 +149,8 @@ class PaymentService{
 
   saveOrderInfo(BuildContext context,String orderId,String deliveryAddress,String deliveryOption,String orderAmount,
       String paymentMode,String txnId,String txTime,Map<String, int> items,String uid,String vid,
-      String deliveryTime,String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp)async{
+      String deliveryTime,String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,
+      String pinCode,String deliveryType)async{
 
     //showLoadingIndicator(context);
     SharedPreferences preferences =await SharedPreferences.getInstance();
@@ -164,9 +170,11 @@ class PaymentService{
       'items':items,
       'userId':uid,
       'vendorId':vid,
-      'status':'In Progress',
+      'status':'Placed',
       'AmountToVendor':'$amountToVendor',
-      'AmountToBhaApp':'$amountToBhaApp'
+      'AmountToBhaApp':'$amountToBhaApp',
+      'DeliveringService':'$deliveryType',
+      'deliveryPincode':'$pinCode'
     },
       SetOptions(merge: true),
     ).then((value) async{
