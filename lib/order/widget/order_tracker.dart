@@ -61,9 +61,15 @@ class OrderTrackerState extends State<OrderTracker> {
                         color: Colors.black.withOpacity(0.6)
                     )
                 ):SizedBox.shrink(),
+                SizedBox(height: 8,),
                 widget.statusList[index].image!=''?
-                Image.network(widget.statusList[index].image,
-                height: 70,) :SizedBox.shrink(),
+                InkWell(
+                  onTap: (){
+                    showAlertDialog(context,widget.statusList[index].image);
+                  },
+                  child: Image.network(widget.statusList[index].image,
+                  height: 70,),
+                ) :SizedBox.shrink(),
               ],
             ),
           );
@@ -97,6 +103,49 @@ class OrderTrackerState extends State<OrderTracker> {
           ),
         ),
       ),
+    );
+  }
+  showAlertDialog(BuildContext context,String image) {
+
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("Close"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      titlePadding: EdgeInsets.zero,
+      content: InteractiveViewer(
+        child: Image.network(image),
+        panEnabled: false, // Set it to false to prevent panning.
+        boundaryMargin: EdgeInsets.all(80),
+        minScale: 0.5,
+        maxScale: 4,
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            child: Icon(Icons.close,color: Colors.black,),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

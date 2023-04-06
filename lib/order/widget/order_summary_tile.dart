@@ -68,7 +68,7 @@ Container orderSummaryTile(double width,double height,List<String>sku,List<Strin
                       ),)
                   ],
                 ),
-                InkWell(
+                /*InkWell(
                   onTap: (){},
                   child: Container(
                     height: 24,width: 122,
@@ -82,7 +82,7 @@ Container orderSummaryTile(double width,double height,List<String>sku,List<Strin
                         ),),
                     ),
                   ),
-                )
+                )*/
               ],
             ),
           )

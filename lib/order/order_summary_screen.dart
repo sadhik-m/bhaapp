@@ -115,14 +115,11 @@ class OrderSummary extends StatelessWidget {
                                       fontWeight: FontWeight.w400,
                                       color: Colors.black
                                   ),),
-                                  Container(
-                                    width: screenWidth*0.4,
-                                    child: Text(snapshot.data!.docs[0]['orderId'],style: GoogleFonts.inter(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: splashBlue
-                                    ),),
-                                  ),
+                                  Text(snapshot.data!.docs[0]['orderId'],style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: splashBlue
+                                  ),),
 
                                 ],
                               ),
@@ -191,13 +188,13 @@ class OrderSummary extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
+                /*Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: screenWidth*0.07,
                       vertical: screenHeight*0.01
                   ),
                   child: blackButton("Repeat Order", (){}, screenWidth, screenHeight*0.05),
-                )
+                )*/
 
               ],
             );

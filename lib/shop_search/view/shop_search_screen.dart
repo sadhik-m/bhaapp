@@ -65,10 +65,10 @@ class _ShopSearchScreenState extends State<ShopSearchScreen> {
       height: height*0.095,
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: const BorderRadius.only(
+       /* borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
-        ),
+        ),*/
       ),
       child: SafeArea(
         bottom: true,
