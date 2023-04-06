@@ -170,7 +170,7 @@ class PaymentService{
       'items':items,
       'userId':uid,
       'vendorId':vid,
-      'status':'Placed',
+      'status':'Order Placed',
       'AmountToVendor':'$amountToVendor',
       'AmountToBhaApp':'$amountToBhaApp',
       'DeliveringService':'$deliveryType',
@@ -224,7 +224,7 @@ class PaymentService{
 
 
 List<OrderStatusModel> productStatusDeliverByBhaappList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Order Placed', status: true, date: DateTime.now().toString(),image: ''),
   OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
   OrderStatusModel(name: 'Ready For Pickup', status: false, date: '',image: ''),
   OrderStatusModel(name: 'Out For Delivery', status: false, date: '',image: ''),
@@ -232,14 +232,14 @@ List<OrderStatusModel> productStatusDeliverByBhaappList=[
   //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
 ];
   List<OrderStatusModel> productStatusStorePickupList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Order Placed', status: true, date: DateTime.now().toString(),image: ''),
   OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
   OrderStatusModel(name: 'Ready For Pickup', status: false, date: '',image: ''),
   OrderStatusModel(name: 'Delivered', status: false, date: '',image: ''),
   //OrderStatusModel(name: 'Order Cancelled', status: false, date: ''),
 ];
 List<OrderStatusModel> serviceStatusList=[
-  OrderStatusModel(name: 'Placed', status: true, date: DateTime.now().toString(),image: ''),
+  OrderStatusModel(name: 'Order Placed', status: true, date: DateTime.now().toString(),image: ''),
   OrderStatusModel(name: 'Accepted', status: false, date: '',image: ''),
   OrderStatusModel(name: 'InProgress', status: false, date: '',image: ''),
   OrderStatusModel(name: 'Done', status: false, date: '',image: ''),

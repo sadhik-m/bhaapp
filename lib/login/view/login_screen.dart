@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/home/newlogo.png',
+                Image.asset('assets/dashboard/BhaApp_logo_NoBG_1.png',
                 height: screenHeight*0.035,),
                 Text('Login',
                 style: GoogleFonts.inter(

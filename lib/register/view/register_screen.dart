@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 Row(
                   children: [
-                    Image.asset('assets/home/newlogo.png',
+                    Image.asset('assets/dashboard/BhaApp_logo_NoBG_1.png',
                       height: screenHeight*0.035,),
                   ],
                 ),

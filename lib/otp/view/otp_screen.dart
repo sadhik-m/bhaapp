@@ -7,9 +7,10 @@ import 'package:bhaapp/otp/view/widget/otp_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:telephony/telephony.dart';
 
 import '../../login/view/login_screen.dart';
-
+final Telephony telephony = Telephony.instance;
 class OtpScreen extends StatefulWidget {
   String verificationId;
 
@@ -21,6 +22,33 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   String  enteredOtp='';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    readSms();
+    super.initState();
+  }
+  readSms()async{
+    print("CHHEECKKKKKIIINGGGGG>>>>>>>>>>");
+    telephony.listenIncomingSms(
+        onNewMessage: (SmsMessage message) {
+          if(message.body.toString().contains('BhaApp')){
+            setState(() {
+              enteredOtp=message.body.toString().substring(0,6);
+            });
+            OtpService().signInWithPhoneNumber(
+                widget.verificationId,
+                enteredOtp,
+                context
+            );
+          }
+          print('Message kittyyyy otp  '+enteredOtp);
+          print('Message kittyyyy  '+message.body.toString());
+          // Handle message
+        },listenInBackground: false
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

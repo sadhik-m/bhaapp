@@ -43,17 +43,17 @@ Container homeAppBar(BuildContext context,double screenHeight,VoidCallback ontap
               ),
             ),
             Container(
-                height: 20,
+                height: 40,
                 width: 60,
               decoration: BoxDecoration(
                 //color: const Color(0xff7c94b6),
                 image: new DecorationImage(
                   fit: BoxFit.fill,
-                  colorFilter:
-                  ColorFilter.mode(Colors.black.withOpacity(0.6),
-                      BlendMode.dstATop),
+                 /* colorFilter:
+                  ColorFilter.mode(Colors.black.withOpacity(0.0),
+                      BlendMode.dstATop),*/
                   image: new AssetImage(
-                    'assets/home/newlogo.png',
+                    'assets/dashboard/BhaApp_logo_NoBG_1.png',
                   ),
                 ),
               ),

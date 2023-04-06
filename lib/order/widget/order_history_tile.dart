@@ -126,7 +126,7 @@ StreamBuilder orderHistoryTile(double width,double height,DocumentSnapshot snaps
                           ),),
                       ),
                       Expanded(
-                        child: Text('Paid',
+                        child: Text(snapshot['status'],
                           style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,

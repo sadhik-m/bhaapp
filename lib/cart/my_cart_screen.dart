@@ -873,7 +873,7 @@ class _MyCartState extends State<MyCart> {
                                       categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
                                       ((double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+((9/100)*double.parse(value.toString()))+deliveryChargeSelected).toStringAsFixed(2),
                                       items,
-                                      "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                      "${DateFormat('d MMM y').format(selectedDate.add(Duration(days: 1)))},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
                                       '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
                                       amountToVendor,amountToBhaApp,
                                     addressModel!.pinCode,deliveringService
@@ -890,7 +890,7 @@ class _MyCartState extends State<MyCart> {
                                       categoryType.toString().toLowerCase()=='services'?'$service':"$delivery",
                                       (double.parse(value.toString())).toStringAsFixed(2),
                                       items,
-                                      "${DateFormat('d MMM y').format(selectedDate)},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
+                                      "${DateFormat('d MMM y').format(selectedDate.add(Duration(days: 1)))},${selectedTime.hourOfPeriod} : ${selectedTime.minute} ${selectedTime.period.name}",
                                       '${addressModel!.mobile}',categoryType.toString().toLowerCase(),
                                       amountToVendor,amountToBhaApp,
                                       addressModel!.pinCode,deliveringService

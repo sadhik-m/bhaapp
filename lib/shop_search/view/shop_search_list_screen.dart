@@ -40,10 +40,12 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
     getDeliveryAddress();
     loadInitialList();
   }
+  String userid='';
   AddressModel ? addressModel;
   getDeliveryAddress()async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String ? uid=prefs.getString('uid');
+     userid=prefs.getString('uid')??'';
     String ? addressId;
     await FirebaseFirestore.instance.collection('customers').doc(uid).get().then((value) {
       setState(() {
@@ -75,7 +77,7 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset('assets/home/newlogo.png',
+            Image.asset('assets/dashboard/BhaApp_logo_NoBG_1.png',
               width: screenWidth*0.2,
             ),
             Text('Find Shop',
@@ -201,7 +203,7 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                     ),),
                   SizedBox(height: screenHeight*0.019,),
                   StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).snapshots(),
+                    stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userid).snapshots(),
                     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
                       if (snapshot.hasError) {

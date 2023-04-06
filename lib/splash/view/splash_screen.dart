@@ -62,8 +62,8 @@ class _SplashScreenState extends State<SplashScreen> {
               ],
             ),
             child: Center(
-              child: Image.asset('assets/home/newlogo.png',
-              height: 29,width: 94,),
+              child: Image.asset('assets/dashboard/BhaApp_logo_NoBG_1.png',
+              height: 40,width: 94,),
             ),
           ),
         ),
