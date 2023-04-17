@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       readOnly: LoginScreen.isPhone!?false:true,
                       enabled: true,
                       decoration: InputDecoration(
-                          label:Text('Email Address*') ,
+                          label:Text('Email Address (optional)') ,
                           focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                           labelStyle: GoogleFonts.inter(
                             fontWeight: FontWeight.w400,
@@ -214,9 +214,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Fluttertoast.showToast(msg: 'Enter valid name');
               }else if(mobController.text.toString().isEmpty ) {
                 Fluttertoast.showToast(msg: 'Enter valid mobile');
-              }else if(emailController.text.isEmpty) {
+              }/*else if(emailController.text.isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid email');
-              }else if(addressController.text.toString().isEmpty) {
+              }*/else if(addressController.text.toString().isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid address');
               }else if(pinCodeController.text.toString().isEmpty) {
                 Fluttertoast.showToast(msg: 'Enter valid pin code');

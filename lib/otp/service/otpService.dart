@@ -64,7 +64,9 @@ class OtpService{
    showLoadingIndicator(context);
    String ? _verificationId;
    FirebaseAuth _auth = await FirebaseAuth.instance;
-   verificationCompleted(PhoneAuthCredential phoneAuthCredential) async {}
+   verificationCompleted(PhoneAuthCredential phoneAuthCredential) async {
+
+   }
 
    verificationFailed(FirebaseAuthException authException) {
      Navigator.of(context).pop();

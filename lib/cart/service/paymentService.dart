@@ -160,7 +160,7 @@ class PaymentService{
       'orderId':orderId ,
       'deliveryAddress': deliveryAddress,
       'deliveryType': deliveryOption,
-      'deliveryTime': deliveryTime,
+      'deliveryTime': 'Within 60 to 90 minutes',
       'deliveringBy': '',
       'customerPhone': customerPhone,
       'orderAmount': orderAmount,

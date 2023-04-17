@@ -119,7 +119,7 @@ class _ChangeAddressState extends State<ChangeAddress> {
             blackButton('Add New Address', (){
               Navigator.pushNamed(context, '/Add_address').then((value) {
                 setState(() {
-
+                  adresFuture=GetAddress().getAddress();
                 });
               });
             }, screenWidth, screenHeight*0.05)

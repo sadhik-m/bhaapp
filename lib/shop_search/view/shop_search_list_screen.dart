@@ -195,13 +195,7 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                   SizedBox(height: screenHeight*0.029,),
                   smallBanner(),
                   SizedBox(height: screenHeight*0.019,),
-                  Text('Recent Ordered Shops',
-                    style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        fontSize: 16
-                    ),),
-                  SizedBox(height: screenHeight*0.019,),
+
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userid).snapshots(),
                     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -217,114 +211,133 @@ class _ShpSearchListScreenState extends State<ShpSearchListScreen> {
                         );
                       }
                       if (snapshot.data!.docs.isEmpty) {
-                        return Padding(
-                          padding:  EdgeInsets.only(top: 0),
-                          child: Center(child: Text('Nothing Found!')),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Welcome to BhaApp! Start ordering now!',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                  fontSize: 15
+                              ),),
+                          ],
                         );
                       }
-                      return SingleChildScrollView(
-                        child: Row(
-                          children: List.generate(snapshot.data!.docs.length, (index) {
-                            Map<String, dynamic> items=snapshot.data!.docs[index]['items']as Map<String, dynamic>;
-                            List<String> skuList=[];
-                            List<String> quantityList=[];
-                            items.forEach((key, value) {
-                              skuList.add(key.toString());
-                              quantityList.add(value.toString());
-                            });
-                            return snapshot.data!.docs[index]['status']=='Order Cancelled'?
-                            SizedBox.shrink():
-                            StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance.collection('vendors').where('vendorId',isEqualTo: snapshot.data!.docs[index]['vendorId']).snapshots(),
-                              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotShop) {
-                                if (snapshotShop.hasError) {
-                                  return SizedBox.shrink();
-                                }
-
-                                if (snapshotShop.connectionState == ConnectionState.waiting) {
-                                  return SizedBox.shrink();
-                                }
-                                if (snapshotShop.data!.docs.isEmpty) {
-                                  return SizedBox.shrink();
-                                }
-                                return  InkWell(
-                                  onTap: (){
-                                    if(snapshot.data!.docs[index]['status']=='order delivered'){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderSummary(orderid: snapshot.data!.docs[index]['orderId'], sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot.data!.docs[index]['status'],orderStatusDate: snapshot.data!.docs[index]['txTime'],shopName: snapshotShop.data!.docs[0]['shopName'],shopAddress: snapshotShop.data!.docs[0]['address'],)));
-                                    }else{
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot.data!.docs[index]['orderId'],shopName:snapshotShop.data!.docs[0]['shopName'] , sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot.data!.docs[index]['status'],
-                                        orderStatusDate: snapshot.data!.docs[index]['txTime'],deliveryAddress: snapshot.data!.docs[index]['deliveryAddress'],
-                                        deliveryTime: snapshot.data!.docs[index]['deliveryTime'],orderTotal: snapshot.data!.docs[index]['orderAmount'],
-                                      )));
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Recent Ordered Shops',
+                            style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                                fontSize: 16
+                            ),),
+                          SizedBox(height: screenHeight*0.019,),
+                          SingleChildScrollView(
+                            child: Row(
+                              children: List.generate(snapshot.data!.docs.length, (index) {
+                                Map<String, dynamic> items=snapshot.data!.docs[index]['items']as Map<String, dynamic>;
+                                List<String> skuList=[];
+                                List<String> quantityList=[];
+                                items.forEach((key, value) {
+                                  skuList.add(key.toString());
+                                  quantityList.add(value.toString());
+                                });
+                                return snapshot.data!.docs[index]['status']=='Order Cancelled'?
+                                SizedBox.shrink():
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance.collection('vendors').where('vendorId',isEqualTo: snapshot.data!.docs[index]['vendorId']).snapshots(),
+                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotShop) {
+                                    if (snapshotShop.hasError) {
+                                      return SizedBox.shrink();
                                     }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 4),
-                                    child: Container(
-                                      padding: EdgeInsets.all(4),
-                                      width: (screenWidth-(screenWidth*0.12))/3,
 
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey,
+                                    if (snapshotShop.connectionState == ConnectionState.waiting) {
+                                      return SizedBox.shrink();
+                                    }
+                                    if (snapshotShop.data!.docs.isEmpty) {
+                                      return SizedBox.shrink();
+                                    }
+                                    return  InkWell(
+                                      onTap: (){
+                                        if(snapshot.data!.docs[index]['status']=='order delivered'){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderSummary(orderid: snapshot.data!.docs[index]['orderId'], sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot.data!.docs[index]['status'],orderStatusDate: snapshot.data!.docs[index]['txTime'],shopName: snapshotShop.data!.docs[0]['shopName'],shopAddress: snapshotShop.data!.docs[0]['address'],)));
+                                        }else{
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot.data!.docs[index]['orderId'],shopName:snapshotShop.data!.docs[0]['shopName'] , sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot.data!.docs[index]['status'],
+                                            orderStatusDate: snapshot.data!.docs[index]['txTime'],deliveryAddress: snapshot.data!.docs[index]['deliveryAddress'],
+                                            deliveryTime: snapshot.data!.docs[index]['deliveryTime'],orderTotal: snapshot.data!.docs[index]['orderAmount'],
+                                          )));
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 4),
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          width: (screenWidth-(screenWidth*0.12))/3,
+
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.grey,
+                                              ),
+                                              borderRadius: BorderRadius.all(Radius.circular(8))
                                           ),
-                                          borderRadius: BorderRadius.all(Radius.circular(8))
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(snapshotShop.data!.docs[0]['shopName'],
-                                            style: GoogleFonts.inter(
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black,
-                                                fontSize: 12
-                                            ),overflow: TextOverflow.ellipsis,textAlign: TextAlign.left,),
-                                          SizedBox(height: 4,),
-                                          SingleChildScrollView(
-                                            child: Row(
-                                              children: List.generate(min(3,skuList.length), (index) {
-                                              return  StreamBuilder<QuerySnapshot>(
-                                                  stream: FirebaseFirestore.instance.collection('products').where('sku',isEqualTo: skuList[index]).snapshots(),
-                                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                                                    if (snapshot.hasError) {
-                                                      return SizedBox.shrink();
-                                                    }
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(snapshotShop.data!.docs[0]['shopName'],
+                                                style: GoogleFonts.inter(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                    fontSize: 12
+                                                ),overflow: TextOverflow.ellipsis,textAlign: TextAlign.left,),
+                                              SizedBox(height: 4,),
+                                              SingleChildScrollView(
+                                                child: Row(
+                                                  children: List.generate(min(3,skuList.length), (index) {
+                                                  return  StreamBuilder<QuerySnapshot>(
+                                                      stream: FirebaseFirestore.instance.collection('products').where('sku',isEqualTo: skuList[index]).snapshots(),
+                                                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                                        if (snapshot.hasError) {
+                                                          return SizedBox.shrink();
+                                                        }
 
-                                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return SizedBox.shrink();
-                                                    }
-                                                    if (snapshot.data!.docs.isEmpty) {
-                                                      return SizedBox.shrink();
-                                                    }
-                                                    return Padding(
-                                                      padding:  EdgeInsets.only(right: 5),
-                                                      child: Container(height: 20,width: 20,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(color: Colors.grey),
-                                                        shape: BoxShape.circle,
-                                                        image: DecorationImage(
-                                                          image: NetworkImage(
-                                                              snapshot.data!.docs[0]['productImageUrl']
-                                                          ),fit: BoxFit.cover
-                                                        )
-                                                      ),),
-                                                    );
-                                                  },
-                                                ) ;
-                                              }),
-                                            ),
-                                          )
+                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                          return SizedBox.shrink();
+                                                        }
+                                                        if (snapshot.data!.docs.isEmpty) {
+                                                          return SizedBox.shrink();
+                                                        }
+                                                        return Padding(
+                                                          padding:  EdgeInsets.only(right: 5),
+                                                          child: Container(height: 20,width: 20,
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.grey),
+                                                            shape: BoxShape.circle,
+                                                            image: DecorationImage(
+                                                              image: NetworkImage(
+                                                                  snapshot.data!.docs[0]['productImageUrl']
+                                                              ),fit: BoxFit.cover
+                                                            )
+                                                          ),),
+                                                        );
+                                                      },
+                                                    ) ;
+                                                  }),
+                                                ),
+                                              )
 
-                                        ],
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 );
-                              },
-                            );
 
-                          }),
-                        ),
+                              }),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),

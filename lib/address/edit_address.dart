@@ -141,7 +141,7 @@ class _EditAddressState extends State<EditAddress> {
                 readOnly:false,
                 enabled: true,
                 decoration: InputDecoration(
-                    label:Text('Email Address*') ,
+                    label:Text('Email Address (optional)') ,
                     focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                     labelStyle: GoogleFonts.inter(
                       fontWeight: FontWeight.w400,
@@ -223,9 +223,9 @@ class _EditAddressState extends State<EditAddress> {
                   Fluttertoast.showToast(msg: 'Enter name');
                 }else if(mobController.text.isEmpty){
                   Fluttertoast.showToast(msg: 'Enter mobile');
-                }else if(emailController.text.isEmpty){
+                }/*else if(emailController.text.isEmpty){
                   Fluttertoast.showToast(msg: 'Enter Email');
-                }else if(addressController.text.isEmpty){
+                }*/else if(addressController.text.isEmpty){
                   Fluttertoast.showToast(msg: 'Enter address');
                 }else if(pinCodeController.text.isEmpty){
                   Fluttertoast.showToast(msg: 'Enter pin code');

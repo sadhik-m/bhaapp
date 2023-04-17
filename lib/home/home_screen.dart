@@ -35,7 +35,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   final Stream<QuerySnapshot> _categoryStream = FirebaseFirestore.instance.collection('categories').snapshots();
-  final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).limit(10).snapshots();
+  final Stream<QuerySnapshot> _productStream = FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('approved',isEqualTo: true).snapshots();
   List<CartModel> cartHomeList=[];
 
   List<ProductModel> initialList=[];
@@ -284,42 +284,40 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           //SizedBox(height: screenHeight*0.024,),
-                        ],
-                      ),
-                      categorisHome.isEmpty?SizedBox.shrink():
-                      ListView.builder(
-                        shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: categorisHome.length,
-                          itemBuilder: (context,i){
-                           return Column(children: [
-                             SizedBox(height: screenHeight*0.024,),
-                             Row(
-                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                               children: [
-                                 Text(categorisHome[i],
-                                   style: GoogleFonts.inter(
-                                       fontWeight: FontWeight.w600,
-                                       fontSize: 16,
-                                       color: Colors.black
-                                   ),),
-                                 InkWell(
-                                   onTap: (){
-                                     Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts(catName: categorisHome[i],))).then((value) {
-                                       getCartList();
-                                     });
-                                   },
-                                   child: Text('View All',
-                                     style: GoogleFonts.inter(
-                                         fontWeight: FontWeight.w400,
-                                         fontSize: 10,
-                                         color: splashBlue
-                                     ),),
-                                 )
-                               ],
-                             ),
-                             SizedBox(height: screenHeight*0.024,),
-                             SizedBox(
+                          categorisHome.isEmpty?SizedBox.shrink():
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: categorisHome.length,
+                              itemBuilder: (context,i){
+                                return Column(children: [
+                                  SizedBox(height: screenHeight*0.024,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(categorisHome[i],
+                                        style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),),
+                                      InkWell(
+                                        onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>NewProducts(catName: categorisHome[i],))).then((value) {
+                                            getCartList();
+                                          });
+                                        },
+                                        child: Text('View All',
+                                          style: GoogleFonts.inter(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10,
+                                              color: splashBlue
+                                          ),),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: screenHeight*0.024,),
+                                  /*SizedBox(
                                width: screenWidth,
                                height:screenHeight*0.26,
                                child: Row(
@@ -355,9 +353,81 @@ class _HomeScreenState extends State<HomeScreen> {
                                    ),
                                  ],
                                ),
-                             )
-                           ],);
-                      }),
+                             )*/
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream:FirebaseFirestore.instance.collection('products').where('seller.${'vid'}',isEqualTo: vendorId).where('approved',isEqualTo: true).snapshots(),
+                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.hasError) {
+                                        return SizedBox.shrink();
+                                      }
+
+                                      /*if (snapshot.connectionState == ConnectionState.waiting) {
+                                   return Padding(
+                                     padding:  EdgeInsets.only(top: screenHeight*0.35),
+                                     child: Text("Loading...."),
+                                   );
+                                 }*/
+                                       if(snapshot.hasData){
+                                      if (snapshot.data!.docs.isEmpty) {
+                                        return Padding(
+                                          padding:  EdgeInsets.only(top: screenHeight*0.35),
+                                          child: Text('Nothing Found!'),
+                                        );
+                                      }
+                                      return SizedBox(
+                                        width: screenWidth,
+                                        height:screenHeight*0.26,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: ListView.builder(
+                                                  scrollDirection: Axis.horizontal,
+                                                  physics: AlwaysScrollableScrollPhysics(),
+                                                  itemCount: snapshot.data!.docs.length,
+                                                  itemBuilder: (context,ind){
+                                                    return
+                                                      snapshot.data!.docs[ind]['subCategory']==categorisHome[i]?
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(right:14.0),
+                                                        child: ProductTile(height:screenHeight,width:screenWidth,
+                                                          ontap: (){
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: initialList[ind].prodDocId.toString())))..then((value) {
+                                                              getCartList();
+                                                            });
+                                                          },
+                                                          image:snapshot.data!.docs[ind]['productImageUrl'],
+                                                          prodName:snapshot.data!.docs[ind]['productName'],
+                                                          salePrize:snapshot.data!.docs[ind]['salesPrice'].toString(),
+                                                          reguarPrize: snapshot.data!.docs[ind]['regularPrice'].toString(),
+                                                          quantity:snapshot.data!.docs[ind]['priceUnit'],
+                                                          prodId:snapshot.data!.docs[ind].id.toString(),
+                                                          fav:favouriteList!.contains(snapshot.data!.docs[ind].id.toString()),
+                                                          cartHomeList:cartHomeList,
+                                                          availableInStock:snapshot.data!.docs[ind]['availableInStock'],
+                                                        ),
+                                                      ):SizedBox.shrink();
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                       }
+
+                                       return Padding(
+                                        padding:  EdgeInsets.only(top: screenHeight*0.35),
+                                        child: Text("Loading...."),
+                                      );
+
+
+
+
+                                    },
+                                  ),
+                                ],);
+                              }),
+                        ],
+                      ),
+
 
 
                      /* SizedBox(
@@ -404,58 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),*/
-                  /*StreamBuilder<QuerySnapshot>(
-                    stream: _productStream,
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return SizedBox.shrink();
-                      }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Padding(
-                          padding:  EdgeInsets.only(top: screenHeight*0.35),
-                          child: Text("Loading...."),
-                        );
-                      }
-                      if (snapshot.data!.docs.isEmpty) {
-                        return Padding(
-                          padding:  EdgeInsets.only(top: screenHeight*0.35),
-                          child: Text('Nothing Found!'),
-                        );
-                      }
-                      return SizedBox(
-
-                        width: screenWidth,
-                        child: Wrap(
-                          alignment: WrapAlignment.spaceBetween,
-                          runAlignment: WrapAlignment.spaceBetween,
-                          runSpacing: 20,
-                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                            return
-                              ProductTile(height:screenHeight,width:screenWidth,
-                                   ontap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetail(docId: document.id.toString())))..then((value) {
-                                    getCartList();
-                                  });
-                                },
-                                image:data['productImageUrl'],
-                                prodName:data['productName'],
-                                salePrize:data['salesPrice'].toString(),
-                                reguarPrize:data['regularPrice'].toString(),
-                                quantity:data['priceUnit'],
-                                  prodId:document.id.toString(),
-                                  fav:favouriteList!.contains(document.id.toString()),
-                                  cartHomeList:cartHomeList
-                              );
-                          }).toList(),
-
-                        ),
-                      );
-
-
-                    },
-                  ),*/
               ],
             ),
                 ))
@@ -477,3 +496,4 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 }
+//<uses-permission android:name="android.permission.RECEIVE_SMS"/>

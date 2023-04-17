@@ -1,3 +1,4 @@
+//import 'package:android_sms_retriever/android_sms_retriever.dart';
 import 'package:bhaapp/common/constants/colors.dart';
 import 'package:bhaapp/common/widgets/appBar.dart';
 import 'package:bhaapp/common/widgets/black_button.dart';
@@ -7,10 +8,10 @@ import 'package:bhaapp/otp/view/widget/otp_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:telephony/telephony.dart';
+//import 'package:telephony/telephony.dart';
 
 import '../../login/view/login_screen.dart';
-final Telephony telephony = Telephony.instance;
+//final Telephony telephony = Telephony.instance;
 class OtpScreen extends StatefulWidget {
   String verificationId;
 
@@ -26,10 +27,11 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    readSms();
+    //readSms();
+    //getSms();
     super.initState();
   }
-  readSms()async{
+  /*readSms()async{
     print("CHHEECKKKKKIIINGGGGG>>>>>>>>>>");
     telephony.listenIncomingSms(
         onNewMessage: (SmsMessage message) {
@@ -48,7 +50,30 @@ class _OtpScreenState extends State<OtpScreen> {
           // Handle message
         },listenInBackground: false
     );
-  }
+  }*/
+
+
+/*  String _applicationSignature = "";
+  getSms()async{
+    AndroidSmsRetriever.getAppSignature().then((value) {
+      setState(() {
+        _applicationSignature = value ?? 'Signature Not Found';
+        print("SSSSSSSSSIIIIGGG  $_applicationSignature");
+        AndroidSmsRetriever.listenForOneTimeConsent().then((value) {
+          setState(() {
+            print("VAAAAlllll  $value");
+            final intRegex = RegExp(r'\d+', multiLine: true);
+            final code = intRegex
+                .allMatches(value ?? 'Phone Number Not Found')
+                .first
+                .group(0);
+            enteredOtp = code ?? 'NO CODE';
+            //AndroidSmsRetriever.stopSmsListener();
+          });
+        });
+      });
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {

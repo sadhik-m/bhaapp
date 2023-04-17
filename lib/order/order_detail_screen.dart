@@ -192,7 +192,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                     fontSize: 13,
                                     color: Colors.black.withOpacity(0.8)
                                 ),),
-                              Text("${widget.deliveryTime.toString().split(',')[0]},${widget.deliveryTime.toString().split(',')[1].split(':')[0].toString().replaceAll(' ', '').padLeft(2,'0')}:${widget.deliveryTime.toString().split(',')[1].split(':')[1].toString().replaceAll(' ', '').padLeft(4,'0')}",
+                              Text("${widget.deliveryTime.toString()}",
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 13,

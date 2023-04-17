@@ -1,6 +1,7 @@
 import 'package:bhaapp/common/widgets/loading_indicator.dart';
 import 'package:bhaapp/login/view/login_screen.dart';
 import 'package:bhaapp/otp/view/otp_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,9 +16,52 @@ final GoogleSignIn _googleSignIn = GoogleSignIn();
 class LoginService{
   fireBasePhoneAuth(String phoneNum,BuildContext context) async{
     showLoadingIndicator(context);
+    FirebaseAuth firebaseAuth = await FirebaseAuth.instance;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String dev_id=prefs.getString('dev_id')??'';
     String ? _verificationId;
     FirebaseAuth _auth = await FirebaseAuth.instance;
-    verificationCompleted(PhoneAuthCredential phoneAuthCredential) async {}
+    verificationCompleted(PhoneAuthCredential phoneAuthCredential) async {
+      showLoadingIndicator(context);
+ try{
+
+   await _auth.signInWithCredential(phoneAuthCredential).then((value) {
+     Fluttertoast.showToast(msg: 'Mobile Number Verified Automatically');
+     print('Authentication successful${value.user!.uid}');
+     prefs.setString("uid", value.user!.uid);
+     prefs.setString('img','');
+     RegisterService().checkIfUserExists(value.user!.uid).then((values) {
+       if(values==true){
+         RegisterService().checkIfUserActive(value.user!.uid).then((active) {
+
+           if(active){
+             updateDeviceId(value.user!.uid,dev_id).then((value) {
+               Navigator.of(context).pop();
+               setAsLoggedIn(true);
+               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DashBoardScreen()), (route) => false);
+               Fluttertoast.showToast(msg: 'Logged in successfully');
+             });
+
+           }else{
+             Navigator.of(context).pop();
+             LoginService().showAccountStatusDialog(context);
+           }
+         });
+
+       }else{
+
+         Navigator.of(context).pop();
+         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
+         Fluttertoast.showToast(msg: 'Please register');
+       }
+     });
+   });
+ }catch(e){
+   Navigator.of(context).pop();
+   Fluttertoast.showToast(msg: 'Enter OTP');
+ }
+
+    }
 
     verificationFailed(FirebaseAuthException authException) {
       Navigator.of(context).pop();
@@ -50,6 +94,15 @@ class LoginService{
       Fluttertoast.showToast(msg: e.toString());
     }
     return _verificationId;
+  }
+  Future<bool>updateDeviceId(String userId,String dev_id)async{
+    await FirebaseFirestore.instance.collection('customers')
+        .doc(userId)
+        .update({
+      'device_id': dev_id,
+    },
+    );
+    return true;
   }
    Future<User?> signInWithGoogle({required BuildContext context}) async {
     SharedPreferences prefs=await SharedPreferences.getInstance();

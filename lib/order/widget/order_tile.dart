@@ -118,7 +118,7 @@ StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,Bui
                    Row(
                      children: [
                        Expanded(
-                         child: Text("Expected Delivery Date : ",
+                         child: Text("Expected Delivery : ",
                            style: GoogleFonts.inter(
                                fontWeight: FontWeight.w600,
                                fontSize: 12,
@@ -126,7 +126,7 @@ StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,Bui
                            ),),
                        ),
                        Expanded(
-                         child: Text("${snapshot['deliveryTime'].toString().split(',')[0]},${snapshot['deliveryTime'].toString().split(',')[1].split(':')[0].toString().replaceAll(' ', '').padLeft(2,'0')}:${snapshot['deliveryTime'].toString().split(',')[1].split(':')[1].toString().replaceAll(' ', '').padLeft(4,'0')}",
+                         child: Text("${snapshot['deliveryTime'].toString()}",
                            style: GoogleFonts.inter(
                                fontWeight: FontWeight.w600,
                                fontSize: 12,
