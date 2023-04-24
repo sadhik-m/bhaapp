@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../cc_avenue_page.dart';
 import '../common/constants/colors.dart';
 import '../common/services/send_push_notification_service.dart';
 import '../common/widgets/appBar.dart';
@@ -179,6 +180,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           showLogoutDialog(context);
                     }
                 ),
+                SizedBox(height: screenHeight*0.01,),
+                /*profileTile(
+                    'ccc',
+                        (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>CCPage()));
+                    }
+                ),*/
               ],
             ),
           ),

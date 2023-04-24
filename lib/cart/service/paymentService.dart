@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../order/model/orderStatusModel.dart';
@@ -41,7 +41,7 @@ class PaymentService{
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        makePayment(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'],
+        getTolken(context, documentSnapshot['phone'], documentSnapshot['email'], documentSnapshot['name'],
            '${documentSnapshot['phone'].toString().replaceAll(' ', '').replaceAll('+', '').replaceAll('(', '').replaceAll(')', '')}_${((double.parse(documentSnapshot['orderCount']))+1).toInt()}',
        deliveryAddress,deliveryOption,orderAmount,items,uid!,vendorId!,deliveryTime,
            customerPhone,categoryType,amountToVendor,amountToBhaApp,razorpayId!, pinCode, deliveryType);
@@ -54,96 +54,77 @@ class PaymentService{
     });
   }
 
+  getTolken(BuildContext context,String phone,String email,String name,String orderid,
+      String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
+      String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,String razorpayId,
+      String pinCode,String deliveryType)async{
+    await FirebaseFirestore.instance
+        .collection('customers')
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        FirebaseFirestore.instance.collection('customers').doc(uid).update({'orderCount': '${((double.parse(documentSnapshot['orderCount']))+1).toInt()}'});
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+    // var url='https://test.cashfree.com/api/v2/cftoken/order';
+    var url='https://sandbox.cashfree.com/pg/orders';
+    var body=json.encode({
+      "order_id": orderid,
+      "order_amount":double.parse(orderAmount.toString()),
+      "order_currency": "INR",
+      "customer_details": {
+        "customer_id": uid,
+        "customer_name": name,
+        "customer_email": email,
+        "customer_phone": phone
+      },
+      "order_meta": {
+        "notify_url": "https://test.cashfree.com"
+      },
+      "order_note": "some order note here",
+    });
+    var response= await http.post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-client-id' :'280475a5b573c10a4016818b7d574082',
+          'x-client-secret': '2235fabf990fddb9e46dfe101f9a84ec9c0dbad2',
+          'x-api-version': "2022-09-01",
+          'x-request-id': "BhaApp"
+        },
+        body:body ).then((value)  {
+      print(value.body.toString());
+      if(value.body.contains('payment_session_id')){
+        Navigator.of(context).pop();
+        var data=json.decode(value.body.toString());
+        print(data['payment_session_id']);
+        makePayment( context, phone, email, name, orderid,
+             deliveryAddress, deliveryOption, orderAmount,items, uid, vid, deliveryTime,
+             customerPhone, categoryType, amountToVendor, amountToBhaApp, razorpayId,
+             pinCode, deliveryType,data['payment_session_id'],);
+      }else{
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(msg: 'payment failed');
+      }
+    });
+
+  }
 
   makePayment(BuildContext context,String phone,String email,String name,String orderid,
       String deliveryAddress,String deliveryOption,String orderAmount,Map<String, int> items,String uid,String vid,String deliveryTime,
       String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,String razorpayId,
-      String pinCode,String deliveryType) {
+      String pinCode,String deliveryType,String paymentTolken) {
 
-    Razorpay razorpay = Razorpay();
-    var options = {
-      'key': 'rzp_test_ZGpUT4mDZTOmrM',
-      'amount': double.parse(orderAmount)*100,
-      //"payment_capture": 1,
-      'name': 'BhaApp',
-      'description': '',
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {'contact': customerPhone, 'email': email},
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, (PaymentFailureResponse response){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Failed')));
-      Navigator.of(context).pop();
-    });
-    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, (PaymentSuccessResponse response)async{
-      String credentials = "rzp_test_ZGpUT4mDZTOmrM:jCbWl5d6R9D1e20I87XD2ZJM";
-      Codec<String, String> stringToBase64 = utf8.fuse(base64);
-      String encoded = stringToBase64.encode(credentials);
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>PayScreen(
+      phone: phone, email: email, name: name, orderid: orderid, deliveryAddress: deliveryAddress, deliveryOption: deliveryOption,
+      orderAmount: orderAmount, items: items, uid: uid, vid: vid, deliveryTime: deliveryTime, customerPhone: customerPhone,
+      categoryType: categoryType, amountToVendor: amountToVendor,
+      amountToBhaApp: amountToBhaApp, razorpayId: razorpayId, pinCode: pinCode, deliveryType: deliveryType, paymentTolken: paymentTolken,
 
-      await http.post(Uri.parse('https://api.razorpay.com/v1/payments/${response.paymentId}/capture',),
-          body: json.encode({
-            "amount": double.parse(orderAmount)*100,
-            "currency": "INR"
-          }),
-          headers: {
-            'Authorization':"Basic " +encoded,
-            'Accept':'*/*',
-            'Content-Type':'application/json',
-            'Accept-Encoding':'gzip, deflate, br',
-            'Connection':'keep-alive',
-          }
-      ).then((value) {
-        print("CCCCAAAAAAAAAAAA   ${value.body.toString()}");
-        print("razorpayId   ${razorpayId.toString()}");
-        if(value.statusCode==200){
-          http.post(Uri.parse('https://api.razorpay.com/v1/payments/${response.paymentId}/transfers',),
-              body: json.encode({
-                "transfers": [
-                  {
-                    "account": razorpayId,
-                    "amount": double.parse(amountToVendor.toString())*100,
-                    "currency": "INR",
-                    "notes": {
-                      "vendor_id": vid,
-                    },
-                    "linked_account_notes": [
-                    ],
-                    "on_hold": false
-                  }
-                ]
-              }),
-              headers: {
-                'Authorization':"Basic " +encoded,
-                'Accept':'*/*',
-                'Content-Type':'application/json',
-                'Accept-Encoding':'gzip, deflate, br',
-                'Connection':'keep-alive',
-              }
-          ).then((value) {
-            print("TTTTTRRRRRRRRRAAAAAAAAAA   ${value.body.toString()}");
-            if(value.statusCode==200){
-              PaymentService().saveOrderInfo(context, orderid,
-                  deliveryAddress, deliveryOption, orderAmount,
-                  'RazorPay',
-                  response.paymentId.toString(),
-                  DateTime.now().toString(),items,uid,vid,deliveryTime,customerPhone,categoryType,
-                  amountToVendor,amountToBhaApp, pinCode, deliveryType);
-            }else{
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('payment failed')));
-              Navigator.of(context).pop();
-            }
-          });
-        }
-      });
+    )));
 
-    });
-    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, (ExternalWalletResponse response){
-      //showAlertDialog(context, "External Wallet Selected", "${response.walletName}");
-    });
-    razorpay.open(options);
 
   }
 
@@ -152,7 +133,7 @@ class PaymentService{
       String deliveryTime,String customerPhone,String categoryType,double amountToVendor,double amountToBhaApp,
       String pinCode,String deliveryType)async{
 
-    //showLoadingIndicator(context);
+    showLoadingIndicator(context);
     SharedPreferences preferences =await SharedPreferences.getInstance();
     preferences.setString('cartList',CartModel.encode([]));
     DashBoardScreen.cartValueNotifier.updateNotifier(0);
@@ -188,21 +169,6 @@ class PaymentService{
         }
 
       }
-
-      await FirebaseFirestore.instance
-          .collection('customers')
-          .doc(uid)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.exists) {
-          FirebaseFirestore.instance.collection('customers').doc(uid).update({'orderCount': '${((double.parse(documentSnapshot['orderCount']))+1).toInt()}'});
-        } else {
-          print('Document does not exist on the database');
-        }
-      });
-
-
-
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'Order placed successfully');
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>PaymentSuccess()), (route) => false);
