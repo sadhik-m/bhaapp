@@ -325,7 +325,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
         List<Placemark> placemarks = await placemarkFromCoordinates(pos.latitude,pos.longitude).then((value) {
           setState(() {
-            addressController.text="${value[0].locality} ${value[0].thoroughfare} ${value[0].administrativeArea}";
+            addressController.text="${value[0].street}${value[0].street!.isNotEmpty?',':''} ${value[0].subThoroughfare}${value[0].subThoroughfare!.isNotEmpty?',':''} ${value[0].thoroughfare}${value[0].thoroughfare!.isNotEmpty?',':''} ${value[0].subLocality}${value[0].subLocality!.isNotEmpty?',':''} ${value[0].locality}${value[0].locality!.isNotEmpty?',':''} ${value[0].subAdministrativeArea}${value[0].subAdministrativeArea!.isNotEmpty?',':''} ${value[0].administrativeArea}";
             pinCodeController.text="${value[0].postalCode}";
           });
           return value;

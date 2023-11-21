@@ -20,7 +20,8 @@ class VendorShopModel {
     required this.phone,
     required this.email,
     required this.shopType,
-    required this.razorpayId,
+    required this.device_id,
+    required this.approved,
   });
 
   String vendorId;
@@ -33,7 +34,8 @@ class VendorShopModel {
   String phone;
   String email;
   String shopType;
-  String razorpayId;
+  String device_id;
+  bool approved;
 
   factory VendorShopModel.fromJson(Map<String, dynamic> json) => VendorShopModel(
     vendorId: json["vendorId"],
@@ -46,7 +48,8 @@ class VendorShopModel {
     phone: json["phone"],
     email: json["email"],
     shopType: json["shopType"],
-    razorpayId: json["razorpayId"],
+    device_id: json["device_id"],
+    approved: json["approved"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -60,6 +63,7 @@ class VendorShopModel {
     "phone": phone,
     "email": email,
     "shopType": shopType,
-    "razorpayId": razorpayId,
+    "device_id": device_id,
+    "approved": approved,
   };
 }

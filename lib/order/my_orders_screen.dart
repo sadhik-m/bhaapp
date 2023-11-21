@@ -108,7 +108,8 @@ class _OrderScreenState extends State<OrderScreen> {
             Expanded(child:
             orderType=='my_orders'?
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isNotEqualTo: 'Delivered').orderBy('status').orderBy('txTime',descending: true).snapshots(),
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!)
+                .where('status',whereIn: ['Order Placed', 'Accepted', 'In Progress', 'Ready For Pickup', 'Out For Delivery','At Pickup Point', 'Issue Reported', 'Refund Approved', 'Refund Initiated']).orderBy('txTime',descending: true).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return SizedBox.shrink();
@@ -117,7 +118,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Padding(
                     padding:  EdgeInsets.only(top: 0),
-                    child: Center(child: Text('Loading...')),
+                    child: Center(child: Text('Nothing Found!')),
                   );
                 }
                 if (snapshot.data!.docs.isEmpty) {
@@ -138,7 +139,8 @@ class _OrderScreenState extends State<OrderScreen> {
               },
             ):
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).where('status',isEqualTo: 'Delivered').snapshots(),
+              stream: FirebaseFirestore.instance.collection('orders').where('userId',isEqualTo: userId!).
+              where('status',whereIn: ['Delivered', 'Cancelled', 'Rejected', 'Refunded', 'Refund Denied']).orderBy('txTime',descending: true).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return SizedBox.shrink();

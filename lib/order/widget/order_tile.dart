@@ -8,21 +8,39 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'orderProductTile.dart';
 
-StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,BuildContext context){
+String getDeliveryTime(
+    String pickupPoint, String pickupPointTime, Timestamp deliveryTime) {
+  if (pickupPoint.isEmpty) {
+    String dDateTimeStr =
+        DateFormat('d MMM y, hh a').format(deliveryTime.toDate());
+    return 'Within 60 to 90 minutes from $dDateTimeStr';
+    //return deliveryTime.toString();
+  } else {
+    String dDateStr = DateFormat('d MMM y').format(deliveryTime.toDate());
+    return '$dDateStr $pickupPointTime';
+  }
+  //return (pickupPoint.isEmpty) ? 'Within 60 to 90 minutes' : pickupPointTime;
+}
 
-
-  Map<String, dynamic> items=snapshot['items']as Map<String, dynamic>;
-  List<String> skuList=[];
-  List<String> quantityList=[];
+StreamBuilder orderTile(double width, double height, DocumentSnapshot snapshot,
+    BuildContext context) {
+  Map<String, dynamic> items = snapshot['items'] as Map<String, dynamic>;
+  List<String> skuList = [];
+  List<String> quantityList = [];
   items.forEach((key, value) {
     skuList.add(key.toString());
     quantityList.add(value.toString());
   });
-  DateTime date= DateTime.parse(snapshot['txTime'].toString());
+  DateTime date = DateTime.parse(snapshot['txTime'].toString());
 
-  return  StreamBuilder<QuerySnapshot>(
-    stream: FirebaseFirestore.instance.collection('vendors').where('vendorId',isEqualTo: snapshot['vendorId']).snapshots(),
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('vendors')
+        .where('vendorId', isEqualTo: snapshot['vendorId'])
+        .snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotShop) {
+      //bool istestorder=snapshot['isTestOrder']??false;
+
       if (snapshotShop.hasError) {
         return SizedBox.shrink();
       }
@@ -33,196 +51,273 @@ StreamBuilder orderTile(double width,double height,DocumentSnapshot snapshot,Bui
       if (snapshotShop.data!.docs.isEmpty) {
         return SizedBox.shrink();
       }
-      return snapshot['status']=='Order Cancelled'?
-      SizedBox.shrink(): Padding(
-        padding: const EdgeInsets.only(bottom: 15),
-        child: Container(
-
-          decoration:BoxDecoration(
-              border: Border.all(
-                  color: Colors.grey.withOpacity(0.3),
-                  width: 2
-              )
-          ),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-             Padding(
-               padding: const EdgeInsets.only(left:8.0,right: 8,top: 8),
-               child: Column(
-                 children: [
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Shop Name : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text(snapshotShop.data!.docs[0]['shopName'],
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 8,),
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Order ID : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text(snapshot['orderId'],
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 8,),
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Order Date&Time : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text(DateFormat('d MMM y, hh:mm a').format(date),
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 8,),
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Expected Delivery : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text("${snapshot['deliveryTime'].toString()}",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                   snapshot['status']=='Order Cancelled'?
-                   SizedBox.shrink():
-                   SizedBox(height: 8,),
-                   snapshot['status']=='Order Cancelled'?
-                       SizedBox.shrink():
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Status : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text(snapshot['status'],
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Colors.green
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 8,),
-                   Row(
-                     children: [
-                       Expanded(
-                         child: Text("Order Value : ",
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),),
-                       ),
-                       Expanded(
-                         child: Text('₹${snapshot['orderAmount']}',
-                           style: GoogleFonts.inter(
-                               fontWeight: FontWeight.w600,
-                               fontSize: 12,
-                               color: Color(0xff030303).withOpacity(0.7)
-                           ),overflow: TextOverflow.ellipsis,),
-                       ),
-                     ],
-                   ),
-                 ],
-               ),
-             ),
-              Divider(thickness: 2,),
-              Padding(
-                padding:  EdgeInsets.only(left:8.0,right: 8,bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+      return snapshot['status'] == 'Order Cancelled'
+          ? SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 2)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    snapshot['status']=='Order Cancelled'?
-                    Center(
-                      child: Text('Order Cancelled',
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.red
-                        ),),
-                    ):
+                    Column(
+                      children: [
+                        snapshot.data().toString().contains('isTestOrder')?
+                        snapshot['isTestOrder']==true?
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              color: Colors.blueAccent,
+                              padding: EdgeInsets.all(4),
+                              child: Text(
+                                  'Test Order',style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          ],
+                        )
+                            :SizedBox.shrink():SizedBox.shrink(),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 8.0, right: 8, top: 8),
+                          child: Column(
+                            children: [
 
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetail(orderid: snapshot['orderId'],shopName:snapshotShop.data!.docs[0]['shopName'] , sku: skuList, quqntity: quantityList, shopContact: snapshotShop.data!.docs[0]['mobile'], orderStatus: snapshot['status'],
-                          orderStatusDate: snapshot['txTime'],deliveryAddress: snapshot['deliveryAddress'],
-                          deliveryTime: snapshot['deliveryTime'],orderTotal: snapshot['orderAmount'],
-                        )));
-                      },
-                      child: Center(
-                        child: Text('View Order Details',
-                          style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.green
-                          ),),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Shop Name : ",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      snapshotShop.data!.docs[0]['shopName'],
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Order ID : ",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      snapshot['orderId'],
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Order Date&Time : ",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      DateFormat('d MMM y, hh:mm a').format(date),
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Expected Delivery : ",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      snapshot['deliveryTime'],
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              snapshot['status'] == 'Order Cancelled'
+                                  ? SizedBox.shrink()
+                                  : SizedBox(
+                                      height: 8,
+                                    ),
+                              snapshot['status'] == 'Order Cancelled'
+                                  ? SizedBox.shrink()
+                                  : Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Status : ",
+                                            style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                color: Color(0xff030303)
+                                                    .withOpacity(0.7)),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            snapshot['status'],
+                                            style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                color: Colors.green),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Order Value : ",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      '₹${snapshot['orderAmount']}',
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color:
+                                              Color(0xff030303).withOpacity(0.7)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 2,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          snapshot['status'] == 'Order Cancelled'
+                              ? Center(
+                                  child: Text(
+                                    'Order Cancelled',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.red),
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => OrderDetail(
+                                                  orderid: snapshot['orderId'],
+                                                  shopName: snapshotShop.data!
+                                                      .docs[0]['shopName'],
+                                                  sku: skuList,
+                                                  quqntity: quantityList,
+                                                  shopContact: snapshotShop
+                                                      .data!.docs[0]['mobile'],
+                                                  orderStatus:
+                                                      snapshot['status'],
+                                                  orderStatusDate:
+                                                      snapshot['txTime'],
+                                                  deliveryAddress: snapshot[
+                                                      'deliveryAddress'],
+                                                  deliveryTime:
+                                                      snapshot['deliveryTime'],
+                                                  orderTotal:
+                                                      snapshot['orderAmount'],
+                                                )));
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      'View Order Details',
+                                      style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.green),
+                                    ),
+                                  ),
+                                )
+                        ],
                       ),
                     )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      );
+              ),
+            );
     },
   );
 }

@@ -43,7 +43,7 @@ Container orderSummaryTile(double width,double height,List<String>sku,List<Strin
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return productListTile(width,height,sku[index],quqntity[index]);
+              return productListTile(width,height,sku[index],quqntity[index],index+1);
             },
           ),
           Padding(

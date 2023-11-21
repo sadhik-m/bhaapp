@@ -208,7 +208,7 @@ class _ProductTileState extends State<ProductTile> {
             widget.availableInStock?
                 SizedBox.shrink():
                 Positioned(
-                    top: 5,
+                    bottom: 15,
                     left: 0,right: 0,
                     child: Text('Not in Stock',
                     style: TextStyle(

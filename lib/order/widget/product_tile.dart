@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
-StreamBuilder productListTile(double width,double height,String sku,String quantity){
+StreamBuilder productListTile(double width,double height,String sku,String quantity,int serialNum){
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance.collection('products').where('sku',isEqualTo: sku).snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -28,11 +28,22 @@ StreamBuilder productListTile(double width,double height,String sku,String quant
       return Column(
         children: [
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: width*0.07),
+            padding:  EdgeInsets.symmetric(horizontal: width*0.02),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                RotatedBox(
+                  quarterTurns: 5,
+                  child: Container(
+                    child: Text('Item $serialNum',style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w500,
+                        color: splashBlue,
+                        fontSize: 12
+                    ),),
+                  ),
+                ),
+                SizedBox(width: 15,),
                 Image.network(snapshot.data!.docs[0]['productImageUrl'],
                   height: height*0.12,width: width*0.25),
                 SizedBox(width: width*0.05,),

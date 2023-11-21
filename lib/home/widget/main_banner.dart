@@ -8,6 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
+import '../../dashboard/dash_board_screen.dart';
+import '../../shop_search/view/shop_search_screen.dart';
 class mainBanner extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -43,12 +46,14 @@ getVendorShopData()async{
               phone: documentSnapshot['mobile'],
               email: documentSnapshot['email'],
           shopType: documentSnapshot['shopType'],
-              razorpayId: '${documentSnapshot['bankDetails.${'razorpayId'}']}'
+            device_id: documentSnapshot['device_id'],
+            approved: documentSnapshot['approved'],
           )
         );
       });
-    } else {
-      print('Document does not exist on the database');
+    } else{
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:
+          (context)=>ShopSearchScreen(willPop: true,)), (route) => false);
     }
   });
 }
@@ -120,7 +125,7 @@ getRatingData()async{
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(shopData[0].vendorId,
+                            Text('Vendor Code: '+shopData[0].vendorId,
                               style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,

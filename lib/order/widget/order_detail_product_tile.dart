@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../common/constants/colors.dart';
 
-StreamBuilder orderDetailProductListTile(double width,double height,String sku,String quantity){
+StreamBuilder orderDetailProductListTile(double width,double height,String sku,String quantity,int serialNum){
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance.collection('products').where('sku',isEqualTo: sku).snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -31,6 +31,17 @@ StreamBuilder orderDetailProductListTile(double width,double height,String sku,S
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              RotatedBox(
+                quarterTurns: 5,
+                child: Container(
+                  child: Text('Item $serialNum',style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w500,
+                      color: splashBlue,
+                      fontSize: 12
+                  ),),
+                ),
+              ),
+              SizedBox(width: 15,),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

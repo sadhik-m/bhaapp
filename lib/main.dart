@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         '/payment_success':(BuildContext context) => const PaymentSuccess(),
         '/Add_address':(BuildContext context) => const AddAddress(),
         '/change_address':(BuildContext context) => const ChangeAddress(),
-        '/change_payment':(BuildContext context) => const ChangePayment(),
+        //'/change_payment':(BuildContext context) => const ChangePayment(),
         '/profile':(BuildContext context) => const ProfileScreen(),
         '/order':(BuildContext context) =>  OrderScreen(),
         //'/order_detail':(BuildContext context) => const OrderDetail(),

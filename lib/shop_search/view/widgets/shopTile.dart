@@ -77,7 +77,20 @@ class _ShopDataListTileState extends State<ShopDataListTile> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('Vendor Code: '+widget.vendorTypeList.vendorId,
+                        style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            fontSize: 12
+                        ),),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding:  EdgeInsets.symmetric(horizontal: widget.screenWidth*0.04,vertical: widget.screenHeight*0.01),
                   child: Column(
@@ -105,7 +118,7 @@ class _ShopDataListTileState extends State<ShopDataListTile> {
                               Image.asset('assets/home/clock.png',
                                 width: 14,height: 14,),
                               SizedBox(width: widget.screenWidth*0.013,),
-                              Text('${widget.vendorTypeList.openTime} AM - ${widget.vendorTypeList.closeTime} PM',
+                              Text('${widget.vendorTypeList.openTime.toString().padLeft(4,'0').padRight(5,'0')} ${getTimeLabel(widget.vendorTypeList.openTime)} - ${widget.vendorTypeList.closeTime.toString().padLeft(4,'0').padRight(5,'0')} ${getTimeLabel(widget.vendorTypeList.closeTime)}',
                                 style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w400,
@@ -144,5 +157,13 @@ class _ShopDataListTileState extends State<ShopDataListTile> {
             ),
           )),
     );
+  }
+  String getTimeLabel(String time){
+    int hour = int.parse(time.split(":")[0]);
+    if(hour<12){
+      return 'AM';
+    }else{
+      return 'PM';
+    }
   }
 }

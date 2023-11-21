@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,21 +12,22 @@ import '../../dashboard/dash_board_screen.dart';
 import '../../product/model/cartModel.dart';
 import '../my_cart_screen.dart';
 
-FutureBuilder cartListTile(double width,double height,String prodId,int quantity,int index){
-  CollectionReference prodDetail = FirebaseFirestore.instance.collection('products');
-  int prodQua=quantity;
+FutureBuilder cartListTile(
+    double width, double height, String prodId, int quantity, int index) {
+  CollectionReference prodDetail =
+      FirebaseFirestore.instance.collection('products');
+  int prodQua = quantity;
   return FutureBuilder<DocumentSnapshot>(
     future: prodDetail.doc(prodId).get(),
-    builder:
-        (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
+    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
       if (snapshot.hasError) {
         return Text("Something went wrong");
       }
 
-
       if (snapshot.hasData) {
-        Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+        Map<String, dynamic> data =
+            snapshot.data!.data() as Map<String, dynamic>;
+
         return Column(
           children: [
             Row(
@@ -32,31 +36,43 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                 RotatedBox(
                   quarterTurns: 5,
                   child: Container(
-                    child: Text('Item $index',style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w500,
-                        color: splashBlue,
-                        fontSize: 12
-                    ),),
+                    child: Text(
+                      'Item $index',
+                      style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w500,
+                          color: splashBlue,
+                          fontSize: 12),
+                    ),
                   ),
                 ),
-                SizedBox(width: width*0.05,),
-                Image.network(data['productImageUrl'],
-                  height: height*0.12,
-                width: width*0.25,
-                fit: BoxFit.fill,),
-                SizedBox(width: width*0.05,),
+                SizedBox(
+                  width: width * 0.05,
+                ),
+                Image.network(
+                  data['productImageUrl'],
+                  height: height * 0.12,
+                  width: width * 0.25,
+                  fit: BoxFit.fill,
+                ),
+                SizedBox(
+                  width: width * 0.05,
+                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      SizedBox(height: height*0.015,),
-                      Text(data['productName'],style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black
-                      ),),
-                   /*   SizedBox(height: height*0.004,),
+                      SizedBox(
+                        height: height * 0.015,
+                      ),
+                      Text(
+                        data['productName'],
+                        style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                      /*   SizedBox(height: height*0.004,),
                       Row(
                         children: [
                           Text('Product Code: ',style: GoogleFonts.inter(
@@ -71,55 +87,59 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                           ),),
                         ],
                       ),*/
-                      SizedBox(height: height*0.004,),
+                      SizedBox(
+                        height: height * 0.004,
+                      ),
                       Row(
                         children: [
-                          Text('$prodQua Kg',style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: splashBlue
-                          ),),
-                          Text(' - ₹${quantity*double.parse(data['salesPrice'].toString())}',style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black.withOpacity(0.8)
-                          ),),
+                          Text(
+                            '$prodQua Kg',
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: splashBlue),
+                          ),
+                          Text(
+                            ' - ₹${quantity * double.parse(data['salesPrice'].toString())}',
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black.withOpacity(0.8)),
+                          ),
                         ],
                       ),
                       Row(
                         children: [
                           InkWell(
-                            onTap: (){
-
-                            },
+                            onTap: () {},
                             child: Center(
                               child: Text(
                                 '-',
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 22,
-                                    color: Colors.black
-                                ),
+                                    color: Colors.black),
                               ),
                             ),
                           ),
-                          SizedBox(width: width*0.03,),
+                          SizedBox(
+                            width: width * 0.03,
+                          ),
                           Center(
                             child: Text(
-                              '${quantity.toString().padLeft(2,'0')}  ${data['priceUnit'].toString()}',
+                              '${quantity.toString().padLeft(2, '0')}  ${data['priceUnit'].toString()}',
                               style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
-                                  color: Colors.black
-                              ),
+                                  color: Colors.black),
                             ),
                           ),
-                          SizedBox(width: width*0.03,),
+                          SizedBox(
+                            width: width * 0.03,
+                          ),
                           InkWell(
-                            onTap: (){
-
-                              prodQua+=1;
-
+                            onTap: () {
+                              prodQua += 1;
                             },
                             child: Center(
                               child: Text(
@@ -127,8 +147,7 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 22,
-                                    color: Colors.black
-                                ),
+                                    color: Colors.black),
                               ),
                             ),
                           )
@@ -140,8 +159,10 @@ FutureBuilder cartListTile(double width,double height,String prodId,int quantity
               ],
             ),
             Padding(
-              padding:  EdgeInsets.only(bottom:8.0),
-              child: Divider(color: Colors.black.withOpacity(0.2),),
+              padding: EdgeInsets.only(bottom: 8.0),
+              child: Divider(
+                color: Colors.black.withOpacity(0.2),
+              ),
             )
           ],
         );
@@ -158,16 +179,14 @@ class CartListTile extends StatefulWidget {
   String prodId;
   int quantity;
   int index;
-  String categoryType;
 
-   CartListTile({Key? key,
+  CartListTile({
+    Key? key,
     required this.width,
     required this.height,
     required this.prodId,
     required this.quantity,
     required this.index,
-     required this.categoryType
-
   }) : super(key: key);
 
   @override
@@ -175,63 +194,97 @@ class CartListTile extends StatefulWidget {
 }
 
 class _CartListTileState extends State<CartListTile> {
-
   late Future<DocumentSnapshot> data;
-  CollectionReference prodDetail = FirebaseFirestore.instance.collection('products');
+  CollectionReference prodDetail =
+      FirebaseFirestore.instance.collection('products');
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    data= prodDetail.doc(widget.prodId).get();
+    data = prodDetail.doc(widget.prodId).get();
+    startTimer();
   }
+
+  Timer? timer;
+
+  startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      data = prodDetail.doc(widget.prodId).get();
+      removeItem();
+    });
+  }
+
+  cancelTimer() {
+    timer!.cancel();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    cancelTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.quantity==0?SizedBox.shrink():
-    FutureBuilder<DocumentSnapshot>(
-      future: data,
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    return widget.quantity == 0
+        ? SizedBox.shrink()
+        : FutureBuilder<DocumentSnapshot>(
+            future: data,
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
 
-        if (snapshot.hasError) {
-          return Text("Something went wrong");
-        }
-
-
-        if (snapshot.hasData) {
-          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-          return Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  RotatedBox(
-                    quarterTurns: 5,
-                    child: Container(
-                      child: Text('Item ${widget.index+1}',style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w500,
-                          color: splashBlue,
-                          fontSize: 12
-                      ),),
-                    ),
-                  ),
-                  SizedBox(width: widget.width*0.05,),
-                  Image.network(data['productImageUrl'],
-                    height: widget.height*0.12,
-                    width: widget.width*0.25,
-                    fit: BoxFit.fill,),
-                  SizedBox(width: widget.width*0.05,),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+              if (snapshot.hasData) {
+                Map<String, dynamic> data =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                return Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: widget.height*0.015,),
-                        Text(data['productName'],style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black
-                        ),),
-                        /*   SizedBox(height: height*0.004,),
+                        RotatedBox(
+                          quarterTurns: 5,
+                          child: Container(
+                            child: Text(
+                              'Item ${widget.index + 1}',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  color: splashBlue,
+                                  fontSize: 12),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: widget.width * 0.05,
+                        ),
+                        Image.network(
+                          data['productImageUrl'],
+                          height: widget.height * 0.12,
+                          width: widget.width * 0.25,
+                          fit: BoxFit.fill,
+                        ),
+                        SizedBox(
+                          width: widget.width * 0.05,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: widget.height * 0.015,
+                              ),
+                              Text(
+                                data['productName'],
+                                style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black),
+                              ),
+                              /*   SizedBox(height: height*0.004,),
                       Row(
                         children: [
                           Text('Product Code: ',style: GoogleFonts.inter(
@@ -246,167 +299,246 @@ class _CartListTileState extends State<CartListTile> {
                           ),),
                         ],
                       ),*/
-                        SizedBox(height: widget.height*0.004,),
-                        Row(
-                          children: [
-                            Text('Price : ',style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black.withOpacity(0.8)
-                            ),),
-                            Text('₹${(widget.quantity*double.parse(data['salesPrice'].toString())).toStringAsFixed(2)}',style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black
-                            ),),
-                          ],
-                        ),
-                        widget.categoryType.toString().toLowerCase()=='services'?
-                        Row(
-                          children: [
-                            Center(
-                              child: Text(
-                                '${data['priceUnit'].toString()}',
-                                style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                    color: Colors.black
-                                ),
+                              SizedBox(
+                                height: widget.height * 0.004,
                               ),
-                            ),
-
-                          ],
-                        ):
-                        Row(
-                          children: [
-                            Text('Quantity :',style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black.withOpacity(0.8)
-                            ),),
-                            SizedBox(width: widget.width*0.015,),
-                            InkWell(
-                              onTap: (){
-                                setState(() {
-                                  widget.quantity-=1;
-                                });
-                                updateCart(widget.prodId, widget.quantity,'-');
-                              },
-                              child: Center(
-                                child: Text(
-                                  '-',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 22,
-                                      color: Colors.black
+                              Row(
+                                children: [
+                                  Text(
+                                    'Price : ',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black.withOpacity(0.8)),
                                   ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: widget.width*0.015,),
-                            Center(
-                              child: Text(
-                                '${widget.quantity.toString().padLeft(2,'0')} ${data['priceUnit'].toString()}',
-                                style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                    color: Colors.black
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: widget.width*0.015,),
-                            InkWell(
-                              onTap: (){
-
-                                setState(() {
-                                  widget.quantity+=1;
-                                });
-                                updateCart(widget.prodId, widget.quantity,'+');
-                              },
-                              child: Center(
-                                child: Text(
-                                  '+',
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 22,
-                                      color: Colors.black
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '₹${(widget.quantity * double.parse(data['salesPrice'].toString())).toStringAsFixed(2)}',
+                                        style: GoogleFonts.inter(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(
+                                        width: widget.width * 0.015,
+                                      ),
+                                      Text(
+                                        '(${(widget.quantity)} * ₹${(double.parse(data['salesPrice'].toString())).toStringAsFixed(2)})',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                ],
                               ),
-                            )
-                          ],
-                        ),
+                              Row(
+                                      children: [
+                                        Text(
+                                          'Quantity :',
+                                          style: GoogleFonts.inter(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black
+                                                  .withOpacity(0.8)),
+                                        ),
+                                        SizedBox(
+                                          width: widget.width * 0.015,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            //if(widget.quantity!=1){
+                                            setState(() {
+                                              widget.quantity -= 1;
+                                            });
+                                            updateCart(widget.prodId,
+                                                widget.quantity, '-');
+                                            // }
+                                          },
+                                          child: Center(
+                                            child: Text(
+                                              '-',
+                                              style: GoogleFonts.inter(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 22,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: widget.width * 0.015,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            '${widget.quantity.toString().padLeft(2, '0')} ${data['priceUnit'].toString()}',
+                                            style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: widget.width * 0.015,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              widget.quantity += 1;
+                                            });
+                                            updateCart(widget.prodId,
+                                                widget.quantity, '+');
+                                          },
+                                          child: Center(
+                                            child: Text(
+                                              '+',
+                                              style: GoogleFonts.inter(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 22,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                              data['availableInStock'] == true
+                                  ? SizedBox.shrink()
+                                  : Text(
+                                      'Not in Stock',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                          color: Colors.red),
+                                      textAlign: TextAlign.center,
+                                    )
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  )
-                ],
-              ),
-              Padding(
-                padding:  EdgeInsets.only(bottom:8.0),
-                child: Divider(color: Colors.black.withOpacity(0.2),),
-              )
-            ],
-          );
-        }
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
+                      child: Divider(
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                    )
+                  ],
+                );
+              }
 
-        return Center(child: Text(""));
-      },
-    );
+              return Center(child: Text(""));
+            },
+          );
   }
 
-  updateCart(String prodId,int prodQuantity,String operation)async{
-    double totalPrice=0;
+  updateCart(String prodId, int prodQuantity, String operation) async {
+    double totalPrice = 0;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     //String encodedData=CartModel.encode(MyCart.cartList);
 
-     int index = widget.index;
-      if(prodQuantity==0){
+    int index = widget.index;
+    if (prodQuantity == 0) {
+      setState(() {
+        MyCart.cartList.remove(MyCart.cartList[index]);
+      });
+
+      print("LLLLLLLL ${MyCart.cartList.length}");
+    } else {
+      if (operation == '+') {
         setState(() {
-          MyCart.cartList.remove(MyCart.cartList[index]);
+          setState(() {
+            MyCart.cartList[index].productQuantity =
+                MyCart.cartList[index].productQuantity + 1;
+          });
         });
-
-        print("LLLLLLLL ${MyCart.cartList.length}");
-      }else{
-
-         if(operation=='+'){
-           setState(() {
-             setState(() {
-               MyCart.cartList[index].productQuantity=MyCart.cartList[index].productQuantity+1;
-             });
-           });
-         }else{
-           setState(() {
-             setState(() {
-               MyCart.cartList[index].productQuantity=MyCart.cartList[index].productQuantity-1;
-             });
-           });
-         }
-
+      } else {
+        setState(() {
+          setState(() {
+            MyCart.cartList[index].productQuantity =
+                MyCart.cartList[index].productQuantity - 1;
+          });
+        });
       }
+    }
 
     setState(() {
-
-      if(MyCart.cartList.isNotEmpty){
+      if (MyCart.cartList.isNotEmpty) {
         MyCart.cartList.forEach((element) {
           setState(() {
-            FirebaseFirestore.instance.collection('products').doc(element.productId).get().then((value) {
+            FirebaseFirestore.instance
+                .collection('products')
+                .doc(element.productId)
+                .get()
+                .then((value) {
               setState(() {
-                totalPrice += (double.parse(value['salesPrice'].toString())*element.productQuantity);
+                totalPrice += (double.parse(value['salesPrice'].toString()) *
+                    element.productQuantity);
                 DashBoardScreen.cartTotalNotifier.updateNotifier(totalPrice);
                 //items.addAll({'${value['sku']}':element.productQuantity});
               });
             });
           });
         });
-
       }
-      setState(() {
-
-      });
+      setState(() {});
       DashBoardScreen.cartValueNotifier.updateNotifier(MyCart.cartList.length);
     });
-    prefs.setString('cartList',CartModel.encode(MyCart.cartList) ).then((value){
+    prefs
+        .setString('cartList', CartModel.encode(MyCart.cartList))
+        .then((value) {});
+  }
 
+  showNotInStockDialog(BuildContext context) {
+    Widget okButton = TextButton(
+      child: Text("Okay"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+      title: const Text("Item not in stock!, Removing it from cart"),
+      actions: [okButton],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  removeItem() async {
+    //
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    MyCart.cartList.forEach((element) async {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(element.productId)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          setState(() {
+            if (documentSnapshot['availableInStock'] == false) {
+              MyCart.cartList.remove(element);
+              prefs.setString('cartList', CartModel.encode(MyCart.cartList));
+              Fluttertoast.showToast(
+                  msg: 'Item not in stock!, Removing it from cart',
+                  toastLength: Toast.LENGTH_LONG);
+            }
+          });
+        } else {
+          print('Document does not exist on the database');
+          //closeee
+        }
+      });
     });
   }
 }

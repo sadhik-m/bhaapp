@@ -53,7 +53,7 @@ android {
         applicationId "com.bhaapp.bha_app_customer"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 6
+        versionCode 9
         versionName flutterVersionName
     }
 
